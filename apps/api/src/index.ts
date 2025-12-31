@@ -626,10 +626,15 @@ Return ONLY valid JSON (no markdown, no code blocks):
       }
 
       const data = (await response.json()) as any;
+      console.log(`[AI Explanation] Azure OpenAI response structure:`, JSON.stringify(data, null, 2));
+      
       responseText = data.choices?.[0]?.message?.content || '';
       
       if (!responseText || responseText.trim().length === 0) {
         console.error(`[AI Explanation] Empty response from Azure OpenAI`);
+        console.error(`[AI Explanation] Full response data:`, data);
+        console.error(`[AI Explanation] Choices array:`, data.choices);
+        console.error(`[AI Explanation] First choice:`, data.choices?.[0]);
         throw new Error('Azure OpenAI returned empty response');
       }
     } else if (openaiKey) {
