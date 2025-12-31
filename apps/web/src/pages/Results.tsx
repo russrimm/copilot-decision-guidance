@@ -78,6 +78,56 @@ export default function Results() {
   const displayCompliance: string[] =
     enhancedExplanation?.complianceConsiderations || complianceConsiderations;
 
+  // Helper to add inline hyperlinks for source references
+  const addInlineLinks = (text: string) => {
+    if (!sources || sources.length === 0) return text;
+
+    // Keywords to source URL mapping
+    const linkMap: Record<string, { url: string; title: string }> = {};
+    
+    sources.forEach((source) => {
+      const url = source.url.toLowerCase();
+      if (url.includes('microsoft-365-copilot-overview')) {
+        linkMap['Microsoft 365 Copilot'] = source;
+        linkMap['M365 Copilot'] = source;
+      } else if (url.includes('copilot-studio') || url.includes('microsoft-copilot-studio')) {
+        linkMap['Copilot Studio'] = source;
+      } else if (url.includes('licensing')) {
+        linkMap['licensing'] = source;
+      } else if (url.includes('privacy') || url.includes('security')) {
+        linkMap['privacy'] = source;
+        linkMap['security'] = source;
+        linkMap['data privacy'] = source;
+      } else if (url.includes('extensibility')) {
+        linkMap['extensibility'] = source;
+        linkMap['extend'] = source;
+      }
+    });
+
+    // Split text into parts and identify where to add links
+    const parts: Array<{ text: string; link?: { url: string; title: string } }> = [];
+    let remainingText = text;
+    
+    Object.entries(linkMap).forEach(([keyword, source]) => {
+      const regex = new RegExp(`(${keyword})`, 'gi');
+      const match = remainingText.match(regex);
+      if (match) {
+        const index = remainingText.search(regex);
+        if (index > 0) {
+          parts.push({ text: remainingText.substring(0, index) });
+        }
+        parts.push({ text: match[0], link: source });
+        remainingText = remainingText.substring(index + match[0].length);
+      }
+    });
+    
+    if (remainingText) {
+      parts.push({ text: remainingText });
+    }
+
+    return parts.length > 0 ? parts : [{ text }];
+  };
+
   const handleExportJSON = () => {
     const exportData = {
       recommendation: {
@@ -372,22 +422,42 @@ export default function Results() {
       <div className="card">
         <h3 className="text-xl font-semibold mb-4 dark:text-white">Why This Recommendation</h3>
         <ul className="space-y-2">
-          {displayReasons.map((reason, idx) => (
-            <li key={idx} className="flex items-start">
-              <svg
-                className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-gray-700 dark:text-gray-100">{reason}</span>
-            </li>
-          ))}
+          {displayReasons.map((reason, idx) => {
+            const parts = addInlineLinks(reason);
+            return (
+              <li key={idx} className="flex items-start">
+                <svg
+                  className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="text-gray-700 dark:text-gray-100">
+                  {Array.isArray(parts) ? parts.map((part, i) => 
+                    part.link ? (
+                      <a
+                        key={i}
+                        href={part.link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary-600 dark:text-primary-400 hover:underline"
+                        title={part.link.title}
+                      >
+                        {part.text}
+                      </a>
+                    ) : (
+                      <span key={i}>{part.text}</span>
+                    )
+                  ) : reason}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </div>
 
@@ -395,14 +465,34 @@ export default function Results() {
       <div className="card">
         <h3 className="text-xl font-semibold mb-4 dark:text-white">What to Do Next</h3>
         <ol className="space-y-3">
-          {displayNextSteps.map((step, idx) => (
-            <li key={idx} className="flex items-start">
-              <span className="flex items-center justify-center w-6 h-6 bg-primary-600 dark:bg-primary-500 text-white rounded-full text-sm font-medium flex-shrink-0 mr-3 mt-0.5">
-                {idx + 1}
-              </span>
-              <span className="text-gray-700 dark:text-gray-100">{step}</span>
-            </li>
-          ))}
+          {displayNextSteps.map((step, idx) => {
+            const parts = addInlineLinks(step);
+            return (
+              <li key={idx} className="flex items-start">
+                <span className="flex items-center justify-center w-6 h-6 bg-primary-600 dark:bg-primary-500 text-white rounded-full text-sm font-medium flex-shrink-0 mr-3 mt-0.5">
+                  {idx + 1}
+                </span>
+                <span className="text-gray-700 dark:text-gray-100">
+                  {Array.isArray(parts) ? parts.map((part, i) => 
+                    part.link ? (
+                      <a
+                        key={i}
+                        href={part.link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary-600 dark:text-primary-400 hover:underline"
+                        title={part.link.title}
+                      >
+                        {part.text}
+                      </a>
+                    ) : (
+                      <span key={i}>{part.text}</span>
+                    )
+                  ) : step}
+                </span>
+              </li>
+            );
+          })}
         </ol>
       </div>
 
@@ -445,22 +535,42 @@ export default function Results() {
             Compliance & Governance Considerations
           </h3>
           <ul className="space-y-3">
-            {displayCompliance.map((item, idx) => (
-              <li key={idx} className="flex items-start">
-                <svg
-                  className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0 mt-0.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-blue-900 dark:text-blue-100">{item}</span>
-              </li>
-            ))}
+            {displayCompliance.map((item, idx) => {
+              const parts = addInlineLinks(item);
+              return (
+                <li key={idx} className="flex items-start">
+                  <svg
+                    className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0 mt-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="text-blue-900 dark:text-blue-100">
+                    {Array.isArray(parts) ? parts.map((part, i) => 
+                      part.link ? (
+                        <a
+                          key={i}
+                          href={part.link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-600 dark:text-primary-400 hover:underline"
+                          title={part.link.title}
+                        >
+                          {part.text}
+                        </a>
+                      ) : (
+                        <span key={i}>{part.text}</span>
+                      )
+                    ) : item}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

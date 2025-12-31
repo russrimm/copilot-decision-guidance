@@ -30,6 +30,38 @@ export function generateMarkdownSummary(
     scoringResult,
   } = recommendation;
 
+  // Helper to add inline markdown links
+  const addMarkdownLinks = (text: string): string => {
+    if (!sources || sources.length === 0) return text;
+
+    const linkMap: Record<string, { url: string; title: string }> = {};
+    sources.forEach((source) => {
+      const url = source.url.toLowerCase();
+      if (url.includes('microsoft-365-copilot-overview')) {
+        linkMap['Microsoft 365 Copilot'] = source;
+        linkMap['M365 Copilot'] = source;
+      } else if (url.includes('copilot-studio') || url.includes('microsoft-copilot-studio')) {
+        linkMap['Copilot Studio'] = source;
+      } else if (url.includes('licensing')) {
+        linkMap['licensing'] = source;
+      } else if (url.includes('privacy') || url.includes('security')) {
+        linkMap['privacy'] = source;
+        linkMap['security'] = source;
+        linkMap['data privacy'] = source;
+      } else if (url.includes('extensibility')) {
+        linkMap['extensibility'] = source;
+        linkMap['extend'] = source;
+      }
+    });
+
+    let result = text;
+    Object.entries(linkMap).forEach(([keyword, source]) => {
+      const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+      result = result.replace(regex, (match) => `[${match}](${source.url})`);
+    });
+    return result;
+  };
+
   let markdown = `# ${title}\n\n`;
   markdown += `**Recommendation Type:** ${type}\n\n`;
 
@@ -47,30 +79,30 @@ export function generateMarkdownSummary(
     });
   }
 
-  markdown += `## Summary\n\n${summary}\n\n`;
+  markdown += `## Summary\n\n${addMarkdownLinks(summary)}\n\n`;
 
   markdown += `## Why This Recommendation\n\n`;
   reasons.forEach((reason, idx) => {
-    markdown += `${idx + 1}. ${reason}\n`;
+    markdown += `${idx + 1}. ${addMarkdownLinks(reason)}\n`;
   });
   markdown += `\n`;
 
   markdown += `## Next Steps\n\n`;
   nextSteps.forEach((step, idx) => {
-    markdown += `${idx + 1}. ${step}\n`;
+    markdown += `${idx + 1}. ${addMarkdownLinks(step)}\n`;
   });
   markdown += `\n`;
 
   markdown += `## Risks & Watch-outs\n\n`;
   risks.forEach((risk, idx) => {
-    markdown += `${idx + 1}. ${risk}\n`;
+    markdown += `${idx + 1}. ${addMarkdownLinks(risk)}\n`;
   });
   markdown += `\n`;
 
   if (complianceConsiderations && complianceConsiderations.length > 0) {
     markdown += `## Compliance & Governance Considerations\n\n`;
     complianceConsiderations.forEach((item, idx) => {
-      markdown += `${idx + 1}. ${item}\n`;
+      markdown += `${idx + 1}. ${addMarkdownLinks(item)}\n`;
     });
     markdown += `\n`;
   }

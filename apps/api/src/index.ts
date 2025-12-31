@@ -289,28 +289,28 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
   const generateDetailedIntroduction = (rec: any, ctx?: any) => {
     const answers = ctx?.answers || {};
     const recType = rec.type || 'UNKNOWN';
-    
+
     // Extract key scenario details from answers (filter out empty/undefined)
     const experienceLocation = answers['experience-location'];
     const buildStyle = answers['build-style'];
     const teamSize = answers['team-size'];
     const complexity = answers['complexity'];
     const budget = answers['budget-band'];
-    
+
     // Build personalized introduction
     let intro = `This recommendation is generated using a deterministic scoring algorithm that evaluates your specific scenario against weighted decision criteria. `;
-    
+
     // Add scenario-specific details only if available
     const scenarioDetails: string[] = [];
     if (experienceLocation) scenarioDetails.push(`${experienceLocation.toLowerCase()} deployment`);
     if (buildStyle) scenarioDetails.push(`${buildStyle.toLowerCase()} development approach`);
-    
+
     if (scenarioDetails.length > 0) {
       intro += `Based on your requirements for ${scenarioDetails.join(' with ')}, `;
     } else {
       intro += `Based on your specific scenario requirements, `;
     }
-    
+
     if (recType === 'M365_COPILOT') {
       intro += `the analysis indicates Microsoft 365 Copilot aligns best with your immediate needs. `;
     } else if (recType === 'COPILOT_STUDIO') {
@@ -318,21 +318,21 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
     } else if (recType === 'HYBRID') {
       intro += `the analysis recommends a hybrid approach combining both Microsoft 365 Copilot and Copilot Studio. `;
     }
-    
+
     // Add methodology with available context factors
     const contextFactors: string[] = [];
     if (teamSize) contextFactors.push(`team size (${teamSize.toLowerCase()})`);
     if (complexity) contextFactors.push(`technical complexity (${complexity.toLowerCase()})`);
     if (budget) contextFactors.push(`budget constraints (${budget.toLowerCase()})`);
-    
+
     if (contextFactors.length > 0) {
       intro += `The methodology follows the Microsoft AI Decision Framework (BXT + CAF principles), considering your ${contextFactors.join(', ')}. `;
     } else {
       intro += `The methodology follows the Microsoft AI Decision Framework (BXT + CAF principles). `;
     }
-    
+
     intro += `This is a scenario-specific recommendation—most organizations successfully deploy multiple Microsoft AI tools across different use cases, and this guidance helps optimize for your particular requirements.`;
-    
+
     return intro;
   };
 
@@ -617,7 +617,9 @@ Return ONLY valid JSON (no markdown, no code blocks):
       if (!response.ok) {
         const errorBody = await response.text();
         console.error(`[AI Explanation] Azure OpenAI API error details:`, errorBody);
-        throw new Error(`Azure OpenAI API error: ${response.status} ${response.statusText} - ${errorBody}`);
+        throw new Error(
+          `Azure OpenAI API error: ${response.status} ${response.statusText} - ${errorBody}`
+        );
       }
 
       const data = (await response.json()) as any;
