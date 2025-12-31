@@ -98,6 +98,7 @@ function generateCopilotStudioRecommendation(scoringResult: ScoringResult): Reco
       'You want to leverage Power Platform connectors (1000+ prebuilt connectors available)',
     ],
     nextSteps: [
+      'Review the Copilot Studio implementation guide for planning, architecture, and best practices',
       'Identify your licensing path: Microsoft 365 Copilot license (for M365 integration), standalone Copilot Studio subscription, or pay-as-you-go',
       'Decide on deployment channels: Microsoft 365 Copilot, Microsoft Teams, website embed, or custom endpoints',
       'Set up Power Platform environment and configure governance policies in Power Platform admin center',
@@ -174,7 +175,8 @@ function generateHybridRecommendation(scoringResult: ScoringResult): Recommendat
     nextSteps: [
       'Phase 1: Deploy Microsoft 365 Copilot organization-wide to deliver immediate productivity benefits',
       'Ensure foundational governance is in place: permissions, DLP, sensitivity labels, compliance policies',
-      'Phase 2: Identify high-value use cases for custom agents (e.g., customer support, HR automation, sales processes)',
+      'Phase 2: Review the Copilot Studio implementation guide to plan your custom agent strategy',
+      'Identify high-value use cases for custom agents (e.g., customer support, HR automation, sales processes)',
       'Set up Power Platform environment for Copilot Studio development with appropriate governance',
       'Build and pilot custom agents with Copilot Studio for specific departments or processes',
       'Publish Copilot Studio agents to Microsoft 365 Copilot and Teams for unified user experience',
