@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { UserAnswers, Recommendation, ScoringResult } from '@copilot-guidance/decision-engine';
+import type { UserAnswers, Recommendation, ScoringResult } from '../types';
 
 interface WizardState {
   answers: UserAnswers;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useWizardStore } from '../store/wizardStore';
 import {
@@ -7,12 +7,21 @@ import {
   generateMarkdownSummary,
   downloadPDF,
 } from '../lib/export';
-import { getAllQuestions, decisionModel } from '@copilot-guidance/decision-engine';
+import type { DecisionModel, Question } from '../types';
 
 export default function Results() {
   const navigate = useNavigate();
   const { recommendation, scoringResult, answers, reset } = useWizardStore();
   const [showBreakdown, setShowBreakdown] = useState(false);
+  const [model, setModel] = useState<DecisionModel | null>(null);
+
+  useEffect(() => {
+    // Fetch model from API
+    fetch('/api/model')
+      .then(res => res.json())
+      .then(data => setModel(data))
+      .catch(err => console.error('Failed to load model:', err));
+  }, []);
 
   if (!recommendation || !scoringResult) {
     return (
@@ -39,13 +48,26 @@ export default function Results() {
   };
 
   const handleExportPDF = () => {
-    // Get all questions to match with answers
-    const allQuestions = getAllQuestions(decisionModel);
+    if (!model) return;
+    
+    // Get all questions from model
+    const allQuestions: Question[] = [];
+    model.categories.forEach(cat => {
+      cat.questions.forEach(q => allQuestions.push(q));
+    });
+    
     const qaData = allQuestions.map((q) => {
       const answer = answers[q.id];
-      const answerLabel = q.answers.find((a) => a.id === answer)?.label || 'Not answered';
+      let answerLabel = 'Not answered';
+      if (typeof answer === 'boolean') {
+        answerLabel = answer ? 'Yes' : 'No';
+      } else if (Array.isArray(answer)) {
+        answerLabel = answer.join(', ');
+      } else if (answer) {
+        answerLabel = String(answer);
+      }
       return {
-        question: q.title,
+        question: q.text,
         answer: answerLabel,
       };
     });

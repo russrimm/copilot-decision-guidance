@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWizardStore } from '../store/wizardStore';
 import { getDecisionModel, calculateScore } from '../lib/api';
 import { useForm } from 'react-hook-form';
-import type { DecisionModel } from '@copilot-guidance/decision-engine';
+import type { DecisionModel } from '../types';
 
 export default function Wizard() {
   const navigate = useNavigate();

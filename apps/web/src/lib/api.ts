@@ -1,4 +1,4 @@
-import type { UserAnswers, Recommendation, ScoringResult } from '@copilot-guidance/decision-engine';
+import type { UserAnswers, Recommendation, ScoringResult } from '../types';
 
 const API_BASE_URL = '/api';
 
