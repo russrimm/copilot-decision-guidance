@@ -14,6 +14,8 @@ export default function Results() {
   const { recommendation, scoringResult, answers, reset } = useWizardStore();
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [model, setModel] = useState<DecisionModel | null>(null);
+  const [enhancedExplanation, setEnhancedExplanation] = useState<any>(null);
+  const [loadingEnhancement, setLoadingEnhancement] = useState(true);
 
   useEffect(() => {
     // Fetch model from API
@@ -21,7 +23,27 @@ export default function Results() {
       .then((res) => res.json())
       .then((data) => setModel(data))
       .catch((err) => console.error('Failed to load model:', err));
-  }, []);
+
+    // Fetch AI-enhanced explanation
+    if (recommendation) {
+      fetch('/api/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          recommendation: { ...recommendation, scoringResult }, 
+          userContext: { answers } 
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.explanation) {
+            setEnhancedExplanation(data.explanation);
+          }
+        })
+        .catch((err) => console.error('Failed to load enhanced explanation:', err))
+        .finally(() => setLoadingEnhancement(false));
+    }
+  }, [recommendation, scoringResult, answers]);
 
   if (!recommendation || !scoringResult) {
     return (
@@ -37,6 +59,13 @@ export default function Results() {
   const { type, title, summary, reasons, nextSteps, risks, complianceConsiderations, sources } =
     recommendation;
   const { confidenceLevel, scores, breakdown } = scoringResult;
+
+  // Use enhanced explanation if available, otherwise fall back to original
+  const displayIntroduction = enhancedExplanation?.introduction;
+  const displaySummary = enhancedExplanation?.summary || summary;
+  const displayReasons: string[] = enhancedExplanation?.reasons || reasons;
+  const displayNextSteps: string[] = enhancedExplanation?.nextSteps || nextSteps;
+  const displayCompliance: string[] = enhancedExplanation?.complianceConsiderations || complianceConsiderations;
 
   const handleExportJSON = () => {
     downloadJSON({ recommendation, scoringResult }, `copilot-recommendation-${Date.now()}.json`);
@@ -58,9 +87,9 @@ export default function Results() {
 
     const qaData = allQuestions.map((q) => {
       const answer = answers[q.id];
-      const selectedAnswer = q.answers.find(a => a.id === answer);
+      const selectedAnswer = q.answers.find((a) => a.id === answer);
       const answerLabel = selectedAnswer?.label || 'Not answered';
-      
+
       return {
         question: q.title,
         answer: answerLabel,
@@ -103,6 +132,30 @@ export default function Results() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Introduction Section */}
+      {displayIntroduction && (
+        <div className="card bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700">
+          <div className="flex items-start">
+            <svg className="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">About This Analysis</h3>
+              <p className="text-blue-800 dark:text-blue-200 leading-relaxed">{displayIntroduction}</p>
+              {loadingEnhancement && (
+                <div className="mt-2 text-sm text-blue-600 dark:text-blue-300 flex items-center">
+                  <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Enhancing details...
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="card">
         <div className="flex items-start justify-between mb-4">
@@ -112,7 +165,7 @@ export default function Results() {
             >
               {title}
             </div>
-            <p className="text-lg text-gray-700 dark:text-gray-100">{summary}</p>
+            <p className="text-lg text-gray-700 dark:text-gray-100">{displaySummary}</p>
           </div>
         </div>
 
@@ -134,7 +187,7 @@ export default function Results() {
       <div className="card">
         <h3 className="text-xl font-semibold mb-4 dark:text-white">Why This Recommendation</h3>
         <ul className="space-y-2">
-          {reasons.map((reason, idx) => (
+          {displayReasons.map((reason, idx) => (
             <li key={idx} className="flex items-start">
               <svg
                 className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5"
@@ -157,7 +210,7 @@ export default function Results() {
       <div className="card">
         <h3 className="text-xl font-semibold mb-4 dark:text-white">What to Do Next</h3>
         <ol className="space-y-3">
-          {nextSteps.map((step, idx) => (
+          {displayNextSteps.map((step, idx) => (
             <li key={idx} className="flex items-start">
               <span className="flex items-center justify-center w-6 h-6 bg-primary-600 dark:bg-primary-500 text-white rounded-full text-sm font-medium flex-shrink-0 mr-3 mt-0.5">
                 {idx + 1}
@@ -194,7 +247,7 @@ export default function Results() {
       </div>
 
       {/* Compliance & Governance Considerations */}
-      {complianceConsiderations && complianceConsiderations.length > 0 && (
+      {displayCompliance && displayCompliance.length > 0 && (
         <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
           <h3 className="text-xl font-semibold mb-4 text-blue-900 dark:text-blue-100 flex items-center">
             <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -207,7 +260,7 @@ export default function Results() {
             Compliance & Governance Considerations
           </h3>
           <ul className="space-y-3">
-            {complianceConsiderations.map((item, idx) => (
+            {displayCompliance.map((item, idx) => (
               <li key={idx} className="flex items-start">
                 <svg
                   className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2 flex-shrink-0 mt-0.5"
