@@ -73,8 +73,8 @@ export default function Layout() {
               className="text-primary-600 dark:text-primary-400 hover:underline"
             >
               Microsoft Learn
-            </a>
-            {' '}and the{' '}
+            </a>{' '}
+            and the{' '}
             <a
               href="https://microsoft.github.io/Microsoft-AI-Decision-Framework/"
               target="_blank"
@@ -85,7 +85,7 @@ export default function Layout() {
             </a>
           </p>
           <p className="text-center text-xs text-gray-400 dark:text-gray-400 mt-2">
-            v1.1.0 | Not official Microsoft guidance | For informational purposes only
+            v1.1.1 | Not official Microsoft guidance | For informational purposes only
           </p>
         </div>
       </footer>

@@ -29,6 +29,14 @@ app.get('/api/model', (_req: Request, res: Response) => {
 // Calculate score and recommendation
 app.post('/api/score', (req: Request, res: Response) => {
   try {
+    // Validate request body
+    if (!req.body || !req.body.answers) {
+      return res.status(400).json({
+        error: 'Invalid request',
+        message: 'Missing answers in request body. Expected format: { answers: {...} }',
+      });
+    }
+
     const userAnswers = UserAnswersSchema.parse(req.body.answers);
 
     const scoringResult = calculateRecommendation(decisionModel as DecisionModel, userAnswers);
