@@ -18,9 +18,9 @@ export default function Results() {
   useEffect(() => {
     // Fetch model from API
     fetch('/api/model')
-      .then(res => res.json())
-      .then(data => setModel(data))
-      .catch(err => console.error('Failed to load model:', err));
+      .then((res) => res.json())
+      .then((data) => setModel(data))
+      .catch((err) => console.error('Failed to load model:', err));
   }, []);
 
   if (!recommendation || !scoringResult) {
@@ -49,13 +49,13 @@ export default function Results() {
 
   const handleExportPDF = () => {
     if (!model) return;
-    
+
     // Get all questions from model
     const allQuestions: Question[] = [];
-    model.categories.forEach(cat => {
-      cat.questions.forEach(q => allQuestions.push(q));
+    model.categories.forEach((cat) => {
+      cat.questions.forEach((q) => allQuestions.push(q));
     });
-    
+
     const qaData = allQuestions.map((q) => {
       const answer = answers[q.id];
       let answerLabel = 'Not answered';
