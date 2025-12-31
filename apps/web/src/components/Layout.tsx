@@ -74,9 +74,18 @@ export default function Layout() {
             >
               Microsoft Learn
             </a>
+            {' '}and the{' '}
+            <a
+              href="https://microsoft.github.io/Microsoft-AI-Decision-Framework/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-600 dark:text-primary-400 hover:underline"
+            >
+              Microsoft AI Decision Framework
+            </a>
           </p>
           <p className="text-center text-xs text-gray-400 dark:text-gray-400 mt-2">
-            v1.0 | Not official Microsoft guidance | For informational purposes only
+            v1.1.0 | Not official Microsoft guidance | For informational purposes only
           </p>
         </div>
       </footer>
