@@ -13,6 +13,7 @@ export default function Results() {
   const navigate = useNavigate();
   const { recommendation, scoringResult, answers, reset } = useWizardStore();
   const [showBreakdown, setShowBreakdown] = useState(false);
+  const [showResponses, setShowResponses] = useState(false);
   const [model, setModel] = useState<DecisionModel | null>(null);
   const [enhancedExplanation, setEnhancedExplanation] = useState<any>(null);
   const [loadingEnhancement, setLoadingEnhancement] = useState(true);
@@ -177,6 +178,91 @@ export default function Results() {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Your Responses Section - Show all questions and answers */}
+      {model && (
+        <div className="card">
+          <button
+            onClick={() => setShowResponses(!showResponses)}
+            className="flex items-center justify-between w-full text-left mb-4"
+          >
+            <h3 className="text-xl font-semibold dark:text-white flex items-center">
+              <svg
+                className="w-6 h-6 mr-2 text-primary-600 dark:text-primary-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                <path
+                  fillRule="evenodd"
+                  d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Your Questionnaire Responses
+            </h3>
+            <svg
+              className={`w-5 h-5 transition-transform ${showResponses ? 'transform rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {showResponses && (
+            <div className="space-y-4">
+              {model.questionGroups.map((group, groupIdx) => (
+                <div
+                  key={groupIdx}
+                  className="border-l-4 border-primary-600 dark:border-primary-400 pl-4"
+                >
+                  <h4 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-3">
+                    {group.title}
+                  </h4>
+                  <div className="space-y-3">
+                    {group.questions.map((question) => {
+                      const answerId = answers[question.id];
+                      const selectedAnswer = question.answers.find((a) => a.id === answerId);
+
+                      return (
+                        <div
+                          key={question.id}
+                          className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3"
+                        >
+                          <div className="font-medium text-gray-900 dark:text-gray-50 mb-2">
+                            Q: {question.title}
+                          </div>
+                          <div className="text-primary-700 dark:text-primary-300 flex items-start">
+                            <svg
+                              className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            <span>A: {selectedAnswer?.label || 'Not answered'}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

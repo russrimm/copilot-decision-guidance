@@ -173,6 +173,10 @@ app.get('/api/sources', (_req: Request, res: Response) => {
 // Helper to fetch real-time Microsoft Learn documentation
 // Uses Microsoft Learn MCP API at https://learn.microsoft.com/api/mcp
 async function fetchMicrosoftLearnContext(recommendationType: string): Promise<string> {
+  console.log(
+    `[MS Learn MCP] Starting documentation fetch for recommendation type: ${recommendationType}`
+  );
+
   try {
     // Define queries based on recommendation type
     const searchQueries: string[] = [];
@@ -187,11 +191,13 @@ async function fetchMicrosoftLearnContext(recommendationType: string): Promise<s
       searchQueries.push('Copilot Studio publish to Microsoft 365 Copilot Teams channels');
     }
 
+    console.log(`[MS Learn MCP] Queries to execute:`, searchQueries);
     const docsResults: string[] = [];
 
     // Fetch documentation from Microsoft Learn MCP API
     for (const query of searchQueries) {
       try {
+        console.log(`[MS Learn MCP] Fetching docs for query: "${query}"`);
         const response = await fetch('https://learn.microsoft.com/api/mcp/docs-search', {
           method: 'POST',
           headers: {
@@ -200,43 +206,64 @@ async function fetchMicrosoftLearnContext(recommendationType: string): Promise<s
           body: JSON.stringify({ query, maxResults: 2 }),
         });
 
+        console.log(`[MS Learn MCP] Response status: ${response.status} for query: "${query}"`);
+
         if (response.ok) {
           const data = await response.json();
+          console.log(`[MS Learn MCP] Received data:`, JSON.stringify(data).substring(0, 200));
+
           if (data.results && Array.isArray(data.results) && data.results.length > 0) {
+            console.log(
+              `[MS Learn MCP] Found ${data.results.length} results for query: "${query}"`
+            );
             for (const result of data.results) {
               docsResults.push(
                 `**${result.title}**\n${result.url}\n${result.content || result.description || ''}`
               );
             }
+          } else {
+            console.warn(`[MS Learn MCP] No results found for query: "${query}"`);
           }
         } else {
-          console.warn(`Microsoft Learn MCP returned ${response.status} for query: ${query}`);
+          console.warn(`[MS Learn MCP] API returned ${response.status} for query: ${query}`);
         }
       } catch (err) {
-        console.warn(`Failed to fetch docs for query "${query}":`, err);
+        console.error(`[MS Learn MCP] Failed to fetch docs for query "${query}":`, err);
       }
     }
 
+    console.log(`[MS Learn MCP] Total documentation results collected: ${docsResults.length}`);
+
     if (docsResults.length > 0) {
+      console.log(`[MS Learn MCP] ✅ Successfully integrated Microsoft Learn documentation`);
       return `\n\n**REAL-TIME MICROSOFT LEARN DOCUMENTATION:**\n\n${docsResults.join('\n\n---\n\n')}\n\n**ANALYSIS METHOD:** This recommendation combines deterministic scoring with the Microsoft AI Decision Framework, enhanced with real-time Microsoft Learn documentation.`;
     }
 
     // Fallback if no results
+    console.log(`[MS Learn MCP] ⚠️ No results from MCP API, using static framework`);
     return '\n\n**ANALYSIS METHOD:** This recommendation combines deterministic scoring (based on your answers) with the comprehensive Microsoft AI Decision Framework. The framework content is verified against Microsoft Learn documentation.';
   } catch (error) {
-    console.warn('Microsoft Learn MCP integration unavailable:', error);
+    console.error('[MS Learn MCP] ❌ Integration error:', error);
     return '\n\n**ANALYSIS METHOD:** This recommendation uses deterministic scoring with the Microsoft AI Decision Framework (static framework knowledge).';
   }
 }
 
 // AI explanation helper with comprehensive compliance-aware LLM integration
 async function generateAIExplanation(recommendation: any, userContext?: any): Promise<any> {
+  console.log(`[AI Explanation] Starting for recommendation type: ${recommendation.type}`);
+
   const azureKey = process.env.AZURE_OPENAI_API_KEY;
   const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
   const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
   const openaiKey = process.env.OPENAI_API_KEY;
 
+  const aiConfigured = !!(azureKey || openaiKey);
+  console.log(
+    `[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureKey}, OpenAI: ${!!openaiKey})`
+  );
+
   if (!azureKey && !openaiKey) {
+    console.log(`[AI Explanation] No AI keys configured, returning deterministic template`);
     return {
       introduction:
         'This recommendation is generated using a deterministic scoring algorithm that evaluates your answers against weighted criteria. The methodology follows the Microsoft AI Decision Framework, which provides systematic guidance for selecting the right Microsoft AI technology based on business, experience, and technology requirements.',
@@ -251,7 +278,11 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
     const answers = userContext?.answers || {};
 
     // Fetch real-time Microsoft Learn documentation
+    console.log(`[AI Explanation] Fetching Microsoft Learn context...`);
     const learnContext = await fetchMicrosoftLearnContext(recommendation.type);
+    console.log(
+      `[AI Explanation] Microsoft Learn context length: ${learnContext.length} characters`
+    );
     const prompt = `You are a Microsoft AI solutions advisor helping enterprise customers evaluate Microsoft 365 Copilot and Copilot Studio for specific scenarios. Your guidance must be technically accurate, compliance-aware, and based solely on verified Microsoft documentation and the Microsoft AI Decision Framework.
 
 FRAMEWORK METHODOLOGY:
