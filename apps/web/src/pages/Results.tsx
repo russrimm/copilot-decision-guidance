@@ -92,6 +92,9 @@ export default function Results() {
         linkMap['M365 Copilot'] = source;
       } else if (url.includes('copilot-studio') || url.includes('microsoft-copilot-studio')) {
         linkMap['Copilot Studio'] = source;
+      } else if (url.includes('copilotstudioimplementationguide')) {
+        linkMap['implementation guide'] = source;
+        linkMap['Implementation Guide'] = source;
       } else if (url.includes('licensing')) {
         linkMap['licensing'] = source;
       } else if (url.includes('privacy') || url.includes('security')) {

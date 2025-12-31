@@ -72,6 +72,10 @@ function generateM365CopilotRecommendation(scoringResult: ScoringResult): Recomm
         title: 'Get Started with Microsoft 365 Copilot',
         url: 'https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-app-overview',
       },
+      {
+        title: 'Copilot Studio Implementation Guide',
+        url: 'https://aka.ms/copilotstudioimplementationguide',
+      },
     ],
     scoringResult,
   };
@@ -142,6 +146,10 @@ function generateCopilotStudioRecommendation(scoringResult: ScoringResult): Reco
         title: 'Extend Capabilities with Agents',
         url: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/copilot-connectors-in-copilot-studio',
       },
+      {
+        title: 'Copilot Studio Implementation Guide',
+        url: 'https://aka.ms/copilotstudioimplementationguide',
+      },
     ],
     scoringResult,
   };
@@ -210,6 +218,10 @@ function generateHybridRecommendation(scoringResult: ScoringResult): Recommendat
       {
         title: 'Microsoft 365 Copilot Extensibility',
         url: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/',
+      },
+      {
+        title: 'Copilot Studio Implementation Guide',
+        url: 'https://aka.ms/copilotstudioimplementationguide',
       },
     ],
     scoringResult,
