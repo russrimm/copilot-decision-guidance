@@ -18,12 +18,12 @@ app.use(express.json());
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     timestamp: new Date().toISOString(),
     aiEnabled: !!(process.env.AZURE_OPENAI_API_KEY || process.env.OPENAI_API_KEY),
     azureConfigured: !!process.env.AZURE_OPENAI_API_KEY,
-    openaiConfigured: !!process.env.OPENAI_API_KEY
+    openaiConfigured: !!process.env.OPENAI_API_KEY,
   });
 });
 
@@ -215,7 +215,14 @@ async function fetchMicrosoftLearnContext(recommendationType: string): Promise<s
         console.log(`[MS Learn MCP] Response status: ${response.status} for query: "${query}"`);
 
         if (response.ok) {
-          const data = await response.json();
+          const data = (await response.json()) as {
+            results?: Array<{
+              title: string;
+              url: string;
+              content?: string;
+              description?: string;
+            }>;
+          };
           console.log(`[MS Learn MCP] Received data:`, JSON.stringify(data).substring(0, 200));
 
           if (data.results && Array.isArray(data.results) && data.results.length > 0) {

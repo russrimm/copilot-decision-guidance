@@ -43,7 +43,7 @@ export default function Results() {
             console.log('[Results] Setting enhanced explanation:', {
               hasIntroduction: !!data.explanation.introduction,
               hasSummary: !!data.explanation.summary,
-              enhanced: data.enhanced
+              enhanced: data.enhanced,
             });
             setEnhancedExplanation(data.explanation);
           } else {
