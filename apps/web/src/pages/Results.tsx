@@ -84,7 +84,7 @@ export default function Results() {
 
     // Keywords to source URL mapping
     const linkMap: Record<string, { url: string; title: string }> = {};
-    
+
     sources.forEach((source) => {
       const url = source.url.toLowerCase();
       if (url.includes('microsoft-365-copilot-overview')) {
@@ -107,7 +107,7 @@ export default function Results() {
     // Split text into parts and identify where to add links
     const parts: Array<{ text: string; link?: { url: string; title: string } }> = [];
     let remainingText = text;
-    
+
     Object.entries(linkMap).forEach(([keyword, source]) => {
       const regex = new RegExp(`(${keyword})`, 'gi');
       const match = remainingText.match(regex);
@@ -120,7 +120,7 @@ export default function Results() {
         remainingText = remainingText.substring(index + match[0].length);
       }
     });
-    
+
     if (remainingText) {
       parts.push({ text: remainingText });
     }
@@ -438,22 +438,24 @@ export default function Results() {
                   />
                 </svg>
                 <span className="text-gray-700 dark:text-gray-100">
-                  {Array.isArray(parts) ? parts.map((part, i) => 
-                    part.link ? (
-                      <a
-                        key={i}
-                        href={part.link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary-600 dark:text-primary-400 hover:underline"
-                        title={part.link.title}
-                      >
-                        {part.text}
-                      </a>
-                    ) : (
-                      <span key={i}>{part.text}</span>
-                    )
-                  ) : reason}
+                  {Array.isArray(parts)
+                    ? parts.map((part, i) =>
+                        part.link ? (
+                          <a
+                            key={i}
+                            href={part.link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary-600 dark:text-primary-400 hover:underline"
+                            title={part.link.title}
+                          >
+                            {part.text}
+                          </a>
+                        ) : (
+                          <span key={i}>{part.text}</span>
+                        )
+                      )
+                    : reason}
                 </span>
               </li>
             );
@@ -473,22 +475,24 @@ export default function Results() {
                   {idx + 1}
                 </span>
                 <span className="text-gray-700 dark:text-gray-100">
-                  {Array.isArray(parts) ? parts.map((part, i) => 
-                    part.link ? (
-                      <a
-                        key={i}
-                        href={part.link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary-600 dark:text-primary-400 hover:underline"
-                        title={part.link.title}
-                      >
-                        {part.text}
-                      </a>
-                    ) : (
-                      <span key={i}>{part.text}</span>
-                    )
-                  ) : step}
+                  {Array.isArray(parts)
+                    ? parts.map((part, i) =>
+                        part.link ? (
+                          <a
+                            key={i}
+                            href={part.link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary-600 dark:text-primary-400 hover:underline"
+                            title={part.link.title}
+                          >
+                            {part.text}
+                          </a>
+                        ) : (
+                          <span key={i}>{part.text}</span>
+                        )
+                      )
+                    : step}
                 </span>
               </li>
             );
@@ -551,22 +555,24 @@ export default function Results() {
                     />
                   </svg>
                   <span className="text-blue-900 dark:text-blue-100">
-                    {Array.isArray(parts) ? parts.map((part, i) => 
-                      part.link ? (
-                        <a
-                          key={i}
-                          href={part.link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary-600 dark:text-primary-400 hover:underline"
-                          title={part.link.title}
-                        >
-                          {part.text}
-                        </a>
-                      ) : (
-                        <span key={i}>{part.text}</span>
-                      )
-                    ) : item}
+                    {Array.isArray(parts)
+                      ? parts.map((part, i) =>
+                          part.link ? (
+                            <a
+                              key={i}
+                              href={part.link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary-600 dark:text-primary-400 hover:underline"
+                              title={part.link.title}
+                            >
+                              {part.text}
+                            </a>
+                          ) : (
+                            <span key={i}>{part.text}</span>
+                          )
+                        )
+                      : item}
                   </span>
                 </li>
               );

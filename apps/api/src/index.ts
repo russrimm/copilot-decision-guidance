@@ -697,13 +697,13 @@ app.get('*', (_req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`🚀 API server running on http://localhost:${PORT}`);
   console.log(`📊 Decision model loaded: v${decisionModel.version}`);
-  
+
   // Check AI configuration
   const hasAzureKey = !!process.env.AZURE_OPENAI_API_KEY;
   const hasAzureEndpoint = !!process.env.AZURE_OPENAI_ENDPOINT;
   const hasAzureDeployment = !!process.env.AZURE_OPENAI_DEPLOYMENT;
   const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
-  
+
   console.log(`🔑 Azure OpenAI Key: ${hasAzureKey ? '✅ Present' : '❌ Missing'}`);
   console.log(`🌐 Azure OpenAI Endpoint: ${hasAzureEndpoint ? '✅ Present' : '❌ Missing'}`);
   console.log(`🚀 Azure OpenAI Deployment: ${hasAzureDeployment ? '✅ Present' : '❌ Missing'}`);
