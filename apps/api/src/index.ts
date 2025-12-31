@@ -18,7 +18,13 @@ app.use(express.json());
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    aiEnabled: !!(process.env.AZURE_OPENAI_API_KEY || process.env.OPENAI_API_KEY),
+    azureConfigured: !!process.env.AZURE_OPENAI_API_KEY,
+    openaiConfigured: !!process.env.OPENAI_API_KEY
+  });
 });
 
 // Get decision model

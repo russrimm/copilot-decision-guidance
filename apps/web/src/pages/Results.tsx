@@ -27,6 +27,7 @@ export default function Results() {
 
     // Fetch AI-enhanced explanation
     if (recommendation) {
+      console.log('[Results] Fetching AI explanation for type:', recommendation.type);
       fetch('/api/explain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,8 +38,16 @@ export default function Results() {
       })
         .then((res) => res.json())
         .then((data) => {
+          console.log('[Results] Received explanation data:', data);
           if (data.explanation) {
+            console.log('[Results] Setting enhanced explanation:', {
+              hasIntroduction: !!data.explanation.introduction,
+              hasSummary: !!data.explanation.summary,
+              enhanced: data.enhanced
+            });
             setEnhancedExplanation(data.explanation);
+          } else {
+            console.warn('[Results] No explanation in response data');
           }
         })
         .catch((err) => console.error('Failed to load enhanced explanation:', err))
@@ -177,6 +186,29 @@ export default function Results() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Debug Info - Remove after troubleshooting */}
+      {!loadingEnhancement && (
+        <div className="card bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+          <details>
+            <summary className="cursor-pointer font-semibold text-sm text-gray-700 dark:text-gray-300">
+              🔍 Debug: AI Enhancement Status
+            </summary>
+            <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 space-y-1">
+              <p>Enhanced Explanation Received: {enhancedExplanation ? '✅ Yes' : '❌ No'}</p>
+              {enhancedExplanation && (
+                <>
+                  <p>Has Introduction: {displayIntroduction ? '✅ Yes' : '❌ No'}</p>
+                  <p>Introduction Length: {displayIntroduction?.length || 0} characters</p>
+                  <p>Enhanced Summary: {enhancedExplanation.summary ? '✅ Yes' : '❌ No'}</p>
+                  <p>Enhanced Reasons: {enhancedExplanation.reasons ? '✅ Yes' : '❌ No'}</p>
+                </>
+              )}
+              <p className="mt-2 text-xs italic">Check browser console for detailed logs</p>
+            </div>
+          </details>
+        </div>
+      )}
+
       {/* Introduction Section */}
       {displayIntroduction && (
         <div className="card bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700">
