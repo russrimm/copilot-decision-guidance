@@ -170,7 +170,7 @@ export function generatePDF(
     words.forEach((word) => {
       const testLine = currentLine ? `${currentLine} ${word}` : word;
       const testWidth = doc.getTextWidth(testLine);
-      
+
       if (testWidth > maxWidth && currentLine) {
         lines.push(currentLine);
         currentLine = word;
@@ -178,11 +178,11 @@ export function generatePDF(
         currentLine = testLine;
       }
     });
-    
+
     if (currentLine) {
       lines.push(currentLine);
     }
-    
+
     return lines;
   };
 
@@ -209,7 +209,7 @@ export function generatePDF(
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     const introLines = wrapText((recommendation as any).introduction, maxWidth, 10);
-    introLines.forEach(line => {
+    introLines.forEach((line) => {
       doc.text(line, margin, yPosition);
       yPosition += 5;
     });
@@ -220,7 +220,7 @@ export function generatePDF(
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
   const summaryLines = wrapText(summary, maxWidth, 11);
-  summaryLines.forEach(line => {
+  summaryLines.forEach((line) => {
     doc.text(line, margin, yPosition);
     yPosition += 6;
   });
@@ -262,7 +262,7 @@ export function generatePDF(
       yPosition = 20;
     }
     const reasonLines = wrapText(`${idx + 1}. ${reason}`, maxWidth, 11);
-    reasonLines.forEach(line => {
+    reasonLines.forEach((line) => {
       doc.text(line, margin, yPosition);
       yPosition += 6;
     });
@@ -289,7 +289,7 @@ export function generatePDF(
       yPosition = 20;
     }
     const stepLines = wrapText(`${idx + 1}. ${step}`, maxWidth, 11);
-    stepLines.forEach(line => {
+    stepLines.forEach((line) => {
       doc.text(line, margin, yPosition);
       yPosition += 6;
     });
@@ -316,7 +316,7 @@ export function generatePDF(
       yPosition = 20;
     }
     const riskLines = wrapText(`${idx + 1}. ${risk}`, maxWidth, 11);
-    riskLines.forEach(line => {
+    riskLines.forEach((line) => {
       doc.text(line, margin, yPosition);
       yPosition += 6;
     });
@@ -344,7 +344,7 @@ export function generatePDF(
         yPosition = 20;
       }
       const itemLines = wrapText(`${idx + 1}. ${item}`, maxWidth, 11);
-      itemLines.forEach(line => {
+      itemLines.forEach((line) => {
         doc.text(line, margin, yPosition);
         yPosition += 6;
       });
