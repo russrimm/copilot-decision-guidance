@@ -229,10 +229,36 @@ async function generateAIExplanation(recommendation, userContext) {
     const openaiKey = process.env.OPENAI_API_KEY;
     const aiConfigured = !!(azureKey || openaiKey);
     console.log(`[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureKey}, OpenAI: ${!!openaiKey})`);
+    // Helper function to generate detailed introduction based on context
+    const generateDetailedIntroduction = (rec, ctx) => {
+        const answers = ctx?.answers || {};
+        const recType = rec.type || 'UNKNOWN';
+        // Extract key scenario details from answers
+        const experienceLocation = answers['experience-location'] || 'not specified';
+        const buildStyle = answers['build-style'] || 'not specified';
+        const teamSize = answers['team-size'] || 'not specified';
+        const complexity = answers['complexity'] || 'not specified';
+        const budget = answers['budget-band'] || 'not specified';
+        // Build personalized introduction
+        let intro = `This recommendation is generated using a deterministic scoring algorithm that evaluates your specific scenario against weighted decision criteria. `;
+        intro += `Based on your requirements for ${experienceLocation.toLowerCase()} deployment with ${buildStyle.toLowerCase()} development approach, `;
+        if (recType === 'M365_COPILOT') {
+            intro += `the analysis indicates Microsoft 365 Copilot aligns best with your immediate needs. `;
+        }
+        else if (recType === 'COPILOT_STUDIO') {
+            intro += `the analysis indicates Copilot Studio provides the optimal platform for your scenario. `;
+        }
+        else if (recType === 'HYBRID') {
+            intro += `the analysis recommends a hybrid approach combining both Microsoft 365 Copilot and Copilot Studio. `;
+        }
+        intro += `The methodology follows the Microsoft AI Decision Framework (BXT + CAF principles), considering your team size (${teamSize.toLowerCase()}), technical complexity (${complexity.toLowerCase()}), and budget constraints (${budget.toLowerCase()}). `;
+        intro += `This is a scenario-specific recommendation—most organizations successfully deploy multiple Microsoft AI tools across different use cases, and this guidance helps optimize for your particular requirements.`;
+        return intro;
+    };
     if (!azureKey && !openaiKey) {
         console.log(`[AI Explanation] No AI keys configured, returning deterministic template`);
         return {
-            introduction: 'This recommendation is generated using a deterministic scoring algorithm that evaluates your answers against weighted criteria. The methodology follows the Microsoft AI Decision Framework, which provides systematic guidance for selecting the right Microsoft AI technology based on business, experience, and technology requirements.',
+            introduction: generateDetailedIntroduction(recommendation, userContext),
             summary: recommendation.summary,
             reasons: recommendation.reasons,
             nextSteps: recommendation.nextSteps,
@@ -548,7 +574,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
     catch (error) {
         console.error('[AI Explanation] ❌ LLM call failed:', error);
         return {
-            introduction: 'This recommendation is generated using a deterministic scoring algorithm that evaluates your answers against weighted criteria. The methodology follows the Microsoft AI Decision Framework, which provides systematic guidance for selecting the right Microsoft AI technology based on business, experience, and technology requirements.',
+            introduction: generateDetailedIntroduction(recommendation, userContext),
             summary: recommendation.summary,
             reasons: recommendation.reasons,
             nextSteps: recommendation.nextSteps,
