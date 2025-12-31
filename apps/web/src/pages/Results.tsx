@@ -52,22 +52,17 @@ export default function Results() {
 
     // Get all questions from model
     const allQuestions: Question[] = [];
-    model.categories.forEach((cat) => {
-      cat.questions.forEach((q) => allQuestions.push(q));
+    model.questionGroups.forEach((group) => {
+      group.questions.forEach((q) => allQuestions.push(q));
     });
 
     const qaData = allQuestions.map((q) => {
       const answer = answers[q.id];
-      let answerLabel = 'Not answered';
-      if (typeof answer === 'boolean') {
-        answerLabel = answer ? 'Yes' : 'No';
-      } else if (Array.isArray(answer)) {
-        answerLabel = answer.join(', ');
-      } else if (answer) {
-        answerLabel = String(answer);
-      }
+      const selectedAnswer = q.answers.find(a => a.id === answer);
+      const answerLabel = selectedAnswer?.label || 'Not answered';
+      
       return {
-        question: q.text,
+        question: q.title,
         answer: answerLabel,
       };
     });

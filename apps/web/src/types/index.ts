@@ -1,45 +1,75 @@
-// Shared types for the frontend (duplicated from decision-engine for browser compatibility)
+// Type definitions for the decision engine
+// This file provides browser-compatible types without importing Node.js packages
 
-export interface UserAnswers {
-  [questionId: string]: string | boolean | number | string[];
+export type UserAnswers = Record<string, string>;
+
+export type RecommendationType = 'M365_COPILOT' | 'COPILOT_STUDIO' | 'HYBRID';
+
+export interface Weights {
+  m365Copilot: number;
+  copilotStudio: number;
+  hybrid: number;
+}
+
+export interface ScoringResult {
+  recommendation: RecommendationType;
+  scores: Weights;
+  confidenceLevel: 'high' | 'medium' | 'low';
+  breakdown: Array<{
+    questionId: string;
+    questionTitle: string;
+    answerId: string;
+    answerLabel: string;
+    weights: Weights;
+  }>;
 }
 
 export interface Recommendation {
-  type: 'copilot' | 'copilot-studio' | 'hybrid';
+  type: RecommendationType;
   title: string;
   summary: string;
   reasons: string[];
   nextSteps: string[];
   risks: string[];
   complianceConsiderations: string[];
-  sources: string[];
+  sources: Array<{
+    title: string;
+    url: string;
+  }>;
+  scoringResult: ScoringResult;
 }
 
-export interface CategoryScores {
-  [category: string]: number;
-}
-
-export interface ScoringResult {
-  scores: CategoryScores;
-  confidenceLevel: 'high' | 'medium' | 'low';
-  breakdown: string[];
+export interface Answer {
+  id: string;
+  label: string;
+  weights: Weights;
 }
 
 export interface Question {
   id: string;
-  text: string;
-  type: 'single' | 'multiple' | 'boolean' | 'text';
-  category: string;
-  options?: string[];
-  followUp?: { [key: string]: Question };
+  title: string;
+  helperText: string;
+  answers: Answer[];
 }
 
-export interface QuestionCategory {
-  name: string;
+export interface QuestionGroup {
+  id: string;
+  title: string;
+  description: string;
   questions: Question[];
+}
+
+export interface Thresholds {
+  winMargin: number;
+  hybridThreshold: number;
 }
 
 export interface DecisionModel {
   version: string;
-  categories: QuestionCategory[];
+  metadata: {
+    description: string;
+    lastUpdated: string;
+  };
+  questionGroups: QuestionGroup[];
+  thresholds: Thresholds;
 }
