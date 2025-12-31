@@ -1,0 +1,433 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "description": "Decision model for Microsoft 365 Copilot vs Copilot Studio guidance",
+    "lastUpdated": "2025-12-29"
+  },
+  "questionGroups": [
+    {
+      "id": "outcome",
+      "title": "Primary Outcome & Use Case",
+      "description": "What are you trying to achieve?",
+      "questions": [
+        {
+          "id": "outcome_primary",
+          "title": "What is your primary goal?",
+          "helperText": "Think about whether you need broad productivity improvements or specific process automation",
+          "answers": [
+            {
+              "id": "outcome_productivity",
+              "label": "Enhance personal productivity across Microsoft 365 apps (drafting, summarizing, searching)",
+              "weights": { "m365Copilot": 10, "copilotStudio": 1, "hybrid": 3 }
+            },
+            {
+              "id": "outcome_custom_agent",
+              "label": "Build a custom agent or chatbot for specific business processes",
+              "weights": { "m365Copilot": 1, "copilotStudio": 10, "hybrid": 4 }
+            },
+            {
+              "id": "outcome_automate_workflow",
+              "label": "Automate workflows and integrate with line-of-business systems",
+              "weights": { "m365Copilot": 2, "copilotStudio": 10, "hybrid": 5 }
+            },
+            {
+              "id": "outcome_both",
+              "label": "Both: productivity enhancement AND custom automation",
+              "weights": { "m365Copilot": 4, "copilotStudio": 4, "hybrid": 10 }
+            },
+            {
+              "id": "outcome_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 3, "copilotStudio": 3, "hybrid": 5 }
+            }
+          ]
+        },
+        {
+          "id": "outcome_tasks",
+          "title": "What types of tasks do you need AI assistance with?",
+          "helperText": "Select the option that best describes your needs",
+          "answers": [
+            {
+              "id": "tasks_assist",
+              "label": "Assistive tasks (help me draft, summarize, answer questions from my content)",
+              "weights": { "m365Copilot": 10, "copilotStudio": 2, "hybrid": 4 }
+            },
+            {
+              "id": "tasks_action",
+              "label": "Action-oriented tasks (create tickets, update records, trigger workflows)",
+              "weights": { "m365Copilot": 2, "copilotStudio": 10, "hybrid": 5 }
+            },
+            {
+              "id": "tasks_both",
+              "label": "Both assistive and action-oriented",
+              "weights": { "m365Copilot": 4, "copilotStudio": 5, "hybrid": 10 }
+            },
+            {
+              "id": "tasks_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 3, "copilotStudio": 3, "hybrid": 4 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "audience",
+      "title": "Audience & Reach",
+      "description": "Who will use this solution?",
+      "questions": [
+        {
+          "id": "audience_who",
+          "title": "Who is the primary audience?",
+          "helperText": "Consider the scope of who needs access",
+          "answers": [
+            {
+              "id": "audience_all_employees",
+              "label": "All employees / organization-wide knowledge workers",
+              "weights": { "m365Copilot": 10, "copilotStudio": 3, "hybrid": 6 }
+            },
+            {
+              "id": "audience_department",
+              "label": "Specific department or team (e.g., Sales, Support, HR)",
+              "weights": { "m365Copilot": 5, "copilotStudio": 8, "hybrid": 7 }
+            },
+            {
+              "id": "audience_customers",
+              "label": "External customers or partners",
+              "weights": { "m365Copilot": 1, "copilotStudio": 10, "hybrid": 3 }
+            },
+            {
+              "id": "audience_mixed",
+              "label": "Both internal employees and external users",
+              "weights": { "m365Copilot": 3, "copilotStudio": 7, "hybrid": 10 }
+            },
+            {
+              "id": "audience_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 4, "copilotStudio": 4, "hybrid": 5 }
+            }
+          ]
+        },
+        {
+          "id": "audience_scale",
+          "title": "How many users do you expect?",
+          "helperText": "Approximate number of people who will use this",
+          "answers": [
+            {
+              "id": "scale_small",
+              "label": "Small team (< 50 users)",
+              "weights": { "m365Copilot": 7, "copilotStudio": 6, "hybrid": 5 }
+            },
+            {
+              "id": "scale_medium",
+              "label": "Department or division (50-500 users)",
+              "weights": { "m365Copilot": 6, "copilotStudio": 7, "hybrid": 7 }
+            },
+            {
+              "id": "scale_large",
+              "label": "Enterprise-wide (500+ users)",
+              "weights": { "m365Copilot": 9, "copilotStudio": 5, "hybrid": 8 }
+            },
+            {
+              "id": "scale_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 5 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "title": "Data & Knowledge Scope",
+      "description": "What data sources will the AI need access to?",
+      "questions": [
+        {
+          "id": "data_sources",
+          "title": "What data does the AI need to access?",
+          "helperText": "Select the primary data sources",
+          "answers": [
+            {
+              "id": "data_m365",
+              "label": "Primarily Microsoft 365 content (emails, documents, Teams chats, meetings)",
+              "weights": { "m365Copilot": 10, "copilotStudio": 3, "hybrid": 5 }
+            },
+            {
+              "id": "data_lob",
+              "label": "Line-of-business systems (CRM, ERP, ticketing, databases)",
+              "weights": { "m365Copilot": 2, "copilotStudio": 10, "hybrid": 5 }
+            },
+            {
+              "id": "data_both",
+              "label": "Both Microsoft 365 and line-of-business systems",
+              "weights": { "m365Copilot": 4, "copilotStudio": 6, "hybrid": 10 }
+            },
+            {
+              "id": "data_external",
+              "label": "External sources (public web, third-party APIs)",
+              "weights": { "m365Copilot": 3, "copilotStudio": 9, "hybrid": 6 }
+            },
+            {
+              "id": "data_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 4, "copilotStudio": 4, "hybrid": 5 }
+            }
+          ]
+        },
+        {
+          "id": "data_realtime",
+          "title": "Do you need real-time data updates or write-back capability?",
+          "helperText": "Does the AI need to update records or trigger actions in your systems?",
+          "answers": [
+            {
+              "id": "realtime_no",
+              "label": "No, read-only access to existing content is sufficient",
+              "weights": { "m365Copilot": 9, "copilotStudio": 5, "hybrid": 6 }
+            },
+            {
+              "id": "realtime_yes",
+              "label": "Yes, need to update records or trigger actions in external systems",
+              "weights": { "m365Copilot": 2, "copilotStudio": 10, "hybrid": 5 }
+            },
+            {
+              "id": "realtime_maybe",
+              "label": "Maybe in the future, but not immediately",
+              "weights": { "m365Copilot": 6, "copilotStudio": 6, "hybrid": 7 }
+            },
+            {
+              "id": "realtime_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 5 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "integration",
+      "title": "Integration & Complexity",
+      "description": "How complex are your integration needs?",
+      "questions": [
+        {
+          "id": "integration_complexity",
+          "title": "What level of integration do you need?",
+          "helperText": "Think about custom connectors, APIs, and multi-step workflows",
+          "answers": [
+            {
+              "id": "integration_none",
+              "label": "No custom integration—use out-of-the-box capabilities",
+              "weights": { "m365Copilot": 10, "copilotStudio": 3, "hybrid": 5 }
+            },
+            {
+              "id": "integration_prebuilt",
+              "label": "Use prebuilt connectors (e.g., SharePoint, Salesforce, ServiceNow)",
+              "weights": { "m365Copilot": 5, "copilotStudio": 9, "hybrid": 7 }
+            },
+            {
+              "id": "integration_custom",
+              "label": "Need custom APIs or proprietary system integration",
+              "weights": { "m365Copilot": 1, "copilotStudio": 10, "hybrid": 4 }
+            },
+            {
+              "id": "integration_orchestration",
+              "label": "Need multi-step workflows, event-driven automation, or orchestration",
+              "weights": { "m365Copilot": 1, "copilotStudio": 10, "hybrid": 5 }
+            },
+            {
+              "id": "integration_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 4, "copilotStudio": 4, "hybrid": 5 }
+            }
+          ]
+        },
+        {
+          "id": "integration_channels",
+          "title": "Where do users need to access this?",
+          "helperText": "Select the primary interface",
+          "answers": [
+            {
+              "id": "channels_m365",
+              "label": "Within Microsoft 365 apps (Word, Teams, Outlook, etc.)",
+              "weights": { "m365Copilot": 10, "copilotStudio": 4, "hybrid": 6 }
+            },
+            {
+              "id": "channels_teams",
+              "label": "Microsoft Teams only",
+              "weights": { "m365Copilot": 7, "copilotStudio": 7, "hybrid": 7 }
+            },
+            {
+              "id": "channels_web",
+              "label": "Custom website or portal",
+              "weights": { "m365Copilot": 1, "copilotStudio": 10, "hybrid": 3 }
+            },
+            {
+              "id": "channels_multiple",
+              "label": "Multiple channels (Microsoft 365, Teams, website)",
+              "weights": { "m365Copilot": 4, "copilotStudio": 8, "hybrid": 10 }
+            },
+            {
+              "id": "channels_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 5 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "governance",
+      "title": "Governance & Compliance",
+      "description": "What are your governance and control requirements?",
+      "questions": [
+        {
+          "id": "governance_needs",
+          "title": "What level of governance do you require?",
+          "helperText": "Consider admin controls, lifecycle management, and compliance needs",
+          "answers": [
+            {
+              "id": "governance_basic",
+              "label": "Basic: Standard Microsoft 365 security and compliance is sufficient",
+              "weights": { "m365Copilot": 9, "copilotStudio": 4, "hybrid": 6 }
+            },
+            {
+              "id": "governance_moderate",
+              "label": "Moderate: Need some custom controls and monitoring",
+              "weights": { "m365Copilot": 5, "copilotStudio": 8, "hybrid": 8 }
+            },
+            {
+              "id": "governance_advanced",
+              "label": "Advanced: Need dev/test/prod environments, DLP policies, approval workflows",
+              "weights": { "m365Copilot": 2, "copilotStudio": 10, "hybrid": 6 }
+            },
+            {
+              "id": "governance_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 5 }
+            }
+          ]
+        },
+        {
+          "id": "governance_lifecycle",
+          "title": "Do you need application lifecycle management (ALM)?",
+          "helperText": "Versioning, staged deployments, rollback capabilities",
+          "answers": [
+            {
+              "id": "lifecycle_no",
+              "label": "No, simple updates are fine",
+              "weights": { "m365Copilot": 9, "copilotStudio": 4, "hybrid": 6 }
+            },
+            {
+              "id": "lifecycle_yes",
+              "label": "Yes, need structured release management",
+              "weights": { "m365Copilot": 2, "copilotStudio": 10, "hybrid": 5 }
+            },
+            {
+              "id": "lifecycle_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 5 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "timeToValue",
+      "title": "Time to Value & Skills",
+      "description": "How quickly do you need results, and what skills are available?",
+      "questions": [
+        {
+          "id": "ttv_urgency",
+          "title": "When do you need this solution?",
+          "helperText": "Consider your timeline",
+          "answers": [
+            {
+              "id": "urgency_immediate",
+              "label": "Immediately—need value from day one with minimal setup",
+              "weights": { "m365Copilot": 10, "copilotStudio": 2, "hybrid": 5 }
+            },
+            {
+              "id": "urgency_weeks",
+              "label": "Within a few weeks—willing to do some configuration",
+              "weights": { "m365Copilot": 6, "copilotStudio": 7, "hybrid": 7 }
+            },
+            {
+              "id": "urgency_months",
+              "label": "Several months—can invest in design and development",
+              "weights": { "m365Copilot": 3, "copilotStudio": 10, "hybrid": 6 }
+            },
+            {
+              "id": "urgency_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 5 }
+            }
+          ]
+        },
+        {
+          "id": "ttv_skills",
+          "title": "What technical skills are available?",
+          "helperText": "Consider your team's capabilities",
+          "answers": [
+            {
+              "id": "skills_none",
+              "label": "No technical skills—need a solution that works out-of-the-box",
+              "weights": { "m365Copilot": 10, "copilotStudio": 1, "hybrid": 4 }
+            },
+            {
+              "id": "skills_lowcode",
+              "label": "Low-code/no-code skills (Power Platform experience)",
+              "weights": { "m365Copilot": 5, "copilotStudio": 10, "hybrid": 7 }
+            },
+            {
+              "id": "skills_developer",
+              "label": "Developer skills (can build custom APIs and integrations)",
+              "weights": { "m365Copilot": 3, "copilotStudio": 10, "hybrid": 7 }
+            },
+            {
+              "id": "skills_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 5 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cost",
+      "title": "Cost & Scale Considerations",
+      "description": "What is your budget and scale expectation?",
+      "questions": [
+        {
+          "id": "cost_model",
+          "title": "What cost model fits your scenario?",
+          "helperText": "High-level guidance only—verify licensing with Microsoft",
+          "answers": [
+            {
+              "id": "cost_per_user",
+              "label": "Per-user subscription for broad productivity benefits",
+              "weights": { "m365Copilot": 10, "copilotStudio": 3, "hybrid": 6 }
+            },
+            {
+              "id": "cost_usage",
+              "label": "Usage-based or capacity-based for specific scenarios",
+              "weights": { "m365Copilot": 3, "copilotStudio": 9, "hybrid": 6 }
+            },
+            {
+              "id": "cost_both",
+              "label": "Mix of both—per-user + usage-based",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 10 }
+            },
+            {
+              "id": "cost_unsure",
+              "label": "I'm not sure",
+              "weights": { "m365Copilot": 5, "copilotStudio": 5, "hybrid": 5 }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "thresholds": {
+    "winMargin": 15,
+    "hybridThreshold": 10
+  }
+}

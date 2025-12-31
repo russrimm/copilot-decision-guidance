@@ -1,0 +1,11 @@
+{
+  "extends": "./packages/decision-engine/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "noEmit": false,
+    "moduleResolution": "node"
+  },
+  "include": ["server-production.ts"],
+  "exclude": ["node_modules", "apps", "packages/*/src"]
+}

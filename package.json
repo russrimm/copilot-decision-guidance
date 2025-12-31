@@ -1,0 +1,47 @@
+{
+  "name": "copilot-decision-guidance",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "server-production.js",
+  "description": "Decision guidance tool for choosing between Microsoft 365 Copilot, Copilot Studio, or Hybrid approach",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "build": "npm run build:packages && npm run build:web",
+    "build:clean": "node -e \"require('fs').rmSync('dist', {recursive: true, force: true})\"",
+    "build:packages": "npm run build --workspace=packages/decision-engine",
+    "build:web": "npm run build --workspace=apps/web",
+    "postinstall": "npm run build:packages",
+    "postbuild": "node scripts/verify-deployment.js",
+    "start": "node server-production.js",
+    "start:dev": "node server.js",
+    "test": "npm run test --workspaces --if-present",
+    "test:prod": "node scripts/test-production.js",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "concurrently": "^9.1.2",
+    "node-fetch": "^3.3.2",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.5",
+    "tsx": "^4.21.0"
+  }
+}

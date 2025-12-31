@@ -1,0 +1,330 @@
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import type { Recommendation } from '@copilot-guidance/decision-engine';
+
+export function downloadJSON(data: any, filename: string) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+export function generateMarkdownSummary(recommendation: Recommendation): string {
+  const {
+    type,
+    title,
+    summary,
+    reasons,
+    nextSteps,
+    risks,
+    complianceConsiderations,
+    sources,
+    scoringResult,
+  } = recommendation;
+
+  let markdown = `# ${title}\n\n`;
+  markdown += `**Recommendation Type:** ${type}\n\n`;
+  markdown += `## Summary\n\n${summary}\n\n`;
+
+  markdown += `## Why This Recommendation\n\n`;
+  reasons.forEach((reason, idx) => {
+    markdown += `${idx + 1}. ${reason}\n`;
+  });
+  markdown += `\n`;
+
+  markdown += `## Next Steps\n\n`;
+  nextSteps.forEach((step, idx) => {
+    markdown += `${idx + 1}. ${step}\n`;
+  });
+  markdown += `\n`;
+
+  markdown += `## Risks & Watch-outs\n\n`;
+  risks.forEach((risk, idx) => {
+    markdown += `${idx + 1}. ${risk}\n`;
+  });
+  markdown += `\n`;
+
+  if (complianceConsiderations && complianceConsiderations.length > 0) {
+    markdown += `## Compliance & Governance Considerations\n\n`;
+    complianceConsiderations.forEach((item, idx) => {
+      markdown += `${idx + 1}. ${item}\n`;
+    });
+    markdown += `\n`;
+  }
+
+  markdown += `## Confidence Level\n\n`;
+  markdown += `**${scoringResult.confidenceLevel.toUpperCase()}** confidence based on your answers.\n\n`;
+
+  markdown += `## Scores\n\n`;
+  markdown += `- Microsoft 365 Copilot: ${scoringResult.scores.m365Copilot}\n`;
+  markdown += `- Copilot Studio: ${scoringResult.scores.copilotStudio}\n`;
+  markdown += `- Hybrid: ${scoringResult.scores.hybrid}\n\n`;
+
+  markdown += `## Sources\n\n`;
+  sources.forEach((source) => {
+    markdown += `- [${source.title}](${source.url})\n`;
+  });
+  markdown += `\n`;
+
+  markdown += `---\n\n`;
+  markdown += `*Generated on ${new Date().toLocaleString()}*\n`;
+
+  return markdown;
+}
+
+export function downloadMarkdown(markdown: string, filename: string) {
+  const blob = new Blob([markdown], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+export function generatePDF(
+  recommendation: Recommendation,
+  answers: Array<{ question: string; answer: string }>
+) {
+  const {
+    type,
+    summary,
+    reasons,
+    nextSteps,
+    risks,
+    complianceConsiderations,
+    sources,
+    scoringResult,
+  } = recommendation;
+  const doc = new jsPDF();
+
+  let yPosition = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 15;
+  const maxWidth = pageWidth - margin * 2;
+
+  // Title
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Microsoft Copilot Decision Report', margin, yPosition);
+  yPosition += 15;
+
+  // Recommendation Type
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  const typeLabel = type.replace(/_/g, ' ');
+  doc.text(`Recommendation: ${typeLabel}`, margin, yPosition);
+  yPosition += 10;
+
+  // Summary
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  const summaryLines = doc.splitTextToSize(summary, maxWidth);
+  doc.text(summaryLines, margin, yPosition);
+  yPosition += summaryLines.length * 7 + 10;
+
+  // Confidence Level
+  doc.setFont('helvetica', 'bold');
+  doc.text(`Confidence Level: ${scoringResult.confidenceLevel.toUpperCase()}`, margin, yPosition);
+  yPosition += 10;
+
+  // Scores
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Scores:`, margin, yPosition);
+  yPosition += 7;
+  doc.text(`  • Microsoft 365 Copilot: ${scoringResult.scores.m365Copilot}`, margin, yPosition);
+  yPosition += 6;
+  doc.text(`  • Copilot Studio: ${scoringResult.scores.copilotStudio}`, margin, yPosition);
+  yPosition += 6;
+  doc.text(`  • Hybrid: ${scoringResult.scores.hybrid}`, margin, yPosition);
+  yPosition += 12;
+
+  // Check if we need a new page
+  if (yPosition > 250) {
+    doc.addPage();
+    yPosition = 20;
+  }
+
+  // Why This Recommendation
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Why This Recommendation', margin, yPosition);
+  yPosition += 8;
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  reasons.forEach((reason, idx) => {
+    if (yPosition > 270) {
+      doc.addPage();
+      yPosition = 20;
+    }
+    const reasonLines = doc.splitTextToSize(`${idx + 1}. ${reason}`, maxWidth);
+    doc.text(reasonLines, margin, yPosition);
+    yPosition += reasonLines.length * 6 + 4;
+  });
+  yPosition += 6;
+
+  // Next Steps
+  if (yPosition > 250) {
+    doc.addPage();
+    yPosition = 20;
+  }
+
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Next Steps', margin, yPosition);
+  yPosition += 8;
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  nextSteps.forEach((step, idx) => {
+    if (yPosition > 270) {
+      doc.addPage();
+      yPosition = 20;
+    }
+    const stepLines = doc.splitTextToSize(`${idx + 1}. ${step}`, maxWidth);
+    doc.text(stepLines, margin, yPosition);
+    yPosition += stepLines.length * 6 + 4;
+  });
+  yPosition += 6;
+
+  // Risks & Watch-outs
+  if (yPosition > 250) {
+    doc.addPage();
+    yPosition = 20;
+  }
+
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Risks & Watch-outs', margin, yPosition);
+  yPosition += 8;
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  risks.forEach((risk, idx) => {
+    if (yPosition > 270) {
+      doc.addPage();
+      yPosition = 20;
+    }
+    const riskLines = doc.splitTextToSize(`${idx + 1}. ${risk}`, maxWidth);
+    doc.text(riskLines, margin, yPosition);
+    yPosition += riskLines.length * 6 + 4;
+  });
+  yPosition += 10;
+
+  // Compliance & Governance Considerations
+  if (complianceConsiderations && complianceConsiderations.length > 0) {
+    if (yPosition > 230) {
+      doc.addPage();
+      yPosition = 20;
+    }
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Compliance & Governance Considerations', margin, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    complianceConsiderations.forEach((item, idx) => {
+      if (yPosition > 270) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      const itemLines = doc.splitTextToSize(`${idx + 1}. ${item}`, maxWidth);
+      doc.text(itemLines, margin, yPosition);
+      yPosition += itemLines.length * 6 + 4;
+    });
+    yPosition += 10;
+  }
+
+  // Sources
+  if (yPosition > 230) {
+    doc.addPage();
+    yPosition = 20;
+  }
+
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Sources', margin, yPosition);
+  yPosition += 8;
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(0, 0, 255);
+  sources.forEach((source) => {
+    if (yPosition > 275) {
+      doc.addPage();
+      yPosition = 20;
+    }
+    doc.textWithLink(source.title, margin, yPosition, { url: source.url });
+    yPosition += 6;
+  });
+  doc.setTextColor(0, 0, 0);
+  yPosition += 10;
+
+  // Your Answers Section
+  if (answers && answers.length > 0) {
+    doc.addPage();
+    yPosition = 20;
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your Answers', margin, yPosition);
+    yPosition += 12;
+
+    // Create table data
+    const tableData = answers.map((qa) => [qa.question, qa.answer]);
+
+    autoTable(doc, {
+      startY: yPosition,
+      head: [['Question', 'Answer']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [59, 130, 246], fontStyle: 'bold' },
+      columnStyles: {
+        0: { cellWidth: 80 },
+        1: { cellWidth: 100 },
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+      },
+      margin: { left: margin, right: margin },
+    });
+  }
+
+  // Footer on all pages
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(128, 128, 128);
+    doc.text(
+      `Generated on ${new Date().toLocaleString()} | Page ${i} of ${pageCount}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: 'center' }
+    );
+    doc.setTextColor(0, 0, 0);
+  }
+
+  return doc;
+}
+
+export function downloadPDF(
+  recommendation: Recommendation,
+  answers: Array<{ question: string; answer: string }>,
+  filename: string
+) {
+  const doc = generatePDF(recommendation, answers);
+  doc.save(filename);
+}
