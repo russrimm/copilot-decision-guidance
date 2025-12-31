@@ -3,8 +3,8 @@
 # Azure Kudu Deployment Script
 # This script is run by Azure during deployment
 
-# Exit on any error
-set -e
+# Exit on any error and print commands
+set -ex
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🚀 Custom Deployment Script Starting..."
@@ -16,72 +16,44 @@ DEPLOYMENT_TARGET=${DEPLOYMENT_TARGET:-/home/site/wwwroot}
 
 echo "Source: $DEPLOYMENT_SOURCE"
 echo "Target: $DEPLOYMENT_TARGET"
+echo "Current directory: $(pwd)"
 
-cd "$DEPLOYMENT_SOURCE"
+cd "$DEPLOYMENT_SOURCE" || exit 1
 
 # 1. Install dependencies
 echo ""
 echo "📦 Installing dependencies..."
-npm ci --production=false
+npm ci --production=false || npm install
 
 # 2. Build packages
 echo ""
 echo "⚙️  Building packages..."
-npm run build:packages
+npm run build:packages || { echo "Package build failed"; exit 1; }
 
-# 3. Build web frontend (skip if already built locally)
+# 3. Skip frontend build - using pre-built version
 echo ""
-echo "🎨 Checking for pre-built frontend..."
-if [ ! -d "apps/web/dist" ] || [ -z "$(ls -A apps/web/dist)" ]; then
-  echo "  Building web frontend..."
-  npm run build:web || echo "  ⚠️  Frontend build failed, using existing build"
-else
-  echo "  ✓ Using pre-built frontend"
-fi
+echo "🎨 Using pre-built frontend..."
 
 # 4. Copy files to deployment target
 echo ""
 echo "📋 Copying files to $DEPLOYMENT_TARGET..."
 
-# Create target directory if it doesn't exist
-mkdir -p "$DEPLOYMENT_TARGET"
+# Remove old deployment except hostingstart.html
+cd "$DEPLOYMENT_TARGET" || exit 1
+find . -maxdepth 1 ! -name 'hostingstart.html' ! -name '.' ! -name '..' -exec rm -rf {} + || true
 
-# Copy essential files
-echo "  Copying server files..."
-cp -f server-production.js "$DEPLOYMENT_TARGET/"
-cp -f package.json "$DEPLOYMENT_TARGET/"
-cp -f package-lock.json "$DEPLOYMENT_TARGET/"
+cd "$DEPLOYMENT_SOURCE" || exit 1
 
-# Copy built packages
-echo "  Copying built packages..."
-mkdir -p "$DEPLOYMENT_TARGET/packages/decision-engine"
-cp -rf packages/decision-engine/dist "$DEPLOYMENT_TARGET/packages/decision-engine/"
-cp -f packages/decision-engine/package.json "$DEPLOYMENT_TARGET/packages/decision-engine/"
-
-# Copy built frontend
-echo "  Copying built frontend..."
-mkdir -p "$DEPLOYMENT_TARGET/apps/web"
-cp -rf apps/web/dist "$DEPLOYMENT_TARGET/apps/web/"
-
-# Copy node_modules
-echo "  Copying node_modules..."
-cp -rf node_modules "$DEPLOYMENT_TARGET/"
-
-# Copy other necessary files
-if [ -f ".env" ]; then
-  echo "  Copying .env..."
-  cp -f .env "$DEPLOYMENT_TARGET/"
-fi
-
-if [ -f "web.config" ]; then
-  echo "  Copying web.config..."
-  cp -f web.config "$DEPLOYMENT_TARGET/"
-fi
+# Copy everything
+echo "  Copying all files..."
+cp -r . "$DEPLOYMENT_TARGET/" || { echo "Copy failed"; exit 1; }
 
 # 5. Verify deployment
 echo ""
 echo "✅ Verifying deployment files..."
-cd "$DEPLOYMENT_TARGET"
+cd "$DEPLOYMENT_TARGET" || exit 1
+
+ls -la
 
 if [ -f "server-production.js" ]; then
   echo "  ✓ server-production.js"
