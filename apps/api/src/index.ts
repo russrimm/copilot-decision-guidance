@@ -1,5 +1,7 @@
 import express, { type Request, type Response } from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import {
   calculateRecommendation,
   generateRecommendation,
@@ -9,12 +11,19 @@ import {
   type UserAnswers,
 } from '@copilot-guidance/decision-engine';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from web dist folder in production
+const webDistPath = path.join(__dirname, '../../web/dist');
+app.use(express.static(webDistPath));
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
@@ -606,6 +615,11 @@ Return ONLY valid JSON (no markdown, no code blocks):
     };
   }
 }
+
+// Catch-all route to serve index.html for client-side routing
+app.get('*', (_req: Request, res: Response) => {
+  res.sendFile(path.join(webDistPath, 'index.html'));
+});
 
 // Start server
 app.listen(PORT, () => {

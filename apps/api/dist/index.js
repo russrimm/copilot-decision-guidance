@@ -1,11 +1,18 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { calculateRecommendation, generateRecommendation, decisionModel, UserAnswersSchema, } from '@copilot-guidance/decision-engine';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+// Serve static files from web dist folder in production
+const webDistPath = path.join(__dirname, '../../web/dist');
+app.use(express.static(webDistPath));
 // Health check
 app.get('/api/health', (_req, res) => {
     res.json({
@@ -539,6 +546,10 @@ Return ONLY valid JSON (no markdown, no code blocks):
         };
     }
 }
+// Catch-all route to serve index.html for client-side routing
+app.get('*', (_req, res) => {
+    res.sendFile(path.join(webDistPath, 'index.html'));
+});
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 API server running on http://localhost:${PORT}`);
