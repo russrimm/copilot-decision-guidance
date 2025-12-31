@@ -138,6 +138,11 @@ app.get('/api/sources', (_req: Request, res: Response) => {
     ],
     comparison: [
       {
+        title: 'Which Copilot is right for your organization?',
+        url: 'https://learn.microsoft.com/en-us/copilot/microsoft-365/which-copilot-for-your-organization',
+        description: 'Compare different Microsoft Copilot options and determine the best fit',
+      },
+      {
         title: 'Choose between Microsoft 365 Copilot and Copilot Studio',
         url: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/copilot-studio-experience',
         description: 'Decision guidance for selecting the right tool',
