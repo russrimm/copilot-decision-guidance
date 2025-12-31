@@ -56,10 +56,22 @@ app.post('/api/score', (req: Request, res: Response) => {
 // Generate AI-enhanced explanation (LLM-assisted wording)
 app.post('/api/explain', async (req: Request, res: Response) => {
   try {
+    // Validate request body
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({
+        error: 'Invalid request',
+        message:
+          'Missing request body. Expected format: { recommendation: {...}, userContext?: {...} }',
+      });
+    }
+
     const { recommendation, userContext } = req.body;
 
     if (!recommendation) {
-      return res.status(400).json({ error: 'Missing recommendation data' });
+      return res.status(400).json({
+        error: 'Missing recommendation data',
+        message: 'The recommendation object is required in the request body.',
+      });
     }
 
     // Check if AI is enabled
