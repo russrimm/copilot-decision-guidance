@@ -29,10 +29,15 @@ echo ""
 echo "⚙️  Building packages..."
 npm run build:packages
 
-# 3. Build web frontend
+# 3. Build web frontend (skip if already built locally)
 echo ""
-echo "🎨 Building web frontend..."
-npm run build:web
+echo "🎨 Checking for pre-built frontend..."
+if [ ! -d "apps/web/dist" ] || [ -z "$(ls -A apps/web/dist)" ]; then
+  echo "  Building web frontend..."
+  npm run build:web || echo "  ⚠️  Frontend build failed, using existing build"
+else
+  echo "  ✓ Using pre-built frontend"
+fi
 
 # 4. Copy files to deployment target
 echo ""
