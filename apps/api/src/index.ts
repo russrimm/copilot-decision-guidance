@@ -195,13 +195,14 @@ async function fetchMicrosoftLearnContext(recommendationType: string): Promise<s
   try {
     // Define queries based on recommendation type
     const searchQueries: string[] = [];
+    const recType = recommendationType.toUpperCase();
 
-    if (recommendationType === 'm365Copilot' || recommendationType === 'hybrid') {
+    if (recType === 'M365_COPILOT' || recType === 'HYBRID') {
       searchQueries.push('Microsoft 365 Copilot extensibility declarative agents plugins');
       searchQueries.push('Microsoft 365 Copilot security compliance data residency GDPR');
     }
 
-    if (recommendationType === 'copilotStudio' || recommendationType === 'hybrid') {
+    if (recType === 'COPILOT_STUDIO' || recType === 'HYBRID') {
       searchQueries.push('Copilot Studio agents Power Platform connectors governance');
       searchQueries.push('Copilot Studio publish to Microsoft 365 Copilot Teams channels');
     }
@@ -595,7 +596,9 @@ Return ONLY valid JSON (no markdown, no code blocks):
       );
 
       if (!response.ok) {
-        throw new Error(`Azure OpenAI API error: ${response.status} ${response.statusText}`);
+        const errorBody = await response.text();
+        console.error(`[AI Explanation] Azure OpenAI API error details:`, errorBody);
+        throw new Error(`Azure OpenAI API error: ${response.status} ${response.statusText} - ${errorBody}`);
       }
 
       const data = (await response.json()) as any;
