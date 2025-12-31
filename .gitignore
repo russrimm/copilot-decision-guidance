@@ -11,6 +11,7 @@ coverage/
 dist/
 !packages/*/dist/
 !apps/web/dist/
+!apps/api/dist/
 build/
 
 # Misc
