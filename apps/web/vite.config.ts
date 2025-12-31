@@ -19,12 +19,10 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: [
-        '@copilot-guidance/decision-engine'
-      ]
-    }
+      external: ['@copilot-guidance/decision-engine'],
+    },
   },
   optimizeDeps: {
-    exclude: ['@copilot-guidance/decision-engine']
-  }
+    exclude: ['@copilot-guidance/decision-engine'],
+  },
 });
