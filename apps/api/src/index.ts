@@ -626,7 +626,12 @@ Return ONLY valid JSON (no markdown, no code blocks):
       }
 
       const data = (await response.json()) as any;
-      responseText = data.choices[0].message.content;
+      responseText = data.choices?.[0]?.message?.content || '';
+      
+      if (!responseText || responseText.trim().length === 0) {
+        console.error(`[AI Explanation] Empty response from Azure OpenAI`);
+        throw new Error('Azure OpenAI returned empty response');
+      }
     } else if (openaiKey) {
       // OpenAI
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -656,7 +661,12 @@ Return ONLY valid JSON (no markdown, no code blocks):
       }
 
       const data = (await response.json()) as any;
-      responseText = data.choices[0].message.content;
+      responseText = data.choices?.[0]?.message?.content || '';
+      
+      if (!responseText || responseText.trim().length === 0) {
+        console.error(`[AI Explanation] Empty response from OpenAI`);
+        throw new Error('OpenAI returned empty response');
+      }
     } else {
       throw new Error('No valid API configuration');
     }
@@ -664,7 +674,20 @@ Return ONLY valid JSON (no markdown, no code blocks):
     console.log(`[AI Explanation] Raw LLM response length: ${responseText.length} characters`);
     console.log(`[AI Explanation] Response preview: ${responseText.substring(0, 200)}...`);
 
-    const enhanced = JSON.parse(responseText);
+    // Validate response before parsing
+    if (!responseText || responseText.trim().length === 0) {
+      console.error(`[AI Explanation] Empty response text, cannot parse JSON`);
+      throw new Error('Received empty response from LLM');
+    }
+
+    let enhanced;
+    try {
+      enhanced = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error(`[AI Explanation] JSON parse error:`, parseError);
+      console.error(`[AI Explanation] Response that failed to parse:`, responseText);
+      throw parseError;
+    }
 
     console.log(`[AI Explanation] ✅ Successfully parsed enhanced explanation with fields:`, {
       hasIntroduction: !!enhanced.introduction,
