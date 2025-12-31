@@ -160,6 +160,32 @@ export function generatePDF(
   const margin = 15;
   const maxWidth = pageWidth - margin * 2;
 
+  // Helper function to wrap text manually
+  const wrapText = (text: string, maxWidth: number, fontSize: number): string[] => {
+    doc.setFontSize(fontSize);
+    const words = text.split(' ');
+    const lines: string[] = [];
+    let currentLine = '';
+
+    words.forEach((word) => {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      const testWidth = doc.getTextWidth(testLine);
+      
+      if (testWidth > maxWidth && currentLine) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    });
+    
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+    
+    return lines;
+  };
+
   // Title
   doc.setFontSize(20);
   doc.setFont('helvetica', 'bold');
@@ -182,17 +208,23 @@ export function generatePDF(
 
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    const introLines = doc.splitTextToSize((recommendation as any).introduction, maxWidth);
-    doc.text(introLines, margin, yPosition);
-    yPosition += introLines.length * 5 + 10;
+    const introLines = wrapText((recommendation as any).introduction, maxWidth, 10);
+    introLines.forEach(line => {
+      doc.text(line, margin, yPosition);
+      yPosition += 5;
+    });
+    yPosition += 10;
   }
 
   // Summary
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
-  const summaryLines = doc.splitTextToSize(summary, maxWidth);
-  doc.text(summaryLines, margin, yPosition);
-  yPosition += summaryLines.length * 7 + 10;
+  const summaryLines = wrapText(summary, maxWidth, 11);
+  summaryLines.forEach(line => {
+    doc.text(line, margin, yPosition);
+    yPosition += 6;
+  });
+  yPosition += 10;
 
   // Confidence Level
   doc.setFont('helvetica', 'bold');
@@ -229,9 +261,12 @@ export function generatePDF(
       doc.addPage();
       yPosition = 20;
     }
-    const reasonLines = doc.splitTextToSize(`${idx + 1}. ${reason}`, maxWidth);
-    doc.text(reasonLines, margin, yPosition);
-    yPosition += reasonLines.length * 6 + 4;
+    const reasonLines = wrapText(`${idx + 1}. ${reason}`, maxWidth, 11);
+    reasonLines.forEach(line => {
+      doc.text(line, margin, yPosition);
+      yPosition += 6;
+    });
+    yPosition += 4;
   });
   yPosition += 6;
 
@@ -253,9 +288,12 @@ export function generatePDF(
       doc.addPage();
       yPosition = 20;
     }
-    const stepLines = doc.splitTextToSize(`${idx + 1}. ${step}`, maxWidth);
-    doc.text(stepLines, margin, yPosition);
-    yPosition += stepLines.length * 6 + 4;
+    const stepLines = wrapText(`${idx + 1}. ${step}`, maxWidth, 11);
+    stepLines.forEach(line => {
+      doc.text(line, margin, yPosition);
+      yPosition += 6;
+    });
+    yPosition += 4;
   });
   yPosition += 6;
 
@@ -277,9 +315,12 @@ export function generatePDF(
       doc.addPage();
       yPosition = 20;
     }
-    const riskLines = doc.splitTextToSize(`${idx + 1}. ${risk}`, maxWidth);
-    doc.text(riskLines, margin, yPosition);
-    yPosition += riskLines.length * 6 + 4;
+    const riskLines = wrapText(`${idx + 1}. ${risk}`, maxWidth, 11);
+    riskLines.forEach(line => {
+      doc.text(line, margin, yPosition);
+      yPosition += 6;
+    });
+    yPosition += 4;
   });
   yPosition += 10;
 
@@ -302,9 +343,12 @@ export function generatePDF(
         doc.addPage();
         yPosition = 20;
       }
-      const itemLines = doc.splitTextToSize(`${idx + 1}. ${item}`, maxWidth);
-      doc.text(itemLines, margin, yPosition);
-      yPosition += itemLines.length * 6 + 4;
+      const itemLines = wrapText(`${idx + 1}. ${item}`, maxWidth, 11);
+      itemLines.forEach(line => {
+        doc.text(line, margin, yPosition);
+        yPosition += 6;
+      });
+      yPosition += 4;
     });
     yPosition += 10;
   }
