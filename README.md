@@ -150,6 +150,7 @@ When API keys are configured:
 - LLM **NEVER** changes the recommendation or decision logic
 
 **Microsoft Learn MCP Integration (v1.2.0+)**:
+
 - Infrastructure added for real-time Microsoft Learn documentation fetching
 - Uses `mcp_microsoft-lea_microsoft_docs_search` for documentation queries
 - Uses `mcp_microsoft-lea_microsoft_code_sample_search` for code examples

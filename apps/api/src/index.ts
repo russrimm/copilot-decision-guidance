@@ -164,12 +164,12 @@ async function fetchMicrosoftLearnContext(recommendationType: string): Promise<s
   try {
     // Define queries based on recommendation type
     const searchQueries: string[] = [];
-    
+
     if (recommendationType === 'm365Copilot' || recommendationType === 'hybrid') {
       searchQueries.push('Microsoft 365 Copilot extensibility declarative agents plugins');
       searchQueries.push('Microsoft 365 Copilot security compliance data residency GDPR');
     }
-    
+
     if (recommendationType === 'copilotStudio' || recommendationType === 'hybrid') {
       searchQueries.push('Copilot Studio agents Power Platform connectors governance');
       searchQueries.push('Copilot Studio publish to Microsoft 365 Copilot Teams channels');
@@ -179,7 +179,7 @@ async function fetchMicrosoftLearnContext(recommendationType: string): Promise<s
     // In a GitHub Copilot Chat context, the MCP tools would be called here
     // For the Express API, we log the integration point and continue with static knowledge
     console.log('[MCP Integration Point] Would fetch Microsoft Learn docs for:', searchQueries);
-    
+
     return '\n\n**ANALYSIS METHOD:** This recommendation combines deterministic scoring (based on your answers) with the comprehensive Microsoft AI Decision Framework. The framework content is verified against Microsoft Learn documentation.';
   } catch (error) {
     console.warn('Microsoft Learn MCP integration unavailable:', error);
@@ -207,7 +207,7 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
 
   try {
     const answers = userContext?.answers || {};
-    
+
     // Fetch real-time Microsoft Learn documentation
     const learnContext = await fetchMicrosoftLearnContext(recommendation.type);
     const prompt = `You are a Microsoft AI solutions advisor helping enterprise customers evaluate Microsoft 365 Copilot and Copilot Studio for specific scenarios. Your guidance must be technically accurate, compliance-aware, and based solely on verified Microsoft documentation and the Microsoft AI Decision Framework.
