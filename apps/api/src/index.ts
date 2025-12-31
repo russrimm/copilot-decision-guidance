@@ -159,7 +159,7 @@ app.get('/api/sources', (_req: Request, res: Response) => {
 });
 
 // Helper to fetch real-time Microsoft Learn documentation
-// Uses Microsoft Learn MCP integration when AI mode is enabled
+// Uses Microsoft Learn MCP API at https://learn.microsoft.com/api/mcp
 async function fetchMicrosoftLearnContext(recommendationType: string): Promise<string> {
   try {
     // Define queries based on recommendation type
@@ -175,15 +175,45 @@ async function fetchMicrosoftLearnContext(recommendationType: string): Promise<s
       searchQueries.push('Copilot Studio publish to Microsoft 365 Copilot Teams channels');
     }
 
-    // Note: This placeholder shows where MCP integration would fetch live docs
-    // In a GitHub Copilot Chat context, the MCP tools would be called here
-    // For the Express API, we log the integration point and continue with static knowledge
-    console.log('[MCP Integration Point] Would fetch Microsoft Learn docs for:', searchQueries);
+    const docsResults: string[] = [];
 
+    // Fetch documentation from Microsoft Learn MCP API
+    for (const query of searchQueries) {
+      try {
+        const response = await fetch('https://learn.microsoft.com/api/mcp/docs-search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query, maxResults: 2 }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.results && Array.isArray(data.results) && data.results.length > 0) {
+            for (const result of data.results) {
+              docsResults.push(
+                `**${result.title}**\n${result.url}\n${result.content || result.description || ''}`
+              );
+            }
+          }
+        } else {
+          console.warn(`Microsoft Learn MCP returned ${response.status} for query: ${query}`);
+        }
+      } catch (err) {
+        console.warn(`Failed to fetch docs for query "${query}":`, err);
+      }
+    }
+
+    if (docsResults.length > 0) {
+      return `\n\n**REAL-TIME MICROSOFT LEARN DOCUMENTATION:**\n\n${docsResults.join('\n\n---\n\n')}\n\n**ANALYSIS METHOD:** This recommendation combines deterministic scoring with the Microsoft AI Decision Framework, enhanced with real-time Microsoft Learn documentation.`;
+    }
+
+    // Fallback if no results
     return '\n\n**ANALYSIS METHOD:** This recommendation combines deterministic scoring (based on your answers) with the comprehensive Microsoft AI Decision Framework. The framework content is verified against Microsoft Learn documentation.';
   } catch (error) {
     console.warn('Microsoft Learn MCP integration unavailable:', error);
-    return '';
+    return '\n\n**ANALYSIS METHOD:** This recommendation uses deterministic scoring with the Microsoft AI Decision Framework (static framework knowledge).';
   }
 }
 

@@ -151,16 +151,15 @@ When API keys are configured:
 
 **Microsoft Learn MCP Integration (v1.2.0+)**:
 
-- Infrastructure added for real-time Microsoft Learn documentation fetching
-- Uses `mcp_microsoft-lea_microsoft_docs_search` for documentation queries
-- Uses `mcp_microsoft-lea_microsoft_code_sample_search` for code examples
+- **Live documentation fetching** from Microsoft Learn MCP API (`https://learn.microsoft.com/api/mcp`)
+- Automatically retrieves real-time documentation during AI explanation generation
 - Queries are recommendation-specific:
   - **M365 Copilot**: Extensibility, security, compliance, data residency
   - **Copilot Studio**: Agents, connectors, governance, deployment channels
   - **Hybrid**: Combined queries from both
-- Integration point currently logs queries and uses comprehensive static framework knowledge
-- Ready for future enhancement to fetch live documentation when MCP server available
-- Maintains graceful fallback to static content
+- Enhances AI explanations with up-to-date Microsoft Learn content
+- Maintains graceful fallback to static framework knowledge if API unavailable
+- No additional MCP server setup required - uses public Microsoft Learn endpoint
 - Falls back to deterministic templates if AI unavailable
 
 ## API Endpoints
