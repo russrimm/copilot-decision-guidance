@@ -2,7 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 import { calculateRecommendation, generateRecommendation, decisionModel, UserAnswersSchema, } from '@copilot-guidance/decision-engine';
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -617,6 +620,15 @@ app.get('*', (_req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 API server running on http://localhost:${PORT}`);
     console.log(`📊 Decision model loaded: v${decisionModel.version}`);
-    console.log(`🤖 AI mode: ${process.env.AZURE_OPENAI_API_KEY || process.env.OPENAI_API_KEY ? 'ENABLED' : 'DISABLED (No AI mode)'}`);
+    // Check AI configuration
+    const hasAzureKey = !!process.env.AZURE_OPENAI_API_KEY;
+    const hasAzureEndpoint = !!process.env.AZURE_OPENAI_ENDPOINT;
+    const hasAzureDeployment = !!process.env.AZURE_OPENAI_DEPLOYMENT;
+    const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
+    console.log(`🔑 Azure OpenAI Key: ${hasAzureKey ? '✅ Present' : '❌ Missing'}`);
+    console.log(`🌐 Azure OpenAI Endpoint: ${hasAzureEndpoint ? '✅ Present' : '❌ Missing'}`);
+    console.log(`🚀 Azure OpenAI Deployment: ${hasAzureDeployment ? '✅ Present' : '❌ Missing'}`);
+    console.log(`🔑 OpenAI Key: ${hasOpenAIKey ? '✅ Present' : '❌ Missing'}`);
+    console.log(`🤖 AI mode: ${hasAzureKey || hasOpenAIKey ? 'ENABLED' : 'DISABLED (No AI keys configured)'}`);
 });
 export default app;
