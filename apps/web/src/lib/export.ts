@@ -32,7 +32,7 @@ export function generateMarkdownSummary(
 
   let markdown = `# ${title}\n\n`;
   markdown += `**Recommendation Type:** ${type}\n\n`;
-  
+
   // Add introduction if available
   if ((recommendation as any).introduction) {
     markdown += `## About This Analysis\n\n${(recommendation as any).introduction}\n\n`;
@@ -46,7 +46,7 @@ export function generateMarkdownSummary(
       markdown += `**A:** ${qa.answer}\n\n`;
     });
   }
-  
+
   markdown += `## Summary\n\n${summary}\n\n`;
 
   markdown += `## Why This Recommendation\n\n`;
@@ -147,7 +147,7 @@ export function generatePDF(
     doc.setFont('helvetica', 'bold');
     doc.text('About This Analysis', margin, yPosition);
     yPosition += 7;
-    
+
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     const introLines = doc.splitTextToSize((recommendation as any).introduction, maxWidth);
