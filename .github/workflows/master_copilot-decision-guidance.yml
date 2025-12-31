@@ -62,4 +62,5 @@ jobs:
           app-name: 'copilot-decision-guidance'
           slot-name: 'Production'
           package: .
+          startup-command: 'node apps/api/dist/index.js'
           
