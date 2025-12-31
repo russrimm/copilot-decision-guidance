@@ -234,15 +234,26 @@ async function generateAIExplanation(recommendation, userContext) {
     const generateDetailedIntroduction = (rec, ctx) => {
         const answers = ctx?.answers || {};
         const recType = rec.type || 'UNKNOWN';
-        // Extract key scenario details from answers
-        const experienceLocation = answers['experience-location'] || 'not specified';
-        const buildStyle = answers['build-style'] || 'not specified';
-        const teamSize = answers['team-size'] || 'not specified';
-        const complexity = answers['complexity'] || 'not specified';
-        const budget = answers['budget-band'] || 'not specified';
+        // Extract key scenario details from answers (filter out empty/undefined)
+        const experienceLocation = answers['experience-location'];
+        const buildStyle = answers['build-style'];
+        const teamSize = answers['team-size'];
+        const complexity = answers['complexity'];
+        const budget = answers['budget-band'];
         // Build personalized introduction
         let intro = `This recommendation is generated using a deterministic scoring algorithm that evaluates your specific scenario against weighted decision criteria. `;
-        intro += `Based on your requirements for ${experienceLocation.toLowerCase()} deployment with ${buildStyle.toLowerCase()} development approach, `;
+        // Add scenario-specific details only if available
+        const scenarioDetails = [];
+        if (experienceLocation)
+            scenarioDetails.push(`${experienceLocation.toLowerCase()} deployment`);
+        if (buildStyle)
+            scenarioDetails.push(`${buildStyle.toLowerCase()} development approach`);
+        if (scenarioDetails.length > 0) {
+            intro += `Based on your requirements for ${scenarioDetails.join(' with ')}, `;
+        }
+        else {
+            intro += `Based on your specific scenario requirements, `;
+        }
         if (recType === 'M365_COPILOT') {
             intro += `the analysis indicates Microsoft 365 Copilot aligns best with your immediate needs. `;
         }
@@ -252,7 +263,20 @@ async function generateAIExplanation(recommendation, userContext) {
         else if (recType === 'HYBRID') {
             intro += `the analysis recommends a hybrid approach combining both Microsoft 365 Copilot and Copilot Studio. `;
         }
-        intro += `The methodology follows the Microsoft AI Decision Framework (BXT + CAF principles), considering your team size (${teamSize.toLowerCase()}), technical complexity (${complexity.toLowerCase()}), and budget constraints (${budget.toLowerCase()}). `;
+        // Add methodology with available context factors
+        const contextFactors = [];
+        if (teamSize)
+            contextFactors.push(`team size (${teamSize.toLowerCase()})`);
+        if (complexity)
+            contextFactors.push(`technical complexity (${complexity.toLowerCase()})`);
+        if (budget)
+            contextFactors.push(`budget constraints (${budget.toLowerCase()})`);
+        if (contextFactors.length > 0) {
+            intro += `The methodology follows the Microsoft AI Decision Framework (BXT + CAF principles), considering your ${contextFactors.join(', ')}. `;
+        }
+        else {
+            intro += `The methodology follows the Microsoft AI Decision Framework (BXT + CAF principles). `;
+        }
         intro += `This is a scenario-specific recommendation—most organizations successfully deploy multiple Microsoft AI tools across different use cases, and this guidance helps optimize for your particular requirements.`;
         return intro;
     };
