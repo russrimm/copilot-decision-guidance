@@ -611,7 +611,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
               },
               { role: 'user', content: prompt },
             ],
-            max_completion_tokens: 2000,
+            max_completion_tokens: 16000,
             response_format: { type: 'json_object' },
           }),
         }
@@ -626,10 +626,13 @@ Return ONLY valid JSON (no markdown, no code blocks):
       }
 
       const data = (await response.json()) as any;
-      console.log(`[AI Explanation] Azure OpenAI response structure:`, JSON.stringify(data, null, 2));
-      
+      console.log(
+        `[AI Explanation] Azure OpenAI response structure:`,
+        JSON.stringify(data, null, 2)
+      );
+
       responseText = data.choices?.[0]?.message?.content || '';
-      
+
       if (!responseText || responseText.trim().length === 0) {
         console.error(`[AI Explanation] Empty response from Azure OpenAI`);
         console.error(`[AI Explanation] Full response data:`, data);
@@ -667,7 +670,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
 
       const data = (await response.json()) as any;
       responseText = data.choices?.[0]?.message?.content || '';
-      
+
       if (!responseText || responseText.trim().length === 0) {
         console.error(`[AI Explanation] Empty response from OpenAI`);
         throw new Error('OpenAI returned empty response');

@@ -545,7 +545,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
                         },
                         { role: 'user', content: prompt },
                     ],
-                    max_completion_tokens: 2000,
+                    max_completion_tokens: 16000,
                     response_format: { type: 'json_object' },
                 }),
             });
