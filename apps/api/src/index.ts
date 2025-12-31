@@ -154,6 +154,8 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
 
   if (!azureKey && !openaiKey) {
     return {
+      introduction:
+        'This recommendation is generated using a deterministic scoring algorithm that evaluates your answers against weighted criteria. The methodology follows the Microsoft AI Decision Framework, which provides systematic guidance for selecting the right Microsoft AI technology based on business, experience, and technology requirements.',
       summary: recommendation.summary,
       reasons: recommendation.reasons,
       nextSteps: recommendation.nextSteps,
@@ -163,7 +165,15 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
 
   try {
     const answers = userContext?.answers || {};
-    const prompt = `You are a Microsoft AI solutions advisor helping enterprise customers evaluate Microsoft 365 Copilot and Copilot Studio for specific scenarios. Your guidance must be technically accurate, compliance-aware, and based solely on verified Microsoft documentation.
+    const prompt = `You are a Microsoft AI solutions advisor helping enterprise customers evaluate Microsoft 365 Copilot and Copilot Studio for specific scenarios. Your guidance must be technically accurate, compliance-aware, and based solely on verified Microsoft documentation and the Microsoft AI Decision Framework.
+
+FRAMEWORK METHODOLOGY:
+This analysis follows the Microsoft AI Decision Framework (https://github.com/microsoft/Microsoft-AI-Decision-Framework), which integrates:
+- Business-Experience-Technology (BXT) Framework methodology
+- Cloud Adoption Framework (CAF) AI agent adoption principles
+- Systematic evaluation across complexity, skills, budget, governance, and action safety
+- Progressive learning path: Foundation → Context → Application → Mastery
+- "Start Simple, Scale Smart" principle - choose the simplest technology that meets requirements
 
 IMPORTANT FRAMING:
 - Most organizations use BOTH M365 Copilot (for productivity) AND Copilot Studio (for custom agents) based on different requirements
@@ -273,9 +283,10 @@ CONSTRAINTS:
 
 Return ONLY valid JSON (no markdown, no code blocks):
 {
+  "introduction": "3-5 sentence paragraph explaining the analysis methodology (deterministic scoring based on user answers + weighted questions), the Microsoft AI Decision Framework foundation (BXT + CAF principles), and that this recommendation is scenario-specific (organizations typically use multiple tools)",
   "summary": "enhanced summary for THIS SCENARIO (2-3 sentences, acknowledge coexistence)",
-  "reasons": ["reason 1 with specific details", "reason 2...", ...],
-  "nextSteps": ["step 1 with technical specifics (include deployment channels if Copilot Studio)", "step 2...", ...],
+  "reasons": ["reason 1 with specific technical details and 'why this matters' context", "reason 2 with implementation implications", "reason 3...", ...provide 4-6 detailed reasons],
+  "nextSteps": ["step 1 with concrete actions, tools, and timelines", "step 2 with specific Microsoft Learn links or resources", "step 3 with measurable outcomes", ...provide 5-7 actionable steps],
   "complianceConsiderations": [
     "Data residency: [specific guidance]",
     "Regulatory compliance: [specific frameworks]",
