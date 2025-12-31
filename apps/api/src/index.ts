@@ -355,8 +355,9 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
     const answers = userContext?.answers || {};
 
     // Fetch real-time Microsoft Learn documentation
-    console.log(`[AI Explanation] Fetching Microsoft Learn context...`);
-    const learnContext = await fetchMicrosoftLearnContext(recommendation.type);
+    // Temporarily disabled due to MS Learn MCP API returning 500 errors
+    console.log(`[AI Explanation] Skipping Microsoft Learn MCP (API currently unavailable)`);
+    const learnContext = ''; // await fetchMicrosoftLearnContext(recommendation.type);
     console.log(
       `[AI Explanation] Microsoft Learn context length: ${learnContext.length} characters`
     );

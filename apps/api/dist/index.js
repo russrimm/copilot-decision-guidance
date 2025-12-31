@@ -296,8 +296,9 @@ async function generateAIExplanation(recommendation, userContext) {
     try {
         const answers = userContext?.answers || {};
         // Fetch real-time Microsoft Learn documentation
-        console.log(`[AI Explanation] Fetching Microsoft Learn context...`);
-        const learnContext = await fetchMicrosoftLearnContext(recommendation.type);
+        // Temporarily disabled due to MS Learn MCP API returning 500 errors
+        console.log(`[AI Explanation] Skipping Microsoft Learn MCP (API currently unavailable)`);
+        const learnContext = ''; // await fetchMicrosoftLearnContext(recommendation.type);
         console.log(`[AI Explanation] Microsoft Learn context length: ${learnContext.length} characters`);
         const prompt = `You are a Microsoft AI solutions advisor helping enterprise customers evaluate Microsoft 365 Copilot and Copilot Studio for specific scenarios. Your guidance must be technically accurate, compliance-aware, and based solely on verified Microsoft documentation and the Microsoft AI Decision Framework.
 
