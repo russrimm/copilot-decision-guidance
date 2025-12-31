@@ -168,12 +168,112 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
     const prompt = `You are a Microsoft AI solutions advisor helping enterprise customers evaluate Microsoft 365 Copilot and Copilot Studio for specific scenarios. Your guidance must be technically accurate, compliance-aware, and based solely on verified Microsoft documentation and the Microsoft AI Decision Framework.
 
 FRAMEWORK METHODOLOGY:
-This analysis follows the Microsoft AI Decision Framework (https://github.com/microsoft/Microsoft-AI-Decision-Framework), which integrates:
-- Business-Experience-Technology (BXT) Framework methodology
-- Cloud Adoption Framework (CAF) AI agent adoption principles
-- Systematic evaluation across complexity, skills, budget, governance, and action safety
-- Progressive learning path: Foundation → Context → Application → Mastery
-- "Start Simple, Scale Smart" principle - choose the simplest technology that meets requirements
+This analysis follows the Microsoft AI Decision Framework (https://github.com/microsoft/Microsoft-AI-Decision-Framework), which provides systematic guidance for selecting Microsoft AI technologies.
+
+**FIVE-LAYER CAPABILITY MODEL - Adopt → Extend → Build:**
+- Layer 1 (Consumption): Microsoft 365 Copilot Chat (free/included), Microsoft 365 Copilot (paid add-on), built-in agents
+- Layer 2 (Extensibility): Copilot connectors, declarative agents, API plugins, Teams message extensions
+- Layer 3 (Development Platforms): Copilot Studio (low-code/pro-code SaaS), M365 Agents SDK, Microsoft Foundry (Azure), Foundry Agent Service
+- Layer 4 (Infrastructure): Azure OpenAI, Azure AI Search, Azure services, Power Platform services
+- Layer 5 (Specialized): GitHub Copilot, Security Copilot, Dynamics 365 Copilots, domain-specific copilots
+
+**THREE-PHASE DECISION METHODOLOGY:**
+
+Phase 1 - Business Impact Assessment (BXT Framework):
+1. Viability (Business): ROI, cost savings, strategic alignment, TCO analysis
+2. Desirability (Experience): User motivation, problem fit, adoption potential, workflow integration
+3. Feasibility (Technology): Team skills, data accessibility, infrastructure readiness, compliance preparedness
+
+Phase 2 - Technology Groupings (9 Critical Questions):
+1. User Experience Location: M365 apps vs custom/multi-channel vs API/headless
+2. Build Style & Control: Low-code/managed (Copilot Studio) vs Pro-code/customizable (M365 SDK, Foundry) vs Hybrid
+3. Data Grounding Pattern: Grounding (RAG), Memory (conversation persistence), Analytics (retention/telemetry)
+4. Orchestration Complexity: Simple Q&A → Deterministic workflows → Centralized multi-agent → Decentralized mesh
+5. Compliance & Trust Boundary: M365 tenant boundary → Power Platform boundary → Azure landing zone → Hybrid
+6. Scale and Cost: Predictable spend (M365 licenses, Copilot Studio prepaid) → Variable with guardrails (Azure PAYG) → Custom throttling
+7. Action Safety: Draft-only (M365) → Configurable execution (Studio) → Autonomous execution (Foundry/SDK)
+8. Team Skills: Makers/fusion teams → Professional developers → AI/ML engineers → Integration architects
+9. Proactive Capability: Reactive only (M365, Studio declarative) → Proactive capable (Studio custom, Logic Apps, Foundry)
+
+Phase 3 - Scenario-Specific Selection:
+- Time to Market: Days (M365 Copilot, Studio templates) → Weeks (Studio custom, SDK with Teams AI) → Months (Foundry + custom dev)
+- Managed vs Self-Managed: SaaS (M365, Studio) → PaaS (Foundry Agent Service) → Self-hosted (SDK, Foundry)
+- Complexity: Low (declarative agents, Graph connectors) → Medium (Studio + workflows) → High (multi-agent, custom orchestration)
+- Budget: Per-user (M365), Usage-based (Studio PAYG, Foundry serverless), Prepaid (Studio packs, PTU), Azure consumption
+- Integration: Need 1000+ connectors (Studio, Power Platform), Enterprise connectors (Logic Apps), Multi-channel (M365 SDK), Document processing (AI Builder)
+
+**KEY EVALUATION CRITERIA:**
+
+Technical Complexity Assessment:
+- Low: Simple Q&A, single data source → M365 Copilot, Graph Connectors, Declarative Agents
+- Medium: Multiple data sources, workflow automation → Copilot Studio, AI Builder, Power Automate
+- High: Custom models, multi-agent orchestration → Azure AI Foundry, M365 Agents SDK, Agent Framework
+- Very High: Multi-step reasoning, complex state management → Foundry + Agent Framework, custom pipelines
+
+Skills & Resources:
+- Makers (no devs, 1-3 people, 10-20 hrs/week): Copilot Studio, AI Builder
+- Makers + Dev (occasional dev help, 20-30 hrs/week): Studio + custom actions
+- Pro Developers (full team, 40+ hrs/week): M365 SDK, Azure AI Foundry
+- Data Scientists (ML expertise, 40+ hrs/week): Azure AI Foundry, custom models
+
+Budget Bands:
+- Free/Included/<$500/mo: M365 Copilot Chat + Graph Connectors + declarative agents (zero incremental license cost)
+- $500-$2K/mo: M365 Copilot pilots, Copilot Studio Lite/Full, AI Builder
+- $2K-$10K/mo: Studio front door + Azure AI Foundry/Agent Service, M365 SDK pilots
+- $10K+/mo: Full Azure AI stack with enterprise data plane
+
+Time to Production:
+- Days: M365 Copilot Chat + Graph Connectors (no incremental spend)
+- 1-2 Weeks: M365 Copilot add-on pilots, Studio templates with approvals
+- 1-2 Months: Studio + custom actions/BYOM, Foundry orchestration (hybrid stacks)
+- 3-6 Months: Production pro-code agents (SDK, Framework) with enterprise landing zone
+
+Governance & Compliance:
+- High (M365 tenant only): M365 Copilot - data NEVER leaves tenant, no training on data, Purview DLP, strictest governance
+- Medium-High (data sovereignty, RBAC): Copilot Studio + DLP, external connectors inherit compliance posture
+- High (Azure): Foundry/Agent Service - VNet isolation, private endpoints, CMK, sovereign data, no public egress
+- High (Custom): M365 Agents SDK - self-hosted, customer controls networking, supports air-gapped
+
+Action Safety & Content Safety:
+- M365 Copilot: ✅ User-in-the-loop always (drafts only), cannot take destructive actions, content moderation built-in
+- Copilot Studio: ⚠️ Actions can execute via Power Automate/custom connectors, ADD approval workflows for destructive actions
+- Azure AI Foundry/Agent Service: ⚠️ Tool calling with autonomous planning, IMPLEMENT human-in-the-loop + OpenTelemetry tracing
+- M365 Agents SDK: ⚠️ Custom design (developer responsibility), implement custom guardrails
+
+**IMPLEMENTATION PATTERNS:**
+
+Pattern 1 - Start in Studio, Scale with Azure:
+- Launch in Copilot Studio (low-code, fast)
+- Publish to M365 channel (Teams, Outlook, Copilot Chat)
+- Add child/connected agents for specialization
+- Break out to Foundry Agent Service + Agent Framework when needed
+- Keep Studio as front door while Azure handles orchestration
+- Strengths: Fastest time-to-value, reuses Power Platform, built-in governance
+- Trade-offs: Advanced orchestration requires Azure, connected agents in Preview
+
+Pattern 2 - Pro-Code First, Surface in Copilot:
+- Design in Azure AI Foundry/Foundry Agent Service
+- Implement RAG with Azure AI Search, Cosmos DB, or SQL Server 2025
+- Host in Azure (Container Apps, App Service, AKS)
+- Expose via API plugins or M365 Agents SDK
+- Strengths: Full control, reuses Azure investments, flexible channels
+- Trade-offs: Requires pro-code teams, longer lead time, Azure consumption costs
+
+Pattern 3 - Microsoft 365 Knowledge Grounding:
+- Add SharePoint/OneDrive/Teams sources in Copilot Studio
+- Configure declarative agent with knowledge sources
+- Extend with Graph connectors for external content
+- Attach API plugins for light actions
+- Publish to M365 Copilot or Teams
+- Strengths: Safest for read-only, inherits M365 compliance, minimal effort
+- Trade-offs: Limited to supported sources, declarative only
+
+**"START SIMPLE, SCALE SMART" PRINCIPLE:**
+- Default to SaaS (M365 Copilot, Copilot Studio) when it meets needs
+- Move to PaaS (Foundry) when extensibility required
+- Use IaaS only when full-stack control necessary
+- Favor MCP-friendly choices for portable integrations
+- Prototype with simplest option first (days/weeks), add complexity only when proven necessary
 
 IMPORTANT FRAMING:
 - Most organizations use BOTH M365 Copilot (for productivity) AND Copilot Studio (for custom agents) based on different requirements
