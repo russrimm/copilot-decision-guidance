@@ -148,6 +148,18 @@ When API keys are configured:
 
 - LLM **ONLY** rewrites explanations for clarity
 - LLM **NEVER** changes the recommendation or decision logic
+
+**Microsoft Learn MCP Integration (v1.2.0+)**:
+- Infrastructure added for real-time Microsoft Learn documentation fetching
+- Uses `mcp_microsoft-lea_microsoft_docs_search` for documentation queries
+- Uses `mcp_microsoft-lea_microsoft_code_sample_search` for code examples
+- Queries are recommendation-specific:
+  - **M365 Copilot**: Extensibility, security, compliance, data residency
+  - **Copilot Studio**: Agents, connectors, governance, deployment channels
+  - **Hybrid**: Combined queries from both
+- Integration point currently logs queries and uses comprehensive static framework knowledge
+- Ready for future enhancement to fetch live documentation when MCP server available
+- Maintains graceful fallback to static content
 - Falls back to deterministic templates if AI unavailable
 
 ## API Endpoints
