@@ -603,11 +603,27 @@ Return ONLY valid JSON (no markdown, no code blocks):
       throw new Error('No valid API configuration');
     }
 
+    console.log(`[AI Explanation] Raw LLM response length: ${responseText.length} characters`);
+    console.log(
+      `[AI Explanation] Response preview: ${responseText.substring(0, 200)}...`
+    );
+
     const enhanced = JSON.parse(responseText);
+    
+    console.log(`[AI Explanation] ✅ Successfully parsed enhanced explanation with fields:`, {
+      hasIntroduction: !!enhanced.introduction,
+      hasSummary: !!enhanced.summary,
+      hasReasons: !!enhanced.reasons,
+      hasNextSteps: !!enhanced.nextSteps,
+      hasCompliance: !!enhanced.complianceConsiderations,
+    });
+
     return enhanced;
   } catch (error) {
-    console.error('LLM call failed:', error);
+    console.error('[AI Explanation] ❌ LLM call failed:', error);
     return {
+      introduction:
+        'This recommendation is generated using a deterministic scoring algorithm that evaluates your answers against weighted criteria. The methodology follows the Microsoft AI Decision Framework, which provides systematic guidance for selecting the right Microsoft AI technology based on business, experience, and technology requirements.',
       summary: recommendation.summary,
       reasons: recommendation.reasons,
       nextSteps: recommendation.nextSteps,
