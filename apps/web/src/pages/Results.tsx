@@ -70,11 +70,45 @@ export default function Results() {
     enhancedExplanation?.complianceConsiderations || complianceConsiderations;
 
   const handleExportJSON = () => {
-    downloadJSON({ recommendation, scoringResult }, `copilot-recommendation-${Date.now()}.json`);
+    const exportData = {
+      recommendation: {
+        ...recommendation,
+        enhancedExplanation: enhancedExplanation || null,
+      },
+      scoringResult,
+    };
+    downloadJSON(exportData, `copilot-recommendation-${Date.now()}.json`);
   };
 
   const handleExportMarkdown = () => {
-    const markdown = generateMarkdownSummary(recommendation);
+    if (!model) return;
+
+    // Get all questions and answers
+    const allQuestions: Question[] = [];
+    model.questionGroups.forEach((group) => {
+      group.questions.forEach((q) => allQuestions.push(q));
+    });
+
+    const qaData = allQuestions.map((q) => {
+      const answer = answers[q.id];
+      const selectedAnswer = q.answers.find((a) => a.id === answer);
+      const answerLabel = selectedAnswer?.label || 'Not answered';
+
+      return {
+        question: q.title,
+        answer: answerLabel,
+      };
+    });
+
+    const enhancedRecommendation = {
+      ...recommendation,
+      introduction: displayIntroduction,
+      summary: displaySummary,
+      reasons: displayReasons,
+      nextSteps: displayNextSteps,
+      complianceConsiderations: displayCompliance,
+    };
+    const markdown = generateMarkdownSummary(enhancedRecommendation, qaData);
     downloadMarkdown(markdown, `copilot-recommendation-${Date.now()}.md`);
   };
 
@@ -98,7 +132,16 @@ export default function Results() {
       };
     });
 
-    downloadPDF(recommendation, qaData, `copilot-recommendation-${Date.now()}.pdf`);
+    const enhancedRecommendation = {
+      ...recommendation,
+      introduction: displayIntroduction,
+      summary: displaySummary,
+      reasons: displayReasons,
+      nextSteps: displayNextSteps,
+      complianceConsiderations: displayCompliance,
+    };
+
+    downloadPDF(enhancedRecommendation, qaData, `copilot-recommendation-${Date.now()}.pdf`);
   };
 
   const handleStartOver = () => {

@@ -14,7 +14,10 @@ export function downloadJSON(data: any, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export function generateMarkdownSummary(recommendation: Recommendation): string {
+export function generateMarkdownSummary(
+  recommendation: Recommendation,
+  answers?: Array<{ question: string; answer: string }>
+): string {
   const {
     type,
     title,
@@ -29,6 +32,21 @@ export function generateMarkdownSummary(recommendation: Recommendation): string 
 
   let markdown = `# ${title}\n\n`;
   markdown += `**Recommendation Type:** ${type}\n\n`;
+  
+  // Add introduction if available
+  if ((recommendation as any).introduction) {
+    markdown += `## About This Analysis\n\n${(recommendation as any).introduction}\n\n`;
+  }
+
+  // Add Q&A section if provided
+  if (answers && answers.length > 0) {
+    markdown += `## Your Questionnaire Responses\n\n`;
+    answers.forEach((qa, idx) => {
+      markdown += `**Q${idx + 1}:** ${qa.question}\n\n`;
+      markdown += `**A:** ${qa.answer}\n\n`;
+    });
+  }
+  
   markdown += `## Summary\n\n${summary}\n\n`;
 
   markdown += `## Why This Recommendation\n\n`;
@@ -122,6 +140,20 @@ export function generatePDF(
   const typeLabel = type.replace(/_/g, ' ');
   doc.text(`Recommendation: ${typeLabel}`, margin, yPosition);
   yPosition += 10;
+
+  // Add introduction if available
+  if ((recommendation as any).introduction) {
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('About This Analysis', margin, yPosition);
+    yPosition += 7;
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    const introLines = doc.splitTextToSize((recommendation as any).introduction, maxWidth);
+    doc.text(introLines, margin, yPosition);
+    yPosition += introLines.length * 5 + 10;
+  }
 
   // Summary
   doc.setFontSize(11);
