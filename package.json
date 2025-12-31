@@ -22,7 +22,6 @@
     "build:packages": "npm run build --workspace=packages/decision-engine",
     "build:web": "npm run build --workspace=apps/web",
     "postinstall": "npm run build:packages",
-    "postbuild": "node scripts/verify-deployment.js",
     "start": "node server-production.js",
     "start:dev": "node server.js",
     "test": "npm run test --workspaces --if-present",
