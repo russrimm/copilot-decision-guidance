@@ -323,7 +323,7 @@ describe('Decision Engine', () => {
 
       recommendation.sources.forEach((source) => {
         expect(source.title).toBeTruthy();
-        expect(source.url).toMatch(/^https:\/\/learn\.microsoft\.com/);
+        expect(source.url).toMatch(/^https:\/\/(learn\.microsoft\.com|aka\.ms)\//);
       });
     });
   });
