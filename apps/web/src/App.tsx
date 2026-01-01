@@ -5,6 +5,7 @@ import Wizard from './pages/Wizard';
 import Results from './pages/Results';
 import Admin from './pages/Admin';
 import Layout from './components/Layout';
+import { CopilotAgent } from './components/CopilotAgent';
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
             <Route path="admin" element={<Admin />} />
           </Route>
         </Routes>
+        {/* Floating Copilot Agent - Available on all pages */}
+        <CopilotAgent variant="floating" />
       </BrowserRouter>
     </ThemeProvider>
   );

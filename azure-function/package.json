@@ -1,0 +1,25 @@
+{
+  "name": "copilot-licensing-function",
+  "version": "1.0.0",
+  "description": "Azure Function to automatically update Copilot Studio licensing documentation",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prestart": "npm run build",
+    "start": "func start",
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "@azure/functions": "^4.5.0",
+    "@azure/storage-blob": "^12.17.0",
+    "@azure/ai-form-recognizer": "^5.0.0",
+    "@azure/search-documents": "^12.0.0",
+    "@azure/openai": "^1.0.0-beta.12",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "azure-functions-core-tools": "^4.0.5455",
+    "typescript": "^5.3.3"
+  }
+}

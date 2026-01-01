@@ -3,6 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { readFile } from 'fs/promises';
 import {
   calculateRecommendation,
   generateRecommendation,
@@ -187,6 +188,292 @@ app.get('/api/sources', (_req: Request, res: Response) => {
   };
 
   res.json(sources);
+});
+
+// Copilot Knowledge Agent - Chat endpoint
+app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
+  try {
+    const { message, history } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: 'Missing message in request body' });
+    }
+
+    // Check if AI is enabled
+    const azureKey = process.env.AZURE_OPENAI_API_KEY;
+    const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
+    const openaiKey = process.env.OPENAI_API_KEY;
+
+    if (!azureKey && !openaiKey) {
+      return res.status(501).json({
+        error: 'AI not configured',
+        message: 'Set AZURE_OPENAI_API_KEY or OPENAI_API_KEY to enable the Copilot Agent',
+      });
+    }
+
+    // Load licensing data for context
+    const licensingDataPath = path.join(__dirname, '../../../packages/decision-engine/src/data/licensing-data.json');
+    const licensingData = await readFile(licensingDataPath, 'utf-8');
+    const licensing = JSON.parse(licensingData);
+
+    // Build conversation history
+    const conversationHistory = (history || [])
+      .slice(-5)
+      .map((msg: any) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+    // System prompt with knowledge base
+    const systemPrompt = `You are a helpful Microsoft Copilot Knowledge Agent specializing in Microsoft 365 Copilot and Copilot Studio. Your role is to help users understand:
+
+1. **Licensing & Pricing**
+   - Microsoft 365 Copilot: $${licensing.licenses.m365Copilot.pricePerUserPerMonth}/user/month
+   - Copilot Studio Pay-as-you-go: $${licensing.licenses.copilotStudioPayAsYouGo.pricePerMessage}/message
+   - Copilot Studio Subscription: $${licensing.licenses.copilotStudioSubscription.pricePerTenant}/month (includes ${licensing.licenses.copilotStudioSubscription.messagesIncluded.toLocaleString()} messages)
+
+2. **Key Features**
+   M365 Copilot:
+   ${licensing.licenses.m365Copilot.features.map((f: string) => `   - ${f}`).join('\n')}
+
+   Copilot Studio:
+   ${licensing.licenses.copilotStudioPayAsYouGo.features.map((f: string) => `   - ${f}`).join('\n')}
+
+3. **Decision Guidance**
+   ${licensing.decisionGuide.useM365CopilotWhen.map((w: string) => `   - Use M365 Copilot when: ${w}`).join('\n')}
+   
+   ${licensing.decisionGuide.useCopilotStudioWhen.map((w: string) => `   - Use Copilot Studio when: ${w}`).join('\n')}
+
+4. **Deployment Channels**
+   - M365 Copilot: ${Object.entries(licensing.featureComparison.deploymentChannels).filter(([_, v]: any) => v.m365Copilot).map(([k, _]: any) => k).join(', ')}
+   - Copilot Studio: ${Object.entries(licensing.featureComparison.deploymentChannels).filter(([_, v]: any) => v.copilotStudio).map(([k, _]: any) => k).join(', ')}
+
+**Guidelines:**
+- Be conversational and helpful
+- Provide specific, accurate information from the knowledge base above
+- If asked about costs, calculate estimates when possible
+- Clarify that most organizations use BOTH products for different scenarios
+- Keep responses concise (2-4 paragraphs max)
+- Include relevant links when helpful:
+  - Licensing Guide: https://go.microsoft.com/fwlink/?linkid=2320995
+  - M365 Copilot Docs: https://learn.microsoft.com/en-us/copilot/microsoft-365/
+  - Copilot Studio Docs: https://learn.microsoft.com/en-us/microsoft-copilot-studio/
+
+**Important:** Only provide information based on the knowledge above. If you don't know something, say so.`;
+
+    let responseText: string;
+
+    if (azureKey && azureEndpoint && azureDeployment) {
+      // Azure OpenAI
+      const response = await fetch(
+        `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'api-key': azureKey,
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...conversationHistory,
+              { role: 'user', content: message },
+            ],
+            max_completion_tokens: 1000,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Azure OpenAI API error: ${response.status} - ${errorBody}`);
+      }
+
+      const data = (await response.json()) as any;
+      responseText = data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response.';
+    } else if (openaiKey) {
+      // OpenAI
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${openaiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...conversationHistory,
+            { role: 'user', content: message },
+          ],
+          max_tokens: 1000,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.status}`);
+      }
+
+      const data = (await response.json()) as any;
+      responseText = data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response.';
+    } else {
+      throw new Error('No valid API configuration');
+    }
+
+    res.json({ response: responseText });
+  } catch (error) {
+    console.error('Copilot Agent error:', error);
+    res.status(500).json({
+      error: 'Failed to process chat message',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+// Get licensing data
+app.get('/api/licensing', async (_req: Request, res: Response) => {
+  try {
+    const licensingDataPath = path.join(__dirname, '../../../packages/decision-engine/src/data/licensing-data.json');
+    const data = await readFile(licensingDataPath, 'utf-8');
+    const licensingData = JSON.parse(data);
+    res.json(licensingData);
+  } catch (error) {
+    console.error('Error reading licensing data:', error);
+    res.status(500).json({ error: 'Failed to load licensing data' });
+  }
+});
+
+// Calculate cost estimate
+app.post('/api/licensing/calculate', async (req: Request, res: Response) => {
+  try {
+    const { users, messagesPerMonth, licenseType } = req.body;
+
+    if (!users || !messagesPerMonth) {
+      return res.status(400).json({ error: 'Missing required parameters: users, messagesPerMonth' });
+    }
+
+    const licensingDataPath = path.join(__dirname, '../../../packages/decision-engine/src/data/licensing-data.json');
+    const data = await readFile(licensingDataPath, 'utf-8');
+    const licensingData = JSON.parse(data);
+
+    let m365Cost = 0;
+    let copilotStudioCost = 0;
+    let recommendation = '';
+
+    // M365 Copilot cost
+    m365Cost = users * licensingData.licenses.m365Copilot.pricePerUserPerMonth;
+
+    // Copilot Studio cost calculations
+    const totalMessages = messagesPerMonth;
+    
+    // Pay-as-you-go
+    const payAsYouGoCost = totalMessages * licensingData.licenses.copilotStudioPayAsYouGo.pricePerMessage;
+
+    // Subscription model
+    const subscriptionBase = licensingData.licenses.copilotStudioSubscription.pricePerTenant;
+    const includedMessages = licensingData.licenses.copilotStudioSubscription.messagesIncluded;
+    const overageMessages = Math.max(0, totalMessages - includedMessages);
+    const subscriptionCost = subscriptionBase + (overageMessages * licensingData.licenses.copilotStudioSubscription.pricePerAdditionalMessage);
+
+    // Choose better Copilot Studio option
+    copilotStudioCost = Math.min(payAsYouGoCost, subscriptionCost);
+    const recommendedModel = payAsYouGoCost <= subscriptionCost ? 'Pay-as-you-go' : 'Subscription';
+
+    // Recommendation logic
+    if (licenseType === 'm365' || licenseType === 'hybrid') {
+      recommendation = `For ${users} users with Microsoft 365 Copilot: $${m365Cost.toFixed(2)}/month`;
+    }
+    if (licenseType === 'studio' || licenseType === 'hybrid') {
+      recommendation += (recommendation ? ' + ' : '') + `Copilot Studio (${recommendedModel}): $${copilotStudioCost.toFixed(2)}/month for ${messagesPerMonth.toLocaleString()} messages`;
+    }
+
+    const totalCost = (licenseType === 'hybrid' ? m365Cost + copilotStudioCost : 
+                       licenseType === 'm365' ? m365Cost : copilotStudioCost);
+
+    res.json({
+      users,
+      messagesPerMonth,
+      breakdown: {
+        m365Copilot: licenseType === 'm365' || licenseType === 'hybrid' ? m365Cost : 0,
+        copilotStudio: licenseType === 'studio' || licenseType === 'hybrid' ? copilotStudioCost : 0,
+        copilotStudioModel: recommendedModel,
+        payAsYouGoCost,
+        subscriptionCost,
+      },
+      totalCost,
+      recommendation,
+      notes: [
+        `M365 Copilot includes unlimited Copilot Studio messages within Teams, SharePoint, and Office apps`,
+        `Copilot Studio subscription ($${subscriptionBase}/month) becomes cost-effective above ${licensingData.licenses.copilotStudioSubscription.messagesIncluded.toLocaleString()} messages/month`,
+        `External channels (web, WhatsApp, mobile) require separate Copilot Studio licensing`
+      ]
+    });
+  } catch (error) {
+    console.error('Error calculating cost:', error);
+    res.status(500).json({ error: 'Failed to calculate cost estimate' });
+  }
+});
+
+// Search licensing PDF via Azure AI Search (placeholder for future implementation)
+app.post('/api/licensing/search', async (req: Request, res: Response) => {
+  try {
+    const { query } = req.body;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Missing required parameter: query' });
+    }
+
+    // Check if Azure AI Search is configured
+    const searchEndpoint = process.env.AZURE_SEARCH_ENDPOINT;
+    const searchKey = process.env.AZURE_SEARCH_KEY;
+    const searchIndex = process.env.AZURE_SEARCH_INDEX || 'licensing-docs';
+
+    if (!searchEndpoint || !searchKey) {
+      return res.status(501).json({ 
+        error: 'Azure AI Search not configured',
+        message: 'Set AZURE_SEARCH_ENDPOINT and AZURE_SEARCH_KEY environment variables to enable semantic search',
+        fallback: 'Use /api/licensing endpoint for structured licensing data'
+      });
+    }
+
+    // Call Azure AI Search
+    const response = await fetch(
+      `${searchEndpoint}/indexes/${searchIndex}/docs/search?api-version=2024-07-01`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': searchKey,
+        },
+        body: JSON.stringify({
+          search: query,
+          queryType: 'semantic',
+          semanticConfiguration: 'default',
+          top: 5,
+          select: 'content,title,page,url',
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Azure AI Search error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    res.json({
+      results: data.value,
+      count: data['@odata.count'],
+      query,
+    });
+  } catch (error) {
+    console.error('Error searching licensing docs:', error);
+    res.status(500).json({ 
+      error: 'Failed to search licensing documentation',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 // Helper to fetch real-time Microsoft Learn documentation
