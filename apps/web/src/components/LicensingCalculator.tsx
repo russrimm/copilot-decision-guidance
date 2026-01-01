@@ -137,9 +137,11 @@ export function LicensingCalculator() {
 
         {/* Results */}
         {result && (
-          <div className="mt-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 
+          <div
+            className="mt-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 
                           dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 
-                          dark:border-blue-800">
+                          dark:border-blue-800"
+          >
             <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
               💡 Cost Estimate
             </h3>
@@ -150,9 +152,7 @@ export function LicensingCalculator() {
                 <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">
                   ${result.totalCost.toFixed(2)}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  per month
-                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">per month</div>
               </div>
 
               {/* Breakdown */}
@@ -193,9 +193,7 @@ export function LicensingCalculator() {
                 <div className="text-sm font-medium text-gray-900 dark:text-white mb-2">
                   💡 Recommendation
                 </div>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {result.recommendation}
-                </p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">{result.recommendation}</p>
               </div>
 
               {/* Cost Comparison */}
@@ -256,12 +254,8 @@ export function LicensingCalculator() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div>
-                <div className="font-medium text-gray-900 dark:text-white mb-1">
-                  M365 Copilot
-                </div>
-                <div className="text-gray-600 dark:text-gray-400">
-                  $30/user/month
-                </div>
+                <div className="font-medium text-gray-900 dark:text-white mb-1">M365 Copilot</div>
+                <div className="text-gray-600 dark:text-gray-400">$30/user/month</div>
                 <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                   Includes unlimited Copilot Studio in Teams
                 </div>
@@ -270,9 +264,7 @@ export function LicensingCalculator() {
                 <div className="font-medium text-gray-900 dark:text-white mb-1">
                   Studio Pay-as-you-go
                 </div>
-                <div className="text-gray-600 dark:text-gray-400">
-                  $0.01/message
-                </div>
+                <div className="text-gray-600 dark:text-gray-400">$0.01/message</div>
                 <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                   Best for variable usage
                 </div>
@@ -281,9 +273,7 @@ export function LicensingCalculator() {
                 <div className="font-medium text-gray-900 dark:text-white mb-1">
                   Studio Subscription
                 </div>
-                <div className="text-gray-600 dark:text-gray-400">
-                  $200/month
-                </div>
+                <div className="text-gray-600 dark:text-gray-400">$200/month</div>
                 <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                   Includes 25K messages
                 </div>

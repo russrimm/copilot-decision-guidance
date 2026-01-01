@@ -16,7 +16,8 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
     {
       id: '1',
       role: 'assistant',
-      content: '👋 Hi! I\'m your Copilot Knowledge Agent. I can help you understand licensing, compare Microsoft 365 Copilot vs Copilot Studio, calculate costs, and answer questions about deployment. What would you like to know?',
+      content:
+        "👋 Hi! I'm your Copilot Knowledge Agent. I can help you understand licensing, compare Microsoft 365 Copilot vs Copilot Studio, calculate costs, and answer questions about deployment. What would you like to know?",
       timestamp: new Date(),
     },
   ]);
@@ -76,7 +77,8 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '❌ Sorry, I encountered an error. Please check that Azure OpenAI is configured in your environment variables.',
+        content:
+          '❌ Sorry, I encountered an error. Please check that Azure OpenAI is configured in your environment variables.',
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -93,7 +95,7 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
   };
 
   const suggestedQuestions = [
-    'What\'s the difference between M365 Copilot and Copilot Studio?',
+    "What's the difference between M365 Copilot and Copilot Studio?",
     'How much does Microsoft 365 Copilot cost?',
     'Can I deploy Copilot Studio agents to external channels?',
     'What are Copilot Credits?',
@@ -130,9 +132,11 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
 
         {/* Floating Chat Window */}
         {isOpen && (
-          <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-gray-800 
+          <div
+            className="fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-gray-800 
                           rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 
-                          flex flex-col z-50">
+                          flex flex-col z-50"
+          >
             {/* Header */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <div className="flex items-center">

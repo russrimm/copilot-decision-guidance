@@ -45,9 +45,11 @@ This document describes the architecture for integrating Azure AI Search to prov
 ## Components
 
 ### 1. Azure Blob Storage
+
 **Purpose**: Store the licensing PDF with versioning
 
 **Configuration**:
+
 - Container: `licensing-docs`
 - Blob name pattern: `microsoft-copilot-studio-licensing-guide-{YYYY-MM}.pdf`
 - Access tier: Hot
@@ -56,9 +58,11 @@ This document describes the architecture for integrating Azure AI Search to prov
 **Estimated Cost**: ~$0.02/month (1 PDF, ~5MB)
 
 ### 2. Azure AI Document Intelligence
+
 **Purpose**: Extract text and structure from PDF
 
 **Configuration**:
+
 - SKU: S0 (Standard)
 - Region: Same as AI Search (for lower latency)
 - Features needed:
@@ -66,17 +70,21 @@ This document describes the architecture for integrating Azure AI Search to prov
   - Table extraction
   - Page numbering
 
-**Estimated Cost**: 
+**Estimated Cost**:
+
 - $1.50 per 1,000 pages analyzed
 - ~20 pages/month = $0.03/month
 
 ### 3. Azure AI Search
+
 **Purpose**: Semantic search with vector embeddings
 
 **Configuration**:
+
 - SKU: Basic (sufficient for single-document use case)
 - Region: Choose based on data residency requirements
 - Index schema:
+
   ```json
   {
     "name": "licensing-docs",
@@ -88,8 +96,13 @@ This document describes the architecture for integrating Azure AI Search to prov
       { "name": "section", "type": "Edm.String", "filterable": true },
       { "name": "url", "type": "Edm.String" },
       { "name": "lastModified", "type": "Edm.DateTimeOffset" },
-      { "name": "contentVector", "type": "Collection(Edm.Single)", 
-        "searchable": true, "dimensions": 1536, "vectorSearchProfile": "vector-profile" }
+      {
+        "name": "contentVector",
+        "type": "Collection(Edm.Single)",
+        "searchable": true,
+        "dimensions": 1536,
+        "vectorSearchProfile": "vector-profile"
+      }
     ]
   }
   ```
@@ -99,25 +112,31 @@ This document describes the architecture for integrating Azure AI Search to prov
   - Content fields: `content`
   - Keyword fields: `section`
 
-**Estimated Cost**: 
+**Estimated Cost**:
+
 - Basic tier: $75/month (includes 2GB storage, 50k docs)
 
 ### 4. Azure OpenAI (for embeddings)
+
 **Purpose**: Generate vector embeddings for semantic search
 
 **Configuration**:
+
 - Model: `text-embedding-ada-002`
 - Deployment name: `text-embedding-ada-002`
 - Region: Same as AI Search
 
 **Estimated Cost**:
+
 - $0.0001 per 1K tokens
 - ~10K tokens/month for indexing = $0.001/month
 
 ### 5. Azure Function
+
 **Purpose**: Automated monthly PDF download and re-indexing
 
 **Configuration**:
+
 - Runtime: Node.js 20 LTS
 - Plan: Consumption (Y1)
 - Trigger: Timer (first day of each month at 2 AM UTC)
@@ -125,19 +144,20 @@ This document describes the architecture for integrating Azure AI Search to prov
   - `UpdateLicensingPDF` - Downloads and indexes PDF
   - `HealthCheck` - Verifies index health
 
-**Estimated Cost**: 
+**Estimated Cost**:
+
 - Consumption plan: ~$0.20/month (1 execution/month + health checks)
 
 ## Total Monthly Cost Estimate
 
-| Service | Monthly Cost |
-|---------|--------------|
-| Azure Blob Storage | $0.02 |
-| Azure AI Document Intelligence | $0.03 |
-| Azure AI Search (Basic) | $75.00 |
-| Azure OpenAI (Embeddings) | <$0.01 |
-| Azure Function (Consumption) | $0.20 |
-| **TOTAL** | **~$75.25/month** |
+| Service                        | Monthly Cost      |
+| ------------------------------ | ----------------- |
+| Azure Blob Storage             | $0.02             |
+| Azure AI Document Intelligence | $0.03             |
+| Azure AI Search (Basic)        | $75.00            |
+| Azure OpenAI (Embeddings)      | <$0.01            |
+| Azure Function (Consumption)   | $0.20             |
+| **TOTAL**                      | **~$75.25/month** |
 
 ## Deployment Guide
 
@@ -327,6 +347,7 @@ output functionAppName string = functionApp.name
 ```
 
 Deploy:
+
 ```bash
 az deployment group create \
   --resource-group copilot-guidance-rg \
@@ -343,6 +364,7 @@ az deployment group create \
 See [azure-function/](../azure-function/) directory for implementation.
 
 Key files:
+
 - `UpdateLicensingPDF/index.ts` - Main indexing logic
 - `UpdateLicensingPDF/function.json` - Timer trigger config
 - `package.json` - Dependencies
@@ -359,6 +381,7 @@ AZURE_SEARCH_INDEX=licensing-docs
 ```
 
 The API endpoints are already implemented in `apps/api/src/index.ts`:
+
 - `GET /api/licensing` - Structured licensing data
 - `POST /api/licensing/calculate` - Cost calculator
 - `POST /api/licensing/search` - Semantic search (requires Azure AI Search)
@@ -396,8 +419,8 @@ export function LicensingSearch() {
   return (
     <div className="licensing-search">
       <h2>Search Licensing Documentation</h2>
-      <input 
-        type="text" 
+      <input
+        type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="e.g., 'What are Copilot Credits?'"
@@ -405,7 +428,7 @@ export function LicensingSearch() {
       <button onClick={handleSearch} disabled={loading}>
         {loading ? 'Searching...' : 'Search'}
       </button>
-      
+
       <div className="results">
         {results.map((result, i) => (
           <div key={i} className="result">
@@ -427,6 +450,7 @@ export function LicensingSearch() {
 ### Monthly Updates
 
 The Azure Function automatically:
+
 1. Downloads latest PDF from `https://go.microsoft.com/fwlink/?linkid=2320995`
 2. Checks if file has changed (SHA-256 hash comparison)
 3. If changed:
@@ -438,6 +462,7 @@ The Azure Function automatically:
 ### Manual Update
 
 To manually trigger update:
+
 ```bash
 az functionapp function invoke \
   --resource-group copilot-guidance-rg \
@@ -448,11 +473,13 @@ az functionapp function invoke \
 ### Monitoring
 
 Set up Azure Monitor alerts:
+
 - Function execution failures
 - Search service throttling
 - Index size exceeds 80% capacity
 
 Log Analytics queries:
+
 ```kusto
 // Failed indexing attempts
 FunctionAppLogs
@@ -470,17 +497,20 @@ AzureDiagnostics
 ## Cost Optimization Options
 
 ### Option 1: Use Free Tier (for testing)
+
 - Azure AI Search: Free tier (50 MB storage, 3 indexes)
 - Limitation: No semantic search
 - **Cost**: $0/month (excluding Document Intelligence & OpenAI)
 
 ### Option 2: Static Extraction (No Azure AI Search)
+
 - Extract PDF content once using Document Intelligence
 - Store as JSON in `licensing-data.json`
 - Use client-side search (Fuse.js)
 - **Cost**: $0/month ongoing (one-time $0.03 extraction)
 
 ### Option 3: GitHub Actions (instead of Azure Function)
+
 - Use GitHub Actions for monthly updates
 - Store extracted content in repository
 - **Cost**: $0/month (GitHub Actions free for public repos)
@@ -502,7 +532,7 @@ name: Update Licensing PDF
 
 on:
   schedule:
-    - cron: '0 2 1 * *'  # First day of month at 2 AM
+    - cron: '0 2 1 * *' # First day of month at 2 AM
   workflow_dispatch:
 
 jobs:
@@ -510,20 +540,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Download PDF
         run: |
           curl -L -o licensing-guide.pdf \
             https://go.microsoft.com/fwlink/?linkid=2320995
-      
+
       - name: Extract text (using pdf2txt)
         run: |
           pip install pdfminer.six
           pdf2txt.py licensing-guide.pdf > licensing-guide.txt
-      
+
       - name: Update structured data
         run: node scripts/extract-licensing-data.js
-      
+
       - name: Commit changes
         run: |
           git config user.name "GitHub Actions"
@@ -534,12 +564,14 @@ jobs:
 ```
 
 **Benefits**:
+
 - $0/month cost
 - Version controlled
 - CI/CD integrated
 - No Azure infrastructure needed
 
 **Limitations**:
+
 - No semantic search (use client-side search instead)
 - Text extraction quality lower than Document Intelligence
 - Manual review needed for accuracy
@@ -553,6 +585,7 @@ For this project, I recommend:
 3. **Long-term**: Add Azure AI Search when query volume justifies cost (~$75/mo)
 
 The structured licensing data in `licensing-data.json` covers 95% of common questions. Azure AI Search is only needed for:
+
 - Complex natural language queries
 - Edge case licensing scenarios
 - High-volume usage (>1000 searches/day)

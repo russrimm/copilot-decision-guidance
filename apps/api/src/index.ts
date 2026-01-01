@@ -213,17 +213,18 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
     }
 
     // Load licensing data for context
-    const licensingDataPath = path.join(__dirname, '../../../packages/decision-engine/src/data/licensing-data.json');
+    const licensingDataPath = path.join(
+      __dirname,
+      '../../../packages/decision-engine/src/data/licensing-data.json'
+    );
     const licensingData = await readFile(licensingDataPath, 'utf-8');
     const licensing = JSON.parse(licensingData);
 
     // Build conversation history
-    const conversationHistory = (history || [])
-      .slice(-5)
-      .map((msg: any) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
+    const conversationHistory = (history || []).slice(-5).map((msg: any) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
 
     // System prompt with knowledge base
     const systemPrompt = `You are a helpful Microsoft Copilot Knowledge Agent specializing in Microsoft 365 Copilot and Copilot Studio. Your role is to help users understand:
@@ -246,8 +247,14 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
    ${licensing.decisionGuide.useCopilotStudioWhen.map((w: string) => `   - Use Copilot Studio when: ${w}`).join('\n')}
 
 4. **Deployment Channels**
-   - M365 Copilot: ${Object.entries(licensing.featureComparison.deploymentChannels).filter(([_, v]: any) => v.m365Copilot).map(([k, _]: any) => k).join(', ')}
-   - Copilot Studio: ${Object.entries(licensing.featureComparison.deploymentChannels).filter(([_, v]: any) => v.copilotStudio).map(([k, _]: any) => k).join(', ')}
+   - M365 Copilot: ${Object.entries(licensing.featureComparison.deploymentChannels)
+     .filter(([_, v]: any) => v.m365Copilot)
+     .map(([k, _]: any) => k)
+     .join(', ')}
+   - Copilot Studio: ${Object.entries(licensing.featureComparison.deploymentChannels)
+     .filter(([_, v]: any) => v.copilotStudio)
+     .map(([k, _]: any) => k)
+     .join(', ')}
 
 **Guidelines:**
 - Be conversational and helpful
@@ -291,7 +298,8 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
       }
 
       const data = (await response.json()) as any;
-      responseText = data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response.';
+      responseText =
+        data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response.';
     } else if (openaiKey) {
       // OpenAI
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -317,7 +325,8 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
       }
 
       const data = (await response.json()) as any;
-      responseText = data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response.';
+      responseText =
+        data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response.';
     } else {
       throw new Error('No valid API configuration');
     }
@@ -335,7 +344,10 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
 // Get licensing data
 app.get('/api/licensing', async (_req: Request, res: Response) => {
   try {
-    const licensingDataPath = path.join(__dirname, '../../../packages/decision-engine/src/data/licensing-data.json');
+    const licensingDataPath = path.join(
+      __dirname,
+      '../../../packages/decision-engine/src/data/licensing-data.json'
+    );
     const data = await readFile(licensingDataPath, 'utf-8');
     const licensingData = JSON.parse(data);
     res.json(licensingData);
@@ -351,10 +363,15 @@ app.post('/api/licensing/calculate', async (req: Request, res: Response) => {
     const { users, messagesPerMonth, licenseType } = req.body;
 
     if (!users || !messagesPerMonth) {
-      return res.status(400).json({ error: 'Missing required parameters: users, messagesPerMonth' });
+      return res
+        .status(400)
+        .json({ error: 'Missing required parameters: users, messagesPerMonth' });
     }
 
-    const licensingDataPath = path.join(__dirname, '../../../packages/decision-engine/src/data/licensing-data.json');
+    const licensingDataPath = path.join(
+      __dirname,
+      '../../../packages/decision-engine/src/data/licensing-data.json'
+    );
     const data = await readFile(licensingDataPath, 'utf-8');
     const licensingData = JSON.parse(data);
 
@@ -367,15 +384,18 @@ app.post('/api/licensing/calculate', async (req: Request, res: Response) => {
 
     // Copilot Studio cost calculations
     const totalMessages = messagesPerMonth;
-    
+
     // Pay-as-you-go
-    const payAsYouGoCost = totalMessages * licensingData.licenses.copilotStudioPayAsYouGo.pricePerMessage;
+    const payAsYouGoCost =
+      totalMessages * licensingData.licenses.copilotStudioPayAsYouGo.pricePerMessage;
 
     // Subscription model
     const subscriptionBase = licensingData.licenses.copilotStudioSubscription.pricePerTenant;
     const includedMessages = licensingData.licenses.copilotStudioSubscription.messagesIncluded;
     const overageMessages = Math.max(0, totalMessages - includedMessages);
-    const subscriptionCost = subscriptionBase + (overageMessages * licensingData.licenses.copilotStudioSubscription.pricePerAdditionalMessage);
+    const subscriptionCost =
+      subscriptionBase +
+      overageMessages * licensingData.licenses.copilotStudioSubscription.pricePerAdditionalMessage;
 
     // Choose better Copilot Studio option
     copilotStudioCost = Math.min(payAsYouGoCost, subscriptionCost);
@@ -386,11 +406,17 @@ app.post('/api/licensing/calculate', async (req: Request, res: Response) => {
       recommendation = `For ${users} users with Microsoft 365 Copilot: $${m365Cost.toFixed(2)}/month`;
     }
     if (licenseType === 'studio' || licenseType === 'hybrid') {
-      recommendation += (recommendation ? ' + ' : '') + `Copilot Studio (${recommendedModel}): $${copilotStudioCost.toFixed(2)}/month for ${messagesPerMonth.toLocaleString()} messages`;
+      recommendation +=
+        (recommendation ? ' + ' : '') +
+        `Copilot Studio (${recommendedModel}): $${copilotStudioCost.toFixed(2)}/month for ${messagesPerMonth.toLocaleString()} messages`;
     }
 
-    const totalCost = (licenseType === 'hybrid' ? m365Cost + copilotStudioCost : 
-                       licenseType === 'm365' ? m365Cost : copilotStudioCost);
+    const totalCost =
+      licenseType === 'hybrid'
+        ? m365Cost + copilotStudioCost
+        : licenseType === 'm365'
+          ? m365Cost
+          : copilotStudioCost;
 
     res.json({
       users,
@@ -407,8 +433,8 @@ app.post('/api/licensing/calculate', async (req: Request, res: Response) => {
       notes: [
         `M365 Copilot includes unlimited Copilot Studio messages within Teams, SharePoint, and Office apps`,
         `Copilot Studio subscription ($${subscriptionBase}/month) becomes cost-effective above ${licensingData.licenses.copilotStudioSubscription.messagesIncluded.toLocaleString()} messages/month`,
-        `External channels (web, WhatsApp, mobile) require separate Copilot Studio licensing`
-      ]
+        `External channels (web, WhatsApp, mobile) require separate Copilot Studio licensing`,
+      ],
     });
   } catch (error) {
     console.error('Error calculating cost:', error);
@@ -420,7 +446,7 @@ app.post('/api/licensing/calculate', async (req: Request, res: Response) => {
 app.post('/api/licensing/search', async (req: Request, res: Response) => {
   try {
     const { query } = req.body;
-    
+
     if (!query) {
       return res.status(400).json({ error: 'Missing required parameter: query' });
     }
@@ -431,10 +457,11 @@ app.post('/api/licensing/search', async (req: Request, res: Response) => {
     const searchIndex = process.env.AZURE_SEARCH_INDEX || 'licensing-docs';
 
     if (!searchEndpoint || !searchKey) {
-      return res.status(501).json({ 
+      return res.status(501).json({
         error: 'Azure AI Search not configured',
-        message: 'Set AZURE_SEARCH_ENDPOINT and AZURE_SEARCH_KEY environment variables to enable semantic search',
-        fallback: 'Use /api/licensing endpoint for structured licensing data'
+        message:
+          'Set AZURE_SEARCH_ENDPOINT and AZURE_SEARCH_KEY environment variables to enable semantic search',
+        fallback: 'Use /api/licensing endpoint for structured licensing data',
       });
     }
 
@@ -469,9 +496,9 @@ app.post('/api/licensing/search', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error searching licensing docs:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to search licensing documentation',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 });

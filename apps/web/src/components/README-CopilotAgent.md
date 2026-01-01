@@ -8,7 +8,7 @@ An AI-powered chat interface that helps users understand Microsoft 365 Copilot a
 - **Knowledge Base**: Powered by structured licensing data from the December 2025 Microsoft licensing guide
 - **Cost Calculations**: Can provide cost estimates on-demand
 - **Contextual Responses**: Maintains conversation history for better context
-- **Dual Display Modes**: 
+- **Dual Display Modes**:
   - **Inline**: Embedded in the landing page
   - **Floating**: Accessible from all pages via a floating button
 
@@ -21,7 +21,7 @@ The agent is displayed inline on the landing page:
 ```tsx
 import { CopilotAgent } from '../components/CopilotAgent';
 
-<CopilotAgent variant="inline" />
+<CopilotAgent variant="inline" />;
 ```
 
 ### Floating (All Pages)
@@ -31,7 +31,7 @@ The agent appears as a floating button in the bottom-right corner:
 ```tsx
 import { CopilotAgent } from '../components/CopilotAgent';
 
-<CopilotAgent variant="floating" />
+<CopilotAgent variant="floating" />;
 ```
 
 ## API Endpoint
@@ -41,6 +41,7 @@ The agent communicates with the backend via:
 **POST** `/api/copilot-agent/chat`
 
 **Request:**
+
 ```json
 {
   "message": "What's the difference between M365 Copilot and Copilot Studio?",
@@ -52,6 +53,7 @@ The agent communicates with the backend via:
 ```
 
 **Response:**
+
 ```json
 {
   "response": "Microsoft 365 Copilot and Copilot Studio serve different purposes..."
@@ -80,6 +82,7 @@ The agent has access to:
 Requires either Azure OpenAI or OpenAI API key:
 
 ### Azure OpenAI (Recommended)
+
 ```bash
 AZURE_OPENAI_API_KEY=your-key
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
@@ -87,6 +90,7 @@ AZURE_OPENAI_DEPLOYMENT=your-deployment-name
 ```
 
 ### OpenAI
+
 ```bash
 OPENAI_API_KEY=your-key
 ```
@@ -114,7 +118,7 @@ OPENAI_API_KEY=your-key
 - **Message History**: Scrollable conversation view
 - **Loading States**: Animated typing indicators
 - **Timestamps**: Each message includes send time
-- **Keyboard Shortcuts**: 
+- **Keyboard Shortcuts**:
   - Enter: Send message
   - Shift+Enter: New line
 - **Responsive**: Works on desktop and mobile
@@ -122,6 +126,7 @@ OPENAI_API_KEY=your-key
 ## Styling
 
 Uses Tailwind CSS with dark mode support:
+
 - Light theme: Clean, professional
 - Dark theme: Comfortable for extended use
 - Animations: Smooth transitions and pulse effects

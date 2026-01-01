@@ -1,10 +1,14 @@
-import { AzureFunction, Context } from "@azure/functions";
-import { BlobServiceClient } from "@azure/storage-blob";
-import { DocumentAnalysisClient, AzureKeyCredential } from "@azure/ai-form-recognizer";
-import { SearchClient, SearchIndexClient, AzureKeyCredential as SearchKeyCredential } from "@azure/search-documents";
-import { OpenAIClient, AzureKeyCredential as OpenAIKeyCredential } from "@azure/openai";
-import fetch from "node-fetch";
-import crypto from "crypto";
+import { AzureFunction, Context } from '@azure/functions';
+import { BlobServiceClient } from '@azure/storage-blob';
+import { DocumentAnalysisClient, AzureKeyCredential } from '@azure/ai-form-recognizer';
+import {
+  SearchClient,
+  SearchIndexClient,
+  AzureKeyCredential as SearchKeyCredential,
+} from '@azure/search-documents';
+import { OpenAIClient, AzureKeyCredential as OpenAIKeyCredential } from '@azure/openai';
+import fetch from 'node-fetch';
+import crypto from 'crypto';
 
 interface LicensingChunk {
   id: string;
@@ -23,12 +27,12 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
 
   try {
     // Configuration
-    const pdfUrl = "https://go.microsoft.com/fwlink/?linkid=2320995";
+    const pdfUrl = 'https://go.microsoft.com/fwlink/?linkid=2320995';
     const storageConnectionString = process.env.AZURE_STORAGE_CONNECTION_STRING!;
-    const containerName = "licensing-docs";
+    const containerName = 'licensing-docs';
     const searchEndpoint = process.env.AZURE_SEARCH_ENDPOINT!;
     const searchKey = process.env.AZURE_SEARCH_KEY!;
-    const searchIndexName = process.env.AZURE_SEARCH_INDEX || "licensing-docs";
+    const searchIndexName = process.env.AZURE_SEARCH_INDEX || 'licensing-docs';
     const docIntelEndpoint = process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT!;
     const docIntelKey = process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY!;
     const openAIEndpoint = process.env.AZURE_OPENAI_ENDPOINT!;
@@ -36,13 +40,13 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
     const embeddingDeployment = process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT!;
 
     // Step 1: Download PDF
-    context.log("Downloading PDF from Microsoft CDN...");
+    context.log('Downloading PDF from Microsoft CDN...');
     const response = await fetch(pdfUrl);
     if (!response.ok) {
       throw new Error(`Failed to download PDF: ${response.statusText}`);
     }
     const pdfBuffer = await response.buffer();
-    const pdfHash = crypto.createHash("sha256").update(pdfBuffer).digest("hex");
+    const pdfHash = crypto.createHash('sha256').update(pdfBuffer).digest('hex');
     context.log(`PDF downloaded. Size: ${pdfBuffer.length} bytes, Hash: ${pdfHash}`);
 
     // Step 2: Check if PDF has changed
@@ -59,26 +63,29 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
       const properties = await blockBlobClient.getProperties();
       const existingHash = properties.metadata?.hash;
       if (existingHash === pdfHash) {
-        context.log("PDF has not changed. Skipping update.");
+        context.log('PDF has not changed. Skipping update.');
         shouldUpdate = false;
       }
     }
 
     if (shouldUpdate) {
       // Upload new PDF
-      context.log("Uploading PDF to Blob Storage...");
+      context.log('Uploading PDF to Blob Storage...');
       await blockBlobClient.upload(pdfBuffer, pdfBuffer.length, {
         metadata: { hash: pdfHash },
       });
 
       // Step 3: Extract text with Document Intelligence
-      context.log("Extracting text with Azure AI Document Intelligence...");
-      const docClient = new DocumentAnalysisClient(docIntelEndpoint, new AzureKeyCredential(docIntelKey));
-      const poller = await docClient.beginAnalyzeDocument("prebuilt-layout", pdfBuffer);
+      context.log('Extracting text with Azure AI Document Intelligence...');
+      const docClient = new DocumentAnalysisClient(
+        docIntelEndpoint,
+        new AzureKeyCredential(docIntelKey)
+      );
+      const poller = await docClient.beginAnalyzeDocument('prebuilt-layout', pdfBuffer);
       const result = await poller.pollUntilDone();
 
       if (!result.pages) {
-        throw new Error("No pages extracted from PDF");
+        throw new Error('No pages extracted from PDF');
       }
 
       context.log(`Extracted ${result.pages.length} pages`);
@@ -89,13 +96,13 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
 
       for (const page of result.pages) {
         const pageNumber = page.pageNumber;
-        let pageText = "";
+        let pageText = '';
 
         // Extract text from page
         if (result.paragraphs) {
           for (const paragraph of result.paragraphs) {
-            if (paragraph.boundingRegions?.some(r => r.pageNumber === pageNumber)) {
-              pageText += paragraph.content + "\n\n";
+            if (paragraph.boundingRegions?.some((r) => r.pageNumber === pageNumber)) {
+              pageText += paragraph.content + '\n\n';
             }
           }
         }
@@ -104,7 +111,7 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
         const sections = pageText.split(/\n#{1,3}\s/);
         for (const section of sections) {
           if (section.trim().length > 100) {
-            const lines = section.trim().split("\n");
+            const lines = section.trim().split('\n');
             const title = lines[0].substring(0, 200);
             const content = section.trim();
 
@@ -113,7 +120,7 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
               content,
               title: title || `Page ${pageNumber}`,
               page: pageNumber,
-              section: title || "General",
+              section: title || 'General',
               url: `microsoft-copilot-studio-licensing-guide#page=${pageNumber}`,
               lastModified: currentDate,
             });
@@ -124,15 +131,15 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
       context.log(`Created ${chunks.length} content chunks`);
 
       // Step 5: Generate embeddings
-      context.log("Generating embeddings with Azure OpenAI...");
+      context.log('Generating embeddings with Azure OpenAI...');
       const openAIClient = new OpenAIClient(openAIEndpoint, new OpenAIKeyCredential(openAIKey));
 
       for (let i = 0; i < chunks.length; i += 10) {
         const batch = chunks.slice(i, i + 10);
-        const texts = batch.map(c => c.content.substring(0, 8000)); // Token limit
-        
+        const texts = batch.map((c) => c.content.substring(0, 8000)); // Token limit
+
         const embeddingResult = await openAIClient.getEmbeddings(embeddingDeployment, texts);
-        
+
         for (let j = 0; j < batch.length; j++) {
           chunks[i + j].contentVector = embeddingResult.data[j].embedding;
         }
@@ -141,7 +148,7 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
       }
 
       // Step 6: Update Azure AI Search index
-      context.log("Updating Azure AI Search index...");
+      context.log('Updating Azure AI Search index...');
       const searchClient = new SearchClient(
         searchEndpoint,
         searchIndexName,
@@ -149,18 +156,18 @@ const timerTrigger: AzureFunction = async function (context: Context, timer: any
       );
 
       // Delete old documents
-      const deleteResults = await searchClient.deleteDocuments(
-        chunks.map(c => ({ id: c.id }))
-      );
+      const deleteResults = await searchClient.deleteDocuments(chunks.map((c) => ({ id: c.id })));
       context.log(`Deleted ${deleteResults.results.length} old documents`);
 
       // Upload new documents
       const uploadResult = await searchClient.uploadDocuments(chunks);
       context.log(`Uploaded ${uploadResult.results.length} new documents`);
 
-      context.log(`✅ Successfully updated licensing documentation. Total chunks: ${chunks.length}`);
+      context.log(
+        `✅ Successfully updated licensing documentation. Total chunks: ${chunks.length}`
+      );
     } else {
-      context.log("✅ No update needed - PDF unchanged");
+      context.log('✅ No update needed - PDF unchanged');
     }
   } catch (error) {
     context.log.error(`❌ Error updating licensing PDF: ${error}`);

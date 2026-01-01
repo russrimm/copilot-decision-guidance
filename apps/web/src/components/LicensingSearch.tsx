@@ -31,7 +31,7 @@ export function LicensingSearch() {
         if (response.status === 501) {
           setError(
             'Azure AI Search is not configured. Using structured licensing data instead. ' +
-            'Visit the Admin page to set up Azure AI Search for semantic PDF search.'
+              'Visit the Admin page to set up Azure AI Search for semantic PDF search.'
           );
           return;
         }
@@ -89,8 +89,10 @@ export function LicensingSearch() {
 
       {/* Error Message */}
       {error && (
-        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 
-                        dark:border-yellow-800 rounded-lg">
+        <div
+          className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 
+                        dark:border-yellow-800 rounded-lg"
+        >
           <div className="flex items-start">
             <span className="text-yellow-600 dark:text-yellow-400 mr-2">⚠️</span>
             <div className="text-sm text-yellow-800 dark:text-yellow-200">{error}</div>
@@ -147,9 +149,7 @@ export function LicensingSearch() {
       {!loading && !error && results.length === 0 && query && (
         <div className="text-center py-12">
           <div className="text-4xl mb-4">🤷</div>
-          <div className="text-gray-600 dark:text-gray-400">
-            No results found for "{query}"
-          </div>
+          <div className="text-gray-600 dark:text-gray-400">No results found for "{query}"</div>
           <div className="text-sm text-gray-500 dark:text-gray-500 mt-2">
             Try different keywords or check the{' '}
             <a

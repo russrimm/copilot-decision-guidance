@@ -21,11 +21,13 @@ This Azure Function automatically downloads and indexes the Microsoft Copilot St
 ### Local Development
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Create `local.settings.json`:
+
    ```json
    {
      "IsEncrypted": false,
@@ -46,11 +48,13 @@ This Azure Function automatically downloads and indexes the Microsoft Copilot St
    ```
 
 3. Build TypeScript:
+
    ```bash
    npm run build
    ```
 
 4. Start function locally:
+
    ```bash
    npm start
    ```
@@ -95,26 +99,28 @@ func azure functionapp publish <your-function-app-name>
 ### Monitoring
 
 View logs in Azure Portal:
+
 - Function App → Functions → UpdateLicensingPDF → Monitor
 - Application Insights for detailed telemetry
 
 ### Error Handling
 
 The function will:
+
 - Retry automatically (3 times by default)
 - Log errors to Application Insights
 - Send alerts (if configured)
 
 ## Cost Per Execution
 
-| Service | Cost per run |
-|---------|--------------|
-| Function execution | ~$0.0002 |
-| Document Intelligence (20 pages) | $0.03 |
-| Azure OpenAI embeddings | ~$0.001 |
-| Blob Storage (write) | <$0.001 |
-| AI Search (indexing) | Included in tier |
-| **Total** | **~$0.03** |
+| Service                          | Cost per run     |
+| -------------------------------- | ---------------- |
+| Function execution               | ~$0.0002         |
+| Document Intelligence (20 pages) | $0.03            |
+| Azure OpenAI embeddings          | ~$0.001          |
+| Blob Storage (write)             | <$0.001          |
+| AI Search (indexing)             | Included in tier |
+| **Total**                        | **~$0.03**       |
 
 Monthly cost: ~$0.03 (assuming 1 update/month)
 
@@ -136,17 +142,21 @@ curl -X POST http://localhost:7071/admin/functions/UpdateLicensingPDF
 ## Troubleshooting
 
 ### PDF Download Fails
+
 - Check if URL is accessible: `curl -I https://go.microsoft.com/fwlink/?linkid=2320995`
 - Verify outbound network connectivity from Function App
 
 ### Document Intelligence Errors
+
 - Verify endpoint and key are correct
 - Check quota limits (S0 tier: 15 requests/sec)
 
 ### Embedding Generation Slow
+
 - Increase batch size (currently 10 chunks at a time)
 - Consider using PTU (Provisioned Throughput Units) for consistent performance
 
 ### Search Index Update Fails
+
 - Verify search service is not at capacity
 - Check for index schema mismatches
