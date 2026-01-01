@@ -488,7 +488,7 @@ app.post('/api/licensing/search', async (req: Request, res: Response) => {
       throw new Error(`Azure AI Search error: ${response.status}`);
     }
 
-    const data = await response.json() as { value: any[]; '@odata.count': number };
+    const data = (await response.json()) as { value: any[]; '@odata.count': number };
     res.json({
       results: data.value,
       count: data['@odata.count'],
