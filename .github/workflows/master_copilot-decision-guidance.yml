@@ -30,8 +30,6 @@ jobs:
           npm run build:api
           npm run build:web
           npm run test --if-present
-        env:
-          NODE_ENV: production
 
       - name: Prepare deployment package
         run: |
