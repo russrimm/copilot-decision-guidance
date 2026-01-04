@@ -927,15 +927,80 @@ Return ONLY valid JSON (no markdown, no code blocks):
 
     if (azureKey && azureEndpoint && azureDeployment) {
       // Azure OpenAI
-      const response = await fetch(
-        `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`,
-        {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
+      try {
+        const response = await fetch(
+          `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'api-key': azureKey,
+            },
+            body: JSON.stringify({
+              messages: [
+                {
+                  role: 'system',
+                  content:
+                    'You are a Microsoft AI solutions advisor. Provide accurate, compliance-aware guidance. Return only valid JSON.',
+                },
+                { role: 'user', content: prompt },
+              ],
+              max_completion_tokens: 16000,
+              response_format: { type: 'json_object' },
+            }),
+            signal: controller.signal,
+          }
+        );
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errorBody = await response.text();
+          console.error(`[AI Explanation] Azure OpenAI API error details:`, errorBody);
+          throw new Error(
+            `Azure OpenAI API error: ${response.status} ${response.statusText} - ${errorBody}`
+          );
+        }
+
+        const data = (await response.json()) as any;
+        console.log(
+          `[AI Explanation] Azure OpenAI response structure:`,
+          JSON.stringify(data, null, 2)
+        );
+
+        responseText = data.choices?.[0]?.message?.content || '';
+
+        if (!responseText || responseText.trim().length === 0) {
+          console.error(`[AI Explanation] Empty response from Azure OpenAI`);
+          console.error(`[AI Explanation] Full response data:`, data);
+          console.error(`[AI Explanation] Choices array:`, data.choices);
+          console.error(`[AI Explanation] First choice:`, data.choices?.[0]);
+          throw new Error('Azure OpenAI returned empty response');
+        }
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError') {
+          console.error('[AI Explanation] Azure OpenAI request timed out after 30 seconds');
+          throw new Error('Azure OpenAI request timed out. Please try again.');
+        }
+        throw fetchError;
+      }
+    } else if (openaiKey) {
+      // OpenAI
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'api-key': azureKey,
+            Authorization: `Bearer ${openaiKey}`,
           },
           body: JSON.stringify({
+            model: 'gpt-4o',
             messages: [
               {
                 role: 'system',
@@ -944,69 +1009,32 @@ Return ONLY valid JSON (no markdown, no code blocks):
               },
               { role: 'user', content: prompt },
             ],
-            max_completion_tokens: 16000,
+            temperature: 0.3,
+            max_tokens: 2000,
             response_format: { type: 'json_object' },
           }),
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
         }
-      );
 
-      if (!response.ok) {
-        const errorBody = await response.text();
-        console.error(`[AI Explanation] Azure OpenAI API error details:`, errorBody);
-        throw new Error(
-          `Azure OpenAI API error: ${response.status} ${response.statusText} - ${errorBody}`
-        );
-      }
+        const data = (await response.json()) as any;
+        responseText = data.choices?.[0]?.message?.content || '';
 
-      const data = (await response.json()) as any;
-      console.log(
-        `[AI Explanation] Azure OpenAI response structure:`,
-        JSON.stringify(data, null, 2)
-      );
-
-      responseText = data.choices?.[0]?.message?.content || '';
-
-      if (!responseText || responseText.trim().length === 0) {
-        console.error(`[AI Explanation] Empty response from Azure OpenAI`);
-        console.error(`[AI Explanation] Full response data:`, data);
-        console.error(`[AI Explanation] Choices array:`, data.choices);
-        console.error(`[AI Explanation] First choice:`, data.choices?.[0]);
-        throw new Error('Azure OpenAI returned empty response');
-      }
-    } else if (openaiKey) {
-      // OpenAI
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${openaiKey}`,
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o',
-          messages: [
-            {
-              role: 'system',
-              content:
-                'You are a Microsoft AI solutions advisor. Provide accurate, compliance-aware guidance. Return only valid JSON.',
-            },
-            { role: 'user', content: prompt },
-          ],
-          temperature: 0.3,
-          max_tokens: 2000,
-          response_format: { type: 'json_object' },
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = (await response.json()) as any;
-      responseText = data.choices?.[0]?.message?.content || '';
-
-      if (!responseText || responseText.trim().length === 0) {
-        console.error(`[AI Explanation] Empty response from OpenAI`);
-        throw new Error('OpenAI returned empty response');
+        if (!responseText || responseText.trim().length === 0) {
+          console.error(`[AI Explanation] Empty response from OpenAI`);
+          throw new Error('OpenAI returned empty response');
+        }
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError') {
+          console.error('[AI Explanation] OpenAI request timed out after 30 seconds');
+          throw new Error('OpenAI request timed out. Please try again.');
+        }
+        throw fetchError;
       }
     } else {
       throw new Error('No valid API configuration');

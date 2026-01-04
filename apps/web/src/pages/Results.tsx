@@ -28,6 +28,12 @@ export default function Results() {
     // Fetch AI-enhanced explanation
     if (recommendation) {
       console.log('[Results] Fetching AI explanation for type:', recommendation.type);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+        console.error('[Results] AI explanation request timed out after 35 seconds');
+      }, 35000); // 35 second timeout (slightly longer than backend)
+      
       fetch('/api/explain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,8 +41,12 @@ export default function Results() {
           recommendation: { ...recommendation, scoringResult },
           userContext: { answers },
         }),
+        signal: controller.signal,
       })
-        .then((res) => res.json())
+        .then((res) => {
+          clearTimeout(timeoutId);
+          return res.json();
+        })
         .then((data) => {
           console.log('[Results] Received explanation data:', data);
           if (data.explanation) {
@@ -50,7 +60,14 @@ export default function Results() {
             console.warn('[Results] No explanation in response data');
           }
         })
-        .catch((err) => console.error('Failed to load enhanced explanation:', err))
+        .catch((err) => {
+          clearTimeout(timeoutId);
+          if (err.name === 'AbortError') {
+            console.error('[Results] Request timed out - using fallback explanation');
+          } else {
+            console.error('Failed to load enhanced explanation:', err);
+          }
+        })
         .finally(() => setLoadingEnhancement(false));
     }
   }, [recommendation, scoringResult, answers]);
