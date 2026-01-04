@@ -260,11 +260,14 @@ export function generatePDF(
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
   reasons.forEach((reason, idx) => {
-    if (yPosition > 270) {
+    // Calculate needed space for this reason
+    const reasonLines = wrapText(`${idx + 1}. ${reason}`, maxWidth, 11);
+    const neededSpace = reasonLines.length * 6 + 4;
+    
+    if (yPosition + neededSpace > 270) {
       doc.addPage();
       yPosition = 20;
     }
-    const reasonLines = wrapText(`${idx + 1}. ${reason}`, maxWidth, 11);
     reasonLines.forEach((line) => {
       doc.text(line, margin, yPosition);
       yPosition += 6;
@@ -287,11 +290,14 @@ export function generatePDF(
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
   nextSteps.forEach((step, idx) => {
-    if (yPosition > 270) {
+    // Calculate needed space for this step
+    const stepLines = wrapText(`${idx + 1}. ${step}`, maxWidth, 11);
+    const neededSpace = stepLines.length * 6 + 4;
+    
+    if (yPosition + neededSpace > 270) {
       doc.addPage();
       yPosition = 20;
     }
-    const stepLines = wrapText(`${idx + 1}. ${step}`, maxWidth, 11);
     stepLines.forEach((line) => {
       doc.text(line, margin, yPosition);
       yPosition += 6;
@@ -314,11 +320,14 @@ export function generatePDF(
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
   risks.forEach((risk, idx) => {
-    if (yPosition > 270) {
+    // Calculate needed space for this risk
+    const riskLines = wrapText(`${idx + 1}. ${risk}`, maxWidth, 11);
+    const neededSpace = riskLines.length * 6 + 4;
+    
+    if (yPosition + neededSpace > 270) {
       doc.addPage();
       yPosition = 20;
     }
-    const riskLines = wrapText(`${idx + 1}. ${risk}`, maxWidth, 11);
     riskLines.forEach((line) => {
       doc.text(line, margin, yPosition);
       yPosition += 6;
@@ -329,7 +338,8 @@ export function generatePDF(
 
   // Compliance & Governance Considerations
   if (complianceConsiderations && complianceConsiderations.length > 0) {
-    if (yPosition > 230) {
+    // Ensure we have space for section header
+    if (yPosition > 250) {
       doc.addPage();
       yPosition = 20;
     }
@@ -342,11 +352,14 @@ export function generatePDF(
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
     complianceConsiderations.forEach((item, idx) => {
-      if (yPosition > 270) {
+      // Calculate needed space for this item
+      const itemLines = wrapText(`${idx + 1}. ${item}`, maxWidth, 11);
+      const neededSpace = itemLines.length * 6 + 4;
+      
+      if (yPosition + neededSpace > 270) {
         doc.addPage();
         yPosition = 20;
       }
-      const itemLines = wrapText(`${idx + 1}. ${item}`, maxWidth, 11);
       itemLines.forEach((line) => {
         doc.text(line, margin, yPosition);
         yPosition += 6;
@@ -357,7 +370,7 @@ export function generatePDF(
   }
 
   // Sources
-  if (yPosition > 230) {
+  if (yPosition > 250) {
     doc.addPage();
     yPosition = 20;
   }
