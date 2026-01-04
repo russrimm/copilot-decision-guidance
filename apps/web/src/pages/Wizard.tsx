@@ -11,18 +11,55 @@ export default function Wizard() {
     useWizardStore();
   const [model, setModel] = useState<DecisionModel | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [calculating, setCalculating] = useState(false);
   const { register, handleSubmit } = useForm();
 
   useEffect(() => {
     getDecisionModel()
       .then(setModel)
-      .catch(console.error)
+      .catch((err) => {
+        console.error('Failed to load decision model:', err);
+        setError(err.message || 'Failed to load questionnaire. Please try again.');
+      })
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading || !model) {
+  if (loading) {
     return <div className="text-center py-12">Loading questionnaire...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-red-600 dark:text-red-400 mb-4">
+          <p className="font-semibold">Error loading questionnaire</p>
+          <p className="text-sm mt-2">{error}</p>
+        </div>
+        <button
+          onClick={() => window.location.reload()}
+          className="btn-primary"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (!model) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-600 dark:text-gray-200 mb-4">
+          Unable to load questionnaire.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="btn-primary"
+        >
+          Reload
+        </button>
+      </div>
+    );
   }
 
   const groups = model.questionGroups;

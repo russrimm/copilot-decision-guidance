@@ -1,9 +1,30 @@
 import type { UserAnswers, Recommendation, ScoringResult } from '../types';
 
 const API_BASE_URL = '/api';
+const DEFAULT_TIMEOUT = 10000; // 10 seconds for API calls
+
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = DEFAULT_TIMEOUT): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`Request timeout after ${timeout}ms`);
+    }
+    throw error;
+  }
+}
 
 export async function getDecisionModel() {
-  const response = await fetch(`${API_BASE_URL}/model`);
+  const response = await fetchWithTimeout(`${API_BASE_URL}/model`);
   if (!response.ok) {
     throw new Error('Failed to fetch decision model');
   }
@@ -14,7 +35,7 @@ export async function calculateScore(answers: UserAnswers): Promise<{
   recommendation: Recommendation;
   scoringResult: ScoringResult;
 }> {
-  const response = await fetch(`${API_BASE_URL}/score`, {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/score`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -33,13 +54,17 @@ export async function getAIExplanation(
   recommendation: Recommendation,
   userContext?: any
 ): Promise<{ enhanced: boolean; explanation: string }> {
-  const response = await fetch(`${API_BASE_URL}/explain`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/explain`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ recommendation, userContext }),
     },
-    body: JSON.stringify({ recommendation, userContext }),
-  });
+    35000 // 35 seconds for AI explanation (longer timeout)
+  );
 
   if (!response.ok) {
     throw new Error('Failed to get AI explanation');
