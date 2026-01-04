@@ -43,13 +43,15 @@ export default function Layout() {
                   >
                     Home
                   </Link>
-                  <Link
-                    to="/admin"
-                    className="text-sm font-medium text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100"
-                    title="Admin panel"
-                  >
-                    Admin
-                  </Link>
+                  {__ENABLE_ADMIN__ && (
+                    <Link
+                      to="/admin"
+                      className="text-sm font-medium text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100"
+                      title="Admin panel (dev only)"
+                    >
+                      Admin
+                    </Link>
+                  )}
                 </nav>
               )}
               <ThemeToggle />

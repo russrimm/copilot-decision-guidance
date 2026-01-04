@@ -17,4 +17,8 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  define: {
+    // Explicitly set to false in production builds
+    __ENABLE_ADMIN__: JSON.stringify(process.env.NODE_ENV !== 'production'),
+  },
 });
