@@ -87,6 +87,27 @@ export interface Recommendation {
   nextSteps: string[];
   risks: string[];
   complianceConsiderations: string[];
+  keyDecisionPoints?: Array<{
+    question: string;
+    context: string;
+    factors: Array<{
+      factor: string;
+      studio: string;
+      foundry: string;
+    }>;
+    recommendation: string;
+  }>;
+  licensingBreakdown?: {
+    description: string;
+    platforms: Array<{
+      platform: string;
+      model: string;
+      cost: string;
+      notes: string;
+      example: string;
+    } | null>;
+    totalCostExample: string;
+  };
   sources: Array<{
     title: string;
     url: string;

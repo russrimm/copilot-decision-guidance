@@ -65,14 +65,29 @@ function determineRecommendation(scores, thresholds) {
         { type: 'AGENT_BUILDER', score: scores.agentBuilder },
         { type: 'HYBRID', score: scores.hybrid },
     ].sort((a, b) => b.score - a.score);
-    const [highest, secondHighest] = sortedScores;
+    const [highest, secondHighest, thirdHighest] = sortedScores;
     // If hybrid score is within threshold of the top, recommend hybrid
     if (highest.type !== 'HYBRID' && scores.hybrid >= highest.score - hybridThreshold) {
+        return 'HYBRID';
+    }
+    // If multiple platforms score close to each other (3+ platforms competitive), recommend hybrid
+    // This catches scenarios where M365 + Studio + Foundry are all viable options
+    const competitiveScores = sortedScores.filter((s) => s.type !== 'HYBRID' && s.score >= highest.score - (winMargin * 2));
+    if (competitiveScores.length >= 3) {
         return 'HYBRID';
     }
     // If the difference between top two is small, recommend hybrid
     if (highest.score - secondHighest.score < winMargin) {
         return 'HYBRID';
+    }
+    // If Foundry and Copilot Studio are both strong (indicates overlapping capabilities), recommend hybrid
+    if ((highest.type === 'FOUNDRY' || secondHighest.type === 'FOUNDRY') &&
+        (highest.type === 'COPILOT_STUDIO' || secondHighest.type === 'COPILOT_STUDIO')) {
+        const foundryScore = scores.foundry;
+        const studioScore = scores.copilotStudio;
+        if (Math.abs(foundryScore - studioScore) < winMargin * 1.5) {
+            return 'HYBRID';
+        }
     }
     // Otherwise, recommend the highest scoring option
     return highest.type;

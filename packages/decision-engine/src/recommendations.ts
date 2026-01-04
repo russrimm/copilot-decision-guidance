@@ -324,52 +324,240 @@ function generateAgentBuilderRecommendation(scoringResult: ScoringResult): Recom
 }
 
 function generateHybridRecommendation(scoringResult: ScoringResult): Recommendation {
+  const scores = scoringResult.scores;
+
+  // Determine which platforms scored competitively (within threshold of top score)
+  const maxScore = Math.max(
+    scores.m365Copilot,
+    scores.copilotStudio,
+    scores.foundry,
+    scores.agentBuilder
+  );
+  const threshold = 15; // Platforms within 15 points of max are considered "competitive"
+
+  const competitivePlatforms = {
+    m365: scores.m365Copilot >= maxScore - threshold,
+    studio: scores.copilotStudio >= maxScore - threshold,
+    foundry: scores.foundry >= maxScore - threshold,
+    agentBuilder: scores.agentBuilder >= maxScore - threshold,
+  };
+
+  // Check for Foundry vs Studio overlap
+  const foundryStudioOverlap =
+    competitivePlatforms.foundry &&
+    competitivePlatforms.studio &&
+    Math.abs(scores.foundry - scores.copilotStudio) < 10;
+
   return {
     type: 'HYBRID',
     title: 'Hybrid Approach (Multiple Platforms)',
     summary:
-      'For this scenario, combining multiple Microsoft agentic platforms provides the best outcome. Deploy Microsoft 365 Copilot for broad productivity, Copilot Studio for custom agents, Microsoft Foundry for advanced AI development, and Agent Builder for simple knowledge-base bots. This hybrid approach is common—organizations use different platforms for different scenarios based on complexity, audience, and requirements.',
+      'For this scenario, combining multiple Microsoft agentic platforms provides the best outcome. This hybrid approach is common—organizations use different platforms for different scenarios based on complexity, audience, and requirements. Your scoring indicates multiple viable paths forward.',
     reasons: [
-      'You need both broad productivity enhancements AND custom business process automation',
-      'Your organization has diverse needs: general knowledge workers and specialized roles',
+      'Your requirements span multiple capability areas, making a single platform insufficient',
+      'You need both broad productivity enhancements (M365 Copilot) AND custom business process automation (Copilot Studio/Foundry)',
+      'Your organization has diverse needs: general knowledge workers, makers, and professional developers',
       'You want immediate value from out-of-the-box capabilities plus long-term custom solutions',
-      'Your data spans Microsoft 365 content and line-of-business systems',
-      'Copilot Studio agents can be published to M365 Copilot and Teams for seamless user experience',
-      'You have mixed audiences: internal employees and external customers or partners',
-      'You want to balance time-to-value (M365 Copilot) with tailored experiences (Copilot Studio)',
-      'Your budget supports per-user licensing for broad deployment plus targeted custom agents',
-    ],
+      'Your data spans Microsoft 365 content, line-of-business systems, and custom data sources',
+      competitivePlatforms.m365 && competitivePlatforms.studio
+        ? 'Copilot Studio agents can be published to M365 Copilot and Teams for seamless user experience'
+        : null,
+      'You have mixed audiences: internal employees and potentially external customers or partners',
+      'Your budget supports per-user licensing for broad deployment plus targeted custom solutions',
+      foundryStudioOverlap
+        ? '⚠️ OVERLAP AREA: Copilot Studio vs Microsoft Foundry - Both scored competitively for your scenario. See "Key Decision Points" below for guidance on choosing between them.'
+        : null,
+    ].filter(Boolean) as string[],
     nextSteps: [
-      'Phase 1: Deploy Microsoft 365 Copilot organization-wide to deliver immediate productivity benefits',
+      competitivePlatforms.m365
+        ? 'Phase 1: Deploy Microsoft 365 Copilot organization-wide to deliver immediate productivity benefits ($30/user/month)'
+        : null,
       'Ensure foundational governance is in place: permissions, DLP, sensitivity labels, compliance policies',
-      'Phase 2: Review the Copilot Studio implementation guide to plan your custom agent strategy',
-      'Identify high-value use cases for custom agents (e.g., customer support, HR automation, sales processes)',
-      'Set up Power Platform environment for Copilot Studio development with appropriate governance',
-      'Build and pilot custom agents with Copilot Studio for specific departments or processes',
-      'Phase 3: Evaluate Microsoft Foundry for advanced AI scenarios requiring pro-code development or custom model fine-tuning',
-      'Consider Agent Builder for rapid deployment of simple knowledge-base Q&A agents without custom development',
-      'Publish Copilot Studio agents to Microsoft 365 Copilot and Teams for unified user experience',
-      'Configure cross-product integration: ensure agents published to M365 Copilot respect tenant permissions and compliance',
-      'Monitor usage and ROI for M365 Copilot (via Copilot Dashboard), Copilot Studio agents (via analytics), and Foundry applications (via Application Insights)',
+      competitivePlatforms.studio || foundryStudioOverlap
+        ? 'Phase 2A (Low-code path): Use Copilot Studio for custom agents with no-code/low-code development'
+        : null,
+      competitivePlatforms.studio
+        ? '  ✓ Best for: Makers, citizen developers, rapid prototyping, 1000+ prebuilt connectors'
+        : null,
+      competitivePlatforms.studio
+        ? '  ✓ Licensing: Zero-rated when M365 Copilot users access Studio agents in Teams/SharePoint'
+        : null,
+      foundryStudioOverlap
+        ? '  ⚠️ Or Phase 2B (Pro-code path): Use Microsoft Foundry for full-stack AI development with code'
+        : competitivePlatforms.foundry
+          ? 'Phase 2B: Use Microsoft Foundry for advanced AI scenarios requiring pro-code development'
+          : null,
+      competitivePlatforms.foundry
+        ? '  ✓ Best for: Pro developers, custom model fine-tuning, complex orchestration, multi-agent systems'
+        : null,
+      competitivePlatforms.foundry
+        ? '  ✓ Licensing: Azure consumption (pay-as-you-go), PTU for reserved capacity'
+        : null,
+      foundryStudioOverlap
+        ? '  💡 DECISION FACTORS (Studio vs Foundry): Choose Studio if you prioritize speed-to-market, have limited dev resources, need Power Platform integration. Choose Foundry if you need custom models, complex AI workflows, full infrastructure control, or are building AI-first products.'
+        : null,
+      competitivePlatforms.agentBuilder
+        ? 'Phase 3 (Optional): Use Agent Builder for rapid deployment of simple knowledge-base Q&A agents'
+        : null,
+      competitivePlatforms.studio
+        ? 'Publish Copilot Studio agents to Microsoft 365 Copilot and Teams for unified user experience'
+        : null,
+      'Configure cross-product integration: ensure agents respect tenant permissions and compliance across platforms',
+      'Monitor usage and ROI: M365 Copilot Dashboard, Copilot Studio analytics, Azure Application Insights (Foundry)',
+      'Establish center of excellence (CoE) to manage governance, best practices, and platform selection criteria',
       'Iterate and expand: scale successful agents and identify new automation opportunities across all platforms',
-    ],
+    ].filter(Boolean) as string[],
     risks: [
-      'Complexity of managing two platforms—ensure clear governance and ownership boundaries',
-      'Higher total cost: per-user M365 Copilot licenses PLUS Copilot Studio capacity or usage costs',
-      'Requires diverse skillsets: end-user adoption for M365 Copilot AND low-code/dev skills for Copilot Studio',
+      'Complexity of managing multiple platforms—ensure clear governance and ownership boundaries',
+      'Higher total cost: M365 Copilot licenses + Copilot Studio capacity + Azure Foundry consumption',
+      'Requires diverse skillsets: end-user adoption (M365), low-code skills (Studio), pro-code development (Foundry)',
       'Risk of fragmented user experience if not designed cohesively—plan integration touchpoints',
-      'Both platforms require separate governance, monitoring, and compliance strategies',
-      'Change management complexity: training users on two different Copilot experiences',
-      'Data boundaries between M365 and external systems must be carefully managed to prevent leakage',
-    ],
+      'Each platform requires separate governance, monitoring, and compliance strategies',
+      'Change management complexity: training users on multiple experiences and knowing when to use each',
+      'Data boundaries between M365, Power Platform, and Azure must be carefully managed to prevent leakage',
+      foundryStudioOverlap
+        ? '⚠️ Platform overlap risk: Without clear decision criteria, teams may build the same capability on multiple platforms. Define when to use Studio vs Foundry early.'
+        : null,
+      competitivePlatforms.foundry
+        ? 'Foundry requires significant infrastructure setup, DevOps pipelines, and ongoing platform management'
+        : null,
+    ].filter(Boolean) as string[],
+    keyDecisionPoints: foundryStudioOverlap
+      ? [
+          {
+            question: 'Copilot Studio vs Microsoft Foundry - Which to Choose?',
+            context:
+              'Both platforms scored competitively for your scenario, indicating overlap in capabilities. They both support custom agent development, multi-turn conversations, and integration with enterprise data. Here is how to decide:',
+            factors: [
+              {
+                factor: 'Development Approach',
+                studio: 'No-code/low-code canvas with visual design tools',
+                foundry: 'Pro-code with Python/C# SDKs, Jupyter notebooks, VS Code',
+              },
+              {
+                factor: 'Target Developer Persona',
+                studio: 'Citizen developers, makers, business analysts',
+                foundry: 'Professional developers, data scientists, AI engineers',
+              },
+              {
+                factor: 'Speed to Market',
+                studio: 'Fastest—publish agents in hours/days with minimal code',
+                foundry: 'Slower—requires development, testing, deployment pipelines (weeks)',
+              },
+              {
+                factor: 'Custom Model Control',
+                studio: 'Uses Microsoft-managed Azure OpenAI models (GPT-4, GPT-4o)',
+                foundry:
+                  'Full control: fine-tune models, use custom models, adjust hyperparameters',
+              },
+              {
+                factor: 'Orchestration Patterns',
+                studio: 'Built-in topics, Power Automate flows, prebuilt connectors',
+                foundry: 'Custom orchestration with Semantic Kernel, LangChain, Prompt Flow',
+              },
+              {
+                factor: 'Data Integration',
+                studio: '1000+ prebuilt connectors (Power Platform), Dataverse, SharePoint',
+                foundry: 'Custom connectors via code, direct database access, Azure services',
+              },
+              {
+                factor: 'RAG (Retrieval-Augmented Generation)',
+                studio: 'Built-in knowledge base search (SharePoint, websites, files)',
+                foundry:
+                  'Full control: Azure AI Search, custom embeddings, vector stores, chunking strategies',
+              },
+              {
+                factor: 'Deployment Channels',
+                studio: 'Teams, SharePoint, M365 Copilot, web chat, custom websites, WhatsApp',
+                foundry: 'Custom applications, APIs, web apps (requires code integration)',
+              },
+              {
+                factor: 'Licensing Model',
+                studio:
+                  'Zero-rated in M365 Copilot contexts; otherwise $0.01/message or $200/25k messages',
+                foundry: 'Azure consumption (pay-as-you-go) or Provisioned Throughput Units (PTU)',
+              },
+              {
+                factor: 'Infrastructure Control',
+                studio: 'Fully managed—no infrastructure to manage',
+                foundry: 'Full control: VNet integration, private endpoints, custom networking',
+              },
+              {
+                factor: 'Multi-Agent Systems',
+                studio: 'Agent-to-agent handoffs (preview), limited orchestration',
+                foundry: 'Full multi-agent orchestration (AutoGen, Semantic Kernel patterns)',
+              },
+              {
+                factor: 'Compliance & Data Residency',
+                studio: 'Inherits Power Platform compliance, data residency',
+                foundry: 'Full control over data residency, custom compliance implementations',
+              },
+            ],
+            recommendation:
+              '**Choose Copilot Studio if:** You prioritize speed, have limited development resources, need Power Platform integration, want to empower citizen developers, require 1000+ prebuilt connectors, or need zero-rated licensing when deploying to M365 Copilot users.\n\n**Choose Microsoft Foundry if:** You need custom model fine-tuning, require full infrastructure control (VNet, private endpoints), are building AI-first products, need complex multi-agent orchestration, have professional development teams, or require advanced RAG customization.\n\n**Use Both if:** Deploy Studio for rapid, low-code agents for common scenarios AND Foundry for complex, custom AI applications requiring full control. Many enterprises use Studio for 80% of use cases (speed) and Foundry for the remaining 20% (complexity).',
+          },
+        ]
+      : undefined,
     complianceConsiderations: [
-      'Data Residency: M365 Copilot respects M365 tenant residency; Copilot Studio respects Power Platform environment regions. CRITICAL: If Copilot Studio agents enable web search, Bing API routes to US data centers only—organizations with EU Data Boundary or strict sovereignty requirements must disable web search.',
-      'Dual Compliance Frameworks: Both products support HIPAA (M365 BAA + Power Platform BAA) and other regulatory requirements. Ensure PHI/PII flows only through compliant paths and storage.',
-      'Licensing Complexity: M365 Copilot ($30/user/month for Enterprise) + Copilot Studio consumption. M365 Copilot licensed users get zero-rated Copilot Studio usage when using Graph grounding in Teams/SharePoint.',
-      'Governance Separation: M365 Copilot governed via M365 admin center; Copilot Studio governed via Power Platform admin center. Coordinate DLP policies, permissions, and audit strategies across both.',
-      'Integration Points: Declarative agents built in Copilot Studio can extend M365 Copilot. Ensure data classification and access controls are consistent across both platforms to prevent data leakage.',
+      'Data Residency: M365 Copilot respects M365 tenant residency; Copilot Studio respects Power Platform environment regions; Foundry respects Azure region selection. CRITICAL: If Copilot Studio agents enable web search, Bing API routes to US data centers only—organizations with EU Data Boundary or strict sovereignty requirements must disable web search.',
+      'Multi-Platform Compliance: All platforms support HIPAA (M365 BAA + Power Platform BAA + Azure BAA) and other regulatory requirements. Ensure PHI/PII flows only through compliant paths and storage.',
+      'Governance Separation: M365 Copilot governed via M365 admin center; Copilot Studio governed via Power Platform admin center; Foundry governed via Azure Portal. Coordinate DLP policies, permissions, and audit strategies across all platforms.',
+      'Integration Points: Declarative agents built in Copilot Studio can extend M365 Copilot. Ensure data classification and access controls are consistent across all platforms to prevent data leakage.',
+      competitivePlatforms.foundry
+        ? 'Foundry Data Isolation: Foundry projects can be configured with VNet integration and private endpoints for complete network isolation. Data processed in Foundry does NOT leave your Azure subscription unless explicitly configured.'
+        : null,
       'AI Compliance Resources: Access comprehensive compliance documentation at https://servicetrust.microsoft.com/viewpage/AIResources including: ISO 42001 Audit Report for M365 Copilot (March 2025), GDPR & Generative AI Guide (May 2024), Risk Assessment Quickstart (Aug 2025), Managing Risk in Financial Services (Nov 2025), Works Council Adoption Guide (April 2025), and unified governance controls across platforms.',
-    ],
+    ].filter(Boolean) as string[],
+    licensingBreakdown: {
+      description:
+        'Hybrid approach licensing is complex because each platform has different pricing models. Here is how to estimate total cost:',
+      platforms: [
+        competitivePlatforms.m365
+          ? {
+              platform: 'Microsoft 365 Copilot',
+              model: 'Per-user subscription',
+              cost: '$30/user/month (Microsoft 365 Copilot for Enterprise)',
+              notes:
+                'Required for broad productivity deployment. Includes zero-rated access to Copilot Studio agents when accessed via M365 Copilot, Teams, or SharePoint.',
+              example: '1000 users × $30 = $30,000/month (baseline for productivity)',
+            }
+          : null,
+        competitivePlatforms.studio || foundryStudioOverlap
+          ? {
+              platform: 'Copilot Studio',
+              model: 'Message-based consumption OR subscription',
+              cost: '$0.01/message OR $200 for 25,000 messages/month',
+              notes:
+                'Zero-rated when M365 Copilot licensed users access agents in Teams/SharePoint/M365 Copilot. Consumption applies for standalone use, external channels (web, WhatsApp), or non-M365-licensed users.',
+              example:
+                'Custom HR agent with 10,000 monthly messages from non-M365 users = $100/month. If accessed by M365 Copilot users in Teams = $0/month.',
+            }
+          : null,
+        competitivePlatforms.foundry || foundryStudioOverlap
+          ? {
+              platform: 'Microsoft Foundry (Azure AI Foundry)',
+              model: 'Azure consumption (pay-as-you-go) OR Provisioned Throughput Units (PTU)',
+              cost: 'Variable: Azure OpenAI token pricing ($0.03-$0.12/1k tokens depending on model) + infrastructure (compute, storage, networking)',
+              notes:
+                'Cost depends on model choice (GPT-4, GPT-4o, custom), usage volume, and infrastructure footprint. PTU ($6.50/hour/100k tokens) recommended for predictable high-volume workloads.',
+              example:
+                'Custom AI application with 1M GPT-4o tokens/month = ~$60/month (tokens) + $200/month (App Service, AI Search, storage) = $260/month total. High-volume scenarios with PTU = $4,680/month (PTU) + infrastructure.',
+            }
+          : null,
+        competitivePlatforms.agentBuilder
+          ? {
+              platform: 'Agent Builder',
+              model: 'Included with Copilot Studio licensing',
+              cost: 'No separate cost—uses Copilot Studio message consumption ($0.01/message or $200/25k messages)',
+              notes:
+                'Same zero-rated benefit as Copilot Studio when accessed by M365 Copilot users in Teams/SharePoint.',
+              example:
+                'Simple FAQ agent with 5,000 monthly messages = $50/month (standalone) or $0/month (M365 Copilot users in Teams).',
+            }
+          : null,
+      ].filter(Boolean),
+      totalCostExample: `**Example Hybrid Deployment Cost:**\n${competitivePlatforms.m365 ? '- M365 Copilot: 1000 users × $30 = $30,000/month\n' : ''}${competitivePlatforms.studio ? '- Copilot Studio: 20,000 external messages = $200/month\n' : ''}${competitivePlatforms.foundry ? '- Foundry: 2 custom AI apps @ $500/month each = $1,000/month\n' : ''}${competitivePlatforms.agentBuilder ? '- Agent Builder: Included in Studio consumption\n' : ''}\n**Total: $${(competitivePlatforms.m365 ? 30000 : 0) + (competitivePlatforms.studio ? 200 : 0) + (competitivePlatforms.foundry ? 1000 : 0)}/month**\n\n💡 **Cost Optimization Tips:**\n- Maximize zero-rated Studio usage by publishing agents to M365 Copilot for licensed users\n- Use Agent Builder for simple knowledge-base scenarios to avoid custom development costs\n${competitivePlatforms.foundry ? '- Use Foundry PTU for high-volume, predictable workloads to reduce per-token costs\n' : ''}- Monitor usage across all platforms with Azure Cost Management and Power Platform admin analytics`,
+    },
     sources: [
       {
         title: 'Microsoft 365 Copilot Overview',

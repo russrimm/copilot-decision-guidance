@@ -426,7 +426,8 @@ export default function Results() {
               </div>
               <div>
                 <span className="font-medium">Scores: </span>
-                M365={scores.m365Copilot} | Studio={scores.copilotStudio} | Hybrid={scores.hybrid}
+                M365={scores.m365Copilot} | Studio={scores.copilotStudio} | Foundry={scores.foundry}{' '}
+                | Agent={scores.agentBuilder} | Hybrid={scores.hybrid}
               </div>
             </div>
           </div>
@@ -594,6 +595,131 @@ export default function Results() {
             </div>
           )}
 
+          {/* Key Decision Points (Platform Overlap Guidance) */}
+          {recommendation.keyDecisionPoints && recommendation.keyDecisionPoints.length > 0 && (
+            <div className="card bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700">
+              <h3 className="text-xl font-semibold mb-4 text-purple-900 dark:text-purple-100 flex items-center">
+                <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Key Decision Points
+              </h3>
+              {recommendation.keyDecisionPoints.map((decisionPoint, dpIdx) => (
+                <div key={dpIdx} className="mb-6 last:mb-0">
+                  <h4 className="text-lg font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                    {decisionPoint.question}
+                  </h4>
+                  <p className="text-purple-800 dark:text-purple-200 mb-4">
+                    {decisionPoint.context}
+                  </p>
+
+                  {/* Comparison Table */}
+                  <div className="overflow-x-auto mb-4">
+                    <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+                      <thead className="bg-purple-100 dark:bg-purple-800">
+                        <tr>
+                          <th className="px-4 py-2 text-left text-purple-900 dark:text-purple-100 font-semibold">
+                            Factor
+                          </th>
+                          <th className="px-4 py-2 text-left text-purple-900 dark:text-purple-100 font-semibold">
+                            Copilot Studio
+                          </th>
+                          <th className="px-4 py-2 text-left text-purple-900 dark:text-purple-100 font-semibold">
+                            Microsoft Foundry
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {decisionPoint.factors.map((factor, fIdx) => (
+                          <tr
+                            key={fIdx}
+                            className="border-t border-purple-200 dark:border-purple-700"
+                          >
+                            <td className="px-4 py-3 font-medium text-purple-900 dark:text-purple-100">
+                              {factor.factor}
+                            </td>
+                            <td className="px-4 py-3 text-purple-800 dark:text-purple-200">
+                              {factor.studio}
+                            </td>
+                            <td className="px-4 py-3 text-purple-800 dark:text-purple-200">
+                              {factor.foundry}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Recommendation Text */}
+                  <div className="bg-purple-100 dark:bg-purple-800 rounded-lg p-4">
+                    <p className="text-purple-900 dark:text-purple-100 whitespace-pre-line">
+                      {decisionPoint.recommendation}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Licensing Breakdown */}
+          {recommendation.licensingBreakdown && (
+            <div className="card bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700">
+              <h3 className="text-xl font-semibold mb-4 text-green-900 dark:text-green-100 flex items-center">
+                <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Licensing & Cost Breakdown
+              </h3>
+              <p className="text-green-900 dark:text-green-100 mb-4">
+                {recommendation.licensingBreakdown.description}
+              </p>
+
+              <div className="space-y-4 mb-6">
+                {recommendation.licensingBreakdown.platforms
+                  .filter(Boolean)
+                  .map((platform, pIdx) => (
+                    <div
+                      key={pIdx}
+                      className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-green-300 dark:border-green-600"
+                    >
+                      <h4 className="font-semibold text-green-900 dark:text-green-100 mb-2">
+                        {platform!.platform}
+                      </h4>
+                      <div className="space-y-1 text-sm">
+                        <div className="text-green-800 dark:text-green-200">
+                          <span className="font-medium">Model:</span> {platform!.model}
+                        </div>
+                        <div className="text-green-800 dark:text-green-200">
+                          <span className="font-medium">Cost:</span> {platform!.cost}
+                        </div>
+                        <div className="text-green-800 dark:text-green-200">
+                          <span className="font-medium">Notes:</span> {platform!.notes}
+                        </div>
+                        <div className="text-green-700 dark:text-green-300 italic mt-2">
+                          <span className="font-medium">Example:</span> {platform!.example}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <div className="bg-green-100 dark:bg-green-800 rounded-lg p-4">
+                <p className="text-green-900 dark:text-green-100 whitespace-pre-line">
+                  {recommendation.licensingBreakdown.totalCostExample}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Sources */}
           <div className="card">
             <h3 className="text-xl font-semibold mb-4 dark:text-white">Verified Sources</h3>
@@ -661,9 +787,11 @@ export default function Results() {
                     <div className="text-gray-600 dark:text-gray-200 mb-2">
                       → {item.answerLabel}
                     </div>
-                    <div className="flex space-x-4 text-xs text-gray-500 dark:text-gray-300">
+                    <div className="flex flex-wrap gap-2 text-xs text-gray-500 dark:text-gray-300">
                       <span>M365: +{item.weights.m365Copilot}</span>
                       <span>Studio: +{item.weights.copilotStudio}</span>
+                      <span>Foundry: +{item.weights.foundry}</span>
+                      <span>Agent: +{item.weights.agentBuilder}</span>
                       <span>Hybrid: +{item.weights.hybrid}</span>
                     </div>
                   </div>

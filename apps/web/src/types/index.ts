@@ -3,11 +3,18 @@
 
 export type UserAnswers = Record<string, string>;
 
-export type RecommendationType = 'M365_COPILOT' | 'COPILOT_STUDIO' | 'HYBRID';
+export type RecommendationType =
+  | 'M365_COPILOT'
+  | 'COPILOT_STUDIO'
+  | 'FOUNDRY'
+  | 'AGENT_BUILDER'
+  | 'HYBRID';
 
 export interface Weights {
   m365Copilot: number;
   copilotStudio: number;
+  foundry: number;
+  agentBuilder: number;
   hybrid: number;
 }
 
@@ -32,6 +39,27 @@ export interface Recommendation {
   nextSteps: string[];
   risks: string[];
   complianceConsiderations: string[];
+  keyDecisionPoints?: Array<{
+    question: string;
+    context: string;
+    factors: Array<{
+      factor: string;
+      studio: string;
+      foundry: string;
+    }>;
+    recommendation: string;
+  }>;
+  licensingBreakdown?: {
+    description: string;
+    platforms: Array<{
+      platform: string;
+      model: string;
+      cost: string;
+      notes: string;
+      example: string;
+    } | null>;
+    totalCostExample: string;
+  };
   sources: Array<{
     title: string;
     url: string;

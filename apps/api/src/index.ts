@@ -826,9 +826,13 @@ ${recommendation.nextSteps.map((s: string, i: number) => `${i + 1}. ${s}`).join(
 ${recommendation.complianceConsiderations.map((c: string, i: number) => `${i + 1}. ${c}`).join('\n')}
 
 **User's Key Answers:**
-${Object.entries(answers)
-  .map(([key, value]) => `- ${key}: ${value}`)
-  .join('\n')}
+${
+  recommendation.scoringResult?.breakdown
+    ? recommendation.scoringResult.breakdown
+        .map((item: any) => `- ${item.questionTitle}: ${item.answerLabel}`)
+        .join('\n')
+    : 'No detailed breakdown available'
+}
 
 VERIFIED FACTS YOU MUST INCORPORATE:
 

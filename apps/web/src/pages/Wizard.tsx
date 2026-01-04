@@ -81,6 +81,8 @@ export default function Wizard() {
       }
     } else {
       nextStep();
+      // Scroll to top of page when moving to next step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

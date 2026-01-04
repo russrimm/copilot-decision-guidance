@@ -163,30 +163,45 @@ export function generatePDF(
   const margin = 15;
   const maxWidth = pageWidth - margin * 2;
 
-  // Helper function to wrap text manually
-  const wrapText = (text: string, maxWidth: number, fontSize: number): string[] => {
+  // Helper to sanitize text and remove problematic characters
+  const sanitizeText = (text: string): string => {
+    return text
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+      .replace(/[^\x00-\x7F]/g, (char) => {
+        // Replace common special characters
+        const replacements: Record<string, string> = {
+          '\u2013': '-', // en dash
+          '\u2014': '--', // em dash
+          '\u2018': "'", // left single quote
+          '\u2019': "'", // right single quote
+          '\u201C': '"', // left double quote
+          '\u201D': '"', // right double quote
+          '\u2022': '*', // bullet
+          '\u2026': '...', // ellipsis
+        };
+        return replacements[char] || char;
+      });
+  };
+
+  // Helper function to add text with proper wrapping
+  const addText = (text: string, fontSize: number, isBold: boolean = false): void => {
+    const cleanText = sanitizeText(text);
     doc.setFontSize(fontSize);
-    const words = text.split(' ');
-    const lines: string[] = [];
-    let currentLine = '';
+    doc.setFont('helvetica', isBold ? 'bold' : 'normal');
 
-    words.forEach((word) => {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      const testWidth = doc.getTextWidth(testLine);
+    // Use splitTextToSize to get proper line breaks
+    const lines = doc.splitTextToSize(cleanText, maxWidth);
 
-      if (testWidth > maxWidth && currentLine) {
-        lines.push(currentLine);
-        currentLine = word;
-      } else {
-        currentLine = testLine;
+    // Add lines with proper page breaks
+    for (let i = 0; i < lines.length; i++) {
+      if (yPosition > 270) {
+        doc.addPage();
+        yPosition = 20;
       }
-    });
-
-    if (currentLine) {
-      lines.push(currentLine);
+      // Pass string directly with options to ensure proper encoding
+      doc.text(lines[i], margin, yPosition, { maxWidth: maxWidth });
+      yPosition += fontSize * 0.5 + 1;
     }
-
-    return lines;
   };
 
   // Title
@@ -204,32 +219,33 @@ export function generatePDF(
 
   // Add introduction if available
   if ((recommendation as any).introduction) {
+    if (yPosition > 250) {
+      doc.addPage();
+      yPosition = 20;
+    }
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('About This Analysis', margin, yPosition);
     yPosition += 7;
 
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    const introLines = wrapText((recommendation as any).introduction, maxWidth, 10);
-    introLines.forEach((line) => {
-      doc.text(line, margin, yPosition);
-      yPosition += 5;
-    });
-    yPosition += 10;
+    addText((recommendation as any).introduction, 10, false);
+    yPosition += 5;
   }
 
   // Summary
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-  const summaryLines = wrapText(summary, maxWidth, 11);
-  summaryLines.forEach((line) => {
-    doc.text(line, margin, yPosition);
-    yPosition += 6;
-  });
-  yPosition += 10;
+  if (yPosition > 250) {
+    doc.addPage();
+    yPosition = 20;
+  }
+  addText(summary, 11, false);
+  yPosition += 5;
 
   // Confidence Level
+  if (yPosition > 260) {
+    doc.addPage();
+    yPosition = 20;
+  }
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
   doc.text(`Confidence Level: ${scoringResult.confidenceLevel.toUpperCase()}`, margin, yPosition);
   yPosition += 10;
@@ -242,131 +258,93 @@ export function generatePDF(
   yPosition += 6;
   doc.text(`  • Copilot Studio: ${scoringResult.scores.copilotStudio}`, margin, yPosition);
   yPosition += 6;
+  doc.text(`  • Microsoft Foundry: ${scoringResult.scores.foundry}`, margin, yPosition);
+  yPosition += 6;
+  doc.text(`  • Agent Builder: ${scoringResult.scores.agentBuilder}`, margin, yPosition);
+  yPosition += 6;
   doc.text(`  • Hybrid: ${scoringResult.scores.hybrid}`, margin, yPosition);
   yPosition += 12;
 
-  // Check if we need a new page
+  // Why This Recommendation
   if (yPosition > 250) {
     doc.addPage();
     yPosition = 20;
   }
-
-  // Why This Recommendation
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.text('Why This Recommendation', margin, yPosition);
   yPosition += 8;
 
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
   reasons.forEach((reason, idx) => {
-    // Calculate needed space for this reason
-    const reasonLines = wrapText(`${idx + 1}. ${reason}`, maxWidth, 11);
-    const neededSpace = reasonLines.length * 6 + 4;
-
-    if (yPosition + neededSpace > 270) {
+    if (yPosition > 250) {
       doc.addPage();
       yPosition = 20;
     }
-    reasonLines.forEach((line) => {
-      doc.text(line, margin, yPosition);
-      yPosition += 6;
-    });
-    yPosition += 4;
+    addText(`${idx + 1}. ${reason}`, 11, false);
+    yPosition += 2;
   });
-  yPosition += 6;
+  yPosition += 4;
 
   // Next Steps
   if (yPosition > 250) {
     doc.addPage();
     yPosition = 20;
   }
-
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.text('Next Steps', margin, yPosition);
   yPosition += 8;
 
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
   nextSteps.forEach((step, idx) => {
-    // Calculate needed space for this step
-    const stepLines = wrapText(`${idx + 1}. ${step}`, maxWidth, 11);
-    const neededSpace = stepLines.length * 6 + 4;
-
-    if (yPosition + neededSpace > 270) {
+    if (yPosition > 250) {
       doc.addPage();
       yPosition = 20;
     }
-    stepLines.forEach((line) => {
-      doc.text(line, margin, yPosition);
-      yPosition += 6;
-    });
-    yPosition += 4;
+    addText(`${idx + 1}. ${step}`, 11, false);
+    yPosition += 2;
   });
-  yPosition += 6;
+  yPosition += 4;
 
   // Risks & Watch-outs
   if (yPosition > 250) {
     doc.addPage();
     yPosition = 20;
   }
-
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.text('Risks & Watch-outs', margin, yPosition);
   yPosition += 8;
 
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
   risks.forEach((risk, idx) => {
-    // Calculate needed space for this risk
-    const riskLines = wrapText(`${idx + 1}. ${risk}`, maxWidth, 11);
-    const neededSpace = riskLines.length * 6 + 4;
-
-    if (yPosition + neededSpace > 270) {
-      doc.addPage();
-      yPosition = 20;
-    }
-    riskLines.forEach((line) => {
-      doc.text(line, margin, yPosition);
-      yPosition += 6;
-    });
-    yPosition += 4;
-  });
-  yPosition += 10;
-
-  // Compliance & Governance Considerations
-  if (complianceConsiderations && complianceConsiderations.length > 0) {
-    // Ensure we have space for section header
     if (yPosition > 250) {
       doc.addPage();
       yPosition = 20;
     }
+    addText(`${idx + 1}. ${risk}`, 11, false);
+    yPosition += 2;
+  });
+  yPosition += 4;
 
+  // Compliance & Governance Considerations
+  if (complianceConsiderations && complianceConsiderations.length > 0) {
+    if (yPosition > 250) {
+      doc.addPage();
+      yPosition = 20;
+    }
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('Compliance & Governance Considerations', margin, yPosition);
     yPosition += 8;
 
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
     complianceConsiderations.forEach((item, idx) => {
-      // Calculate needed space for this item
-      const itemLines = wrapText(`${idx + 1}. ${item}`, maxWidth, 11);
-      const neededSpace = itemLines.length * 6 + 4;
-
-      if (yPosition + neededSpace > 270) {
+      if (yPosition > 250) {
         doc.addPage();
         yPosition = 20;
       }
-      itemLines.forEach((line) => {
-        doc.text(line, margin, yPosition);
-        yPosition += 6;
-      });
-      yPosition += 4;
+      addText(`${idx + 1}. ${item}`, 11, false);
+      yPosition += 2;
     });
-    yPosition += 10;
+    yPosition += 4;
   }
 
   // Sources
