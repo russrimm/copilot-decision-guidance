@@ -59,6 +59,7 @@ function generateM365CopilotRecommendation(scoringResult: ScoringResult): Recomm
       'Data Privacy: Prompts, responses, and data accessed through Microsoft Graph are NOT used to train foundation LLMs. Your organizational data remains private.',
       'Licensing: Requires Microsoft 365 E3/E5 or Business Standard/Premium base license plus Microsoft 365 Copilot add-on ($30/user/month for Enterprise).',
       'GCC/Government: Available in GCC, GCC-High, and DoD environments with specific feature sets and compliance certifications.',
+      'AI Compliance Resources: Access comprehensive compliance documentation at https://servicetrust.microsoft.com/viewpage/AIResources including: ISO 42001 Audit Report (March 2025), GDPR & Generative AI Guide (May 2024), Risk Assessment Quickstart (Aug 2025), Managing Risk in Financial Services (Nov 2025), Works Council Adoption Guide (April 2025), and Transcription Management controls (March 2025).',
     ],
     sources: [
       {
@@ -131,6 +132,7 @@ function generateCopilotStudioRecommendation(scoringResult: ScoringResult): Reco
       'Licensing: Included with M365 Copilot license when agents are used in M365/Teams/SharePoint with Graph grounding (zero-rated). Standalone use or premium connectors incur Copilot Credits consumption.',
       'Connector Compliance: Premium connectors (SAP, Salesforce, etc.) may have additional licensing and compliance requirements. Custom connectors calling external APIs must be evaluated for data residency.',
       'Environment Governance: Use ALM (Application Lifecycle Management) with dev/test/prod environments. Apply DLP policies at environment level to prevent unauthorized data access.',
+      'AI Compliance Resources: Access comprehensive compliance documentation at https://servicetrust.microsoft.com/viewpage/AIResources including: ISO 42001 Audit Report (March 2025), GDPR & Generative AI Guide (May 2024), Risk Assessment Quickstart (Aug 2025), Managing Risk in Financial Services (Nov 2025), Works Council Adoption Guide (April 2025), and Transcription Management controls (March 2025).',
     ],
     sources: [
       {
@@ -209,6 +211,7 @@ function generateFoundryRecommendation(scoringResult: ScoringResult): Recommenda
       "Model Fine-Tuning: Custom fine-tuning uses your organization's data exclusively. Ensure data classification, access controls, and audit logging meet regulatory requirements.",
       'Responsible AI: Implement content safety filters, red team testing, and evaluation flows. Use Azure AI Content Safety service to detect harmful content, jailbreak attempts, and protected material.',
       'Government Clouds: Azure AI Foundry available in Azure Government (GCC-High, DoD) with FedRAMP High, DISA IL5, and CJIS compliance certifications.',
+      'AI Compliance Resources: Access comprehensive compliance documentation at https://servicetrust.microsoft.com/viewpage/AIResources including: Azure OpenAI Privacy Impact Assessment (2024), ISO/IEC 30107-3 Face Liveness Detection (April 2025), GDPR & Generative AI Guide (May 2024), and ISO 42001 controls for AI management systems.',
     ],
     sources: [
       {
@@ -288,6 +291,7 @@ function generateAgentBuilderRecommendation(scoringResult: ScoringResult): Recom
       'Licensing: Included with Microsoft 365 Copilot license when agents deployed to Teams/M365 with Graph grounding (zero-rated). Standalone use or non-M365 channels consume Copilot Credits.',
       'Data Privacy: Knowledge base content indexed by agent uses Azure OpenAI embeddings. This data is NOT used to train foundation models. Vector embeddings stored in Power Platform environment.',
       'Web Search: If "Allow web search" enabled, agent queries route to Bing API (US data centers only). Disable for strict data sovereignty compliance.',
+      'AI Compliance Resources: Access comprehensive compliance documentation at https://servicetrust.microsoft.com/viewpage/AIResources including: ISO 42001 Audit Report (March 2025), GDPR & Generative AI Guide (May 2024), Risk Assessment Quickstart (Aug 2025), Managing Risk in Financial Services (Nov 2025), and agent governance controls.',
     ],
     sources: [
       {
@@ -364,6 +368,7 @@ function generateHybridRecommendation(scoringResult: ScoringResult): Recommendat
       'Licensing Complexity: M365 Copilot ($30/user/month for Enterprise) + Copilot Studio consumption. M365 Copilot licensed users get zero-rated Copilot Studio usage when using Graph grounding in Teams/SharePoint.',
       'Governance Separation: M365 Copilot governed via M365 admin center; Copilot Studio governed via Power Platform admin center. Coordinate DLP policies, permissions, and audit strategies across both.',
       'Integration Points: Declarative agents built in Copilot Studio can extend M365 Copilot. Ensure data classification and access controls are consistent across both platforms to prevent data leakage.',
+      'AI Compliance Resources: Access comprehensive compliance documentation at https://servicetrust.microsoft.com/viewpage/AIResources including: ISO 42001 Audit Report for M365 Copilot (March 2025), GDPR & Generative AI Guide (May 2024), Risk Assessment Quickstart (Aug 2025), Managing Risk in Financial Services (Nov 2025), Works Council Adoption Guide (April 2025), and unified governance controls across platforms.',
     ],
     sources: [
       {
