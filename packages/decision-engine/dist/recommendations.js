@@ -311,7 +311,7 @@ function generateHybridRecommendation(scoringResult) {
     return {
         type: 'HYBRID',
         title: 'Hybrid Approach (Multiple Platforms)',
-        summary: 'For this scenario, combining multiple Microsoft agentic platforms provides the best outcome. Deploy M365 Copilot for broad productivity, Copilot Studio for custom agents, Microsoft Foundry for advanced AI development, and Agent Builder for simple knowledge-base bots. This hybrid approach is common—organizations use different platforms for different scenarios based on complexity, audience, and requirements.',
+        summary: 'For this scenario, combining multiple Microsoft agentic platforms provides the best outcome. Deploy Microsoft 365 Copilot for broad productivity, Copilot Studio for custom agents, Microsoft Foundry for advanced AI development, and Agent Builder for simple knowledge-base bots. This hybrid approach is common—organizations use different platforms for different scenarios based on complexity, audience, and requirements.',
         reasons: [
             'You need both broad productivity enhancements AND custom business process automation',
             'Your organization has diverse needs: general knowledge workers and specialized roles',
