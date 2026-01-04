@@ -719,7 +719,9 @@ ${recommendation.complianceConsiderations.map((c, i) => `${i + 1}. ${c}`).join('
 
 **User's Key Answers:**
 ${recommendation.scoringResult?.breakdown
-            ? recommendation.scoringResult.breakdown.map((item) => `- ${item.questionTitle}: ${item.answerLabel}`).join('\n')
+            ? recommendation.scoringResult.breakdown
+                .map((item) => `- ${item.questionTitle}: ${item.answerLabel}`)
+                .join('\n')
             : 'No detailed breakdown available'}
 
 VERIFIED FACTS YOU MUST INCORPORATE:

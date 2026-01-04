@@ -72,7 +72,7 @@ function determineRecommendation(scores, thresholds) {
     }
     // If multiple platforms score close to each other (3+ platforms competitive), recommend hybrid
     // This catches scenarios where M365 + Studio + Foundry are all viable options
-    const competitiveScores = sortedScores.filter((s) => s.type !== 'HYBRID' && s.score >= highest.score - (winMargin * 2));
+    const competitiveScores = sortedScores.filter((s) => s.type !== 'HYBRID' && s.score >= highest.score - winMargin * 2);
     if (competitiveScores.length >= 3) {
         return 'HYBRID';
     }

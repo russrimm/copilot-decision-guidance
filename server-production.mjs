@@ -71,7 +71,7 @@ app.post('/api/score', async (req, res) => {
       return res.status(400).json({ error: 'Missing answers in request body' });
     }
 
-    const result = calculateRecommendation(answers);
+    const result = calculateRecommendation(decisionModel, answers);
     res.json(result);
   } catch (error) {
     console.error('Error calculating recommendation:', error);

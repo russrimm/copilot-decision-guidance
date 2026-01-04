@@ -326,10 +326,25 @@ function generateHybridRecommendation(scoringResult) {
     const foundryStudioOverlap = competitivePlatforms.foundry &&
         competitivePlatforms.studio &&
         Math.abs(scores.foundry - scores.copilotStudio) < 10;
+    // Build dynamic summary listing competitive platforms
+    const competitivePlatformNames = [];
+    if (competitivePlatforms.m365)
+        competitivePlatformNames.push('Microsoft 365 Copilot');
+    if (competitivePlatforms.studio)
+        competitivePlatformNames.push('Copilot Studio');
+    if (competitivePlatforms.foundry)
+        competitivePlatformNames.push('Microsoft Foundry');
+    if (competitivePlatforms.agentBuilder)
+        competitivePlatformNames.push('Agent Builder');
+    const platformList = competitivePlatformNames.length > 1
+        ? competitivePlatformNames.slice(0, -1).join(', ') +
+            ' and ' +
+            competitivePlatformNames[competitivePlatformNames.length - 1]
+        : competitivePlatformNames[0] || 'multiple platforms';
     return {
         type: 'HYBRID',
         title: 'Hybrid Approach (Multiple Platforms)',
-        summary: 'For this scenario, combining multiple Microsoft agentic platforms provides the best outcome. This hybrid approach is common—organizations use different platforms for different scenarios based on complexity, audience, and requirements. Your scoring indicates multiple viable paths forward.',
+        summary: `For this scenario, combining ${platformList} provides the best outcome. This hybrid approach is common—organizations use different platforms for different scenarios based on complexity, audience, and requirements. Your scoring indicates multiple viable paths forward.`,
         reasons: [
             'Your requirements span multiple capability areas, making a single platform insufficient',
             'You need both broad productivity enhancements (M365 Copilot) AND custom business process automation (Copilot Studio/Foundry)',
