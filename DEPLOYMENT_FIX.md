@@ -1,9 +1,11 @@
 # Deployment Fix - Published Site Not Matching Localhost
 
 ## Problem
+
 The published Azure site (https://copilot-decision-guidance.azurewebsites.net/) was showing outdated content that didn't match the local development version at http://localhost:5173.
 
 ## Root Cause
+
 The GitHub Actions deployment workflow had three critical issues:
 
 1. **Missing Frontend Build**: The workflow only ran `npm run build --if-present`, which builds the API and decision-engine packages but **NOT the Vite frontend** (`apps/web`).
@@ -16,9 +18,11 @@ The GitHub Actions deployment workflow had three critical issues:
 3. **Inefficient Artifact Upload**: Uploaded the entire workspace (`.`) including source files, .git, and other unnecessary files instead of just the built artifacts.
 
 ## Solution
+
 Updated [.github/workflows/master_copilot-decision-guidance.yml](.github/workflows/master_copilot-decision-guidance.yml) with:
 
 ### 1. Complete Build Process (Lines 25-30)
+
 ```yaml
 - name: npm install, build, and test
   run: |
@@ -30,6 +34,7 @@ Updated [.github/workflows/master_copilot-decision-guidance.yml](.github/workflo
 ```
 
 ### 2. Optimized Artifact Upload (Lines 32-43)
+
 ```yaml
 - name: Upload artifact for deployment job
   uses: actions/upload-artifact@v4
@@ -46,17 +51,19 @@ Updated [.github/workflows/master_copilot-decision-guidance.yml](.github/workflo
 ```
 
 ### 3. Correct Startup Command (Line 73)
+
 ```yaml
 - name: 'Deploy to Azure Web App'
   uses: azure/webapps-deploy@v3
   with:
     app-name: 'copilot-decision-guidance'
-    startup-command: 'node server-production.mjs'  # ← FIXED
+    startup-command: 'node server-production.mjs' # ← FIXED
 ```
 
 ## What Gets Deployed Now
 
 The production server (`server-production.mjs`) runs on Azure and:
+
 1. Loads the decision engine from `packages/decision-engine/dist`
 2. Exposes API endpoints at `/api/*`
 3. Serves the built Vite frontend from `apps/web/dist/`
@@ -67,6 +74,7 @@ The production server (`server-production.mjs`) runs on Azure and:
 To deploy the latest changes:
 
 1. **Commit and push the workflow fix:**
+
    ```bash
    git add .github/workflows/master_copilot-decision-guidance.yml
    git commit -m "Fix deployment workflow to build and deploy frontend"
@@ -88,28 +96,34 @@ To deploy the latest changes:
 Once deployed, the Azure site will include:
 
 ✅ **Microsoft AI Decision Framework Alignment** (100% coverage)
+
 - All 16 evaluation criteria covered across 21 questions
 
 ✅ **Microsoft Foundry Integration**
+
 - Explicit mentions in M365 Copilot, Copilot Studio, Agent Builder, and Hybrid recommendations
 - Complete 5-platform weight system (m365Copilot, copilotStudio, foundry, agentBuilder, hybrid)
 
 ✅ **Fixed Duplicate Question ID**
+
 - `governance_lifecycle` → `governance_alm` for ALM question
 - No more ID conflicts in the questionnaire
 
 ✅ **Fixed PDF Export**
+
 - Improved page break logic prevents text cutoff
 - Proper space calculation before writing content
 - Better handling of long recommendation sections
 
 ✅ **Test Suite Improvements**
+
 - All 19 tests passing
 - Hybrid recommendation now uses "Microsoft 365 Copilot" (full name)
 
 ## Technical Details
 
 ### Production Server Architecture
+
 ```
 server-production.mjs (Port 8080)
 ├── API Routes (/api/*)
@@ -123,6 +137,7 @@ server-production.mjs (Port 8080)
 ```
 
 ### Build Artifacts Structure
+
 ```
 deployment-package/
 ├── apps/
@@ -139,6 +154,7 @@ deployment-package/
 ## Why This Happened
 
 The original workflow was created before the monorepo structure was fully established. It assumed a simpler build process and didn't account for:
+
 - Separate frontend build step (`apps/web` Vite app)
 - Production server that integrates frontend + API
 - Workspace-based dependency management
@@ -146,6 +162,7 @@ The original workflow was created before the monorepo structure was fully establ
 ## Prevention
 
 To avoid similar issues in the future:
+
 1. ✅ Test production builds locally: `npm run build:web && npm run build:api && node server-production.mjs`
 2. ✅ Monitor GitHub Actions after pushing to master
 3. ✅ Compare deployed version against localhost before considering work complete
