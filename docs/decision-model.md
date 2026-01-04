@@ -1,6 +1,6 @@
 # Decision Model Methodology
 
-This document describes the decision-making approach used by the Copilot Decision Guidance Tool.
+This document describes the decision-making approach used by the Microsoft Agentic Solution Advisor.
 
 ## Overview
 

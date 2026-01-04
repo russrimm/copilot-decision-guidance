@@ -3,6 +3,8 @@ import { z } from 'zod';
 export const WeightsSchema = z.object({
     m365Copilot: z.number(),
     copilotStudio: z.number(),
+    foundry: z.number(),
+    agentBuilder: z.number(),
     hybrid: z.number(),
 });
 export const AnswerSchema = z.object({
@@ -25,6 +27,8 @@ export const QuestionGroupSchema = z.object({
 export const ThresholdsSchema = z.object({
     winMargin: z.number(),
     hybridThreshold: z.number(),
+    foundryThreshold: z.number().optional(),
+    agentBuilderThreshold: z.number().optional(),
 });
 export const DecisionModelSchema = z.object({
     version: z.string(),

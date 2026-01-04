@@ -26,10 +26,10 @@ export default function Layout() {
               </svg>
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Copilot Decision Guidance
+                  Agentic Solution Advisor
                 </h1>
                 <p className="text-xs text-gray-500 dark:text-gray-300">
-                  Microsoft 365 Copilot vs Copilot Studio
+                  Platform Decision & Planning
                 </p>
               </div>
             </Link>

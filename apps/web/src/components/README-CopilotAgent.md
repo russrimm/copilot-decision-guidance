@@ -1,6 +1,6 @@
-# Copilot Knowledge Agent
+# Agentic Decision Assistant
 
-An AI-powered chat interface that helps users understand Microsoft 365 Copilot and Copilot Studio licensing, features, and decision guidance.
+An AI-powered chat interface for the Microsoft Agentic Solution Advisor that helps users understand Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder licensing, features, and decision guidance for agentic capabilities.
 
 ## Features
 

@@ -1,0 +1,269 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "description": "Microsoft Copilot Studio Licensing Data",
+    "source": "Microsoft Licensing Guide - December 2025",
+    "sourceUrl": "https://go.microsoft.com/fwlink/?linkid=2320995",
+    "lastUpdated": "2025-12-31",
+    "nextReviewDate": "2026-03-31"
+  },
+  "licenses": {
+    "m365Copilot": {
+      "name": "Microsoft 365 Copilot",
+      "pricePerUserPerMonth": 30,
+      "currency": "USD",
+      "billingModel": "Per-user subscription",
+      "minimumUsers": 1,
+      "includes": {
+        "copilotStudioTeamsUsage": true,
+        "copilotStudioMessagesIncluded": "Unlimited within Teams, SharePoint, Word, Excel, Outlook",
+        "graphConnectors": true,
+        "aiBuilder": false,
+        "premiumConnectors": false,
+        "dataverseAccess": false
+      },
+      "features": [
+        "Embedded AI in Microsoft 365 apps (Word, Excel, PowerPoint, Outlook, Teams)",
+        "Chat-based assistance and content generation",
+        "Meeting summaries and insights",
+        "Email drafting and prioritization",
+        "Document analysis and summarization",
+        "Free Copilot Studio agent usage within Teams"
+      ],
+      "limitations": [
+        "Cannot deploy agents to external channels (web, WhatsApp, etc.)",
+        "Limited to Microsoft 365 app integrations",
+        "No custom workflow automation outside M365 apps"
+      ]
+    },
+    "copilotStudioPayAsYouGo": {
+      "name": "Copilot Studio - Pay-as-you-go",
+      "pricePerMessage": 0.01,
+      "currency": "USD",
+      "billingModel": "Consumption-based",
+      "minimumMessages": 0,
+      "includes": {
+        "aiBuilderCredits": false,
+        "premiumConnectors": false,
+        "dataverseAccess": "Limited",
+        "externalChannels": true,
+        "customAI": true
+      },
+      "features": [
+        "Build custom copilots and agents",
+        "Deploy to any channel (Teams, Web, WhatsApp, Facebook, etc.)",
+        "Generative AI capabilities",
+        "Custom conversation flows",
+        "Integration with Power Automate flows",
+        "Standard connectors included"
+      ],
+      "costEstimates": [
+        {
+          "messagesPerMonth": 1000,
+          "estimatedCost": 10
+        },
+        {
+          "messagesPerMonth": 10000,
+          "estimatedCost": 100
+        },
+        {
+          "messagesPerMonth": 100000,
+          "estimatedCost": 1000
+        }
+      ]
+    },
+    "copilotStudioSubscription": {
+      "name": "Copilot Studio - Subscription",
+      "pricePerTenant": 200,
+      "messagesIncluded": 25000,
+      "currency": "USD",
+      "billingModel": "Tenant-based subscription",
+      "pricePerAdditionalMessage": 0.01,
+      "includes": {
+        "aiBuilderCredits": false,
+        "premiumConnectors": false,
+        "dataverseAccess": "Limited",
+        "externalChannels": true,
+        "customAI": true
+      },
+      "features": [
+        "25,000 messages per month included",
+        "All pay-as-you-go features",
+        "Cost-effective for high-volume usage",
+        "Predictable monthly billing"
+      ],
+      "costEstimates": [
+        {
+          "messagesPerMonth": 25000,
+          "estimatedCost": 200,
+          "note": "Base subscription"
+        },
+        {
+          "messagesPerMonth": 50000,
+          "estimatedCost": 450,
+          "note": "Base + 25,000 overage @ $0.01/msg"
+        },
+        {
+          "messagesPerMonth": 100000,
+          "estimatedCost": 950,
+          "note": "Base + 75,000 overage @ $0.01/msg"
+        }
+      ]
+    },
+    "powerAppsPerUser": {
+      "name": "Power Apps (Premium)",
+      "pricePerUserPerMonth": 20,
+      "currency": "USD",
+      "copilotStudioIncluded": true,
+      "messagesPerUserPerMonth": "Unlimited for internal use",
+      "includes": {
+        "aiBuilderCredits": "Limited capacity",
+        "premiumConnectors": true,
+        "dataverseAccess": true,
+        "copilotStudioFeatures": "Full"
+      },
+      "features": [
+        "Unlimited Copilot Studio messages for licensed users",
+        "Premium connectors included",
+        "Dataverse access",
+        "AI Builder credits",
+        "Power Apps access"
+      ]
+    },
+    "dynamics365": {
+      "name": "Dynamics 365 (Selected Licenses)",
+      "copilotStudioIncluded": true,
+      "messagesPerUserPerMonth": "Varies by license",
+      "includes": {
+        "copilotStudioMessages": "Included with specific D365 licenses",
+        "aiBuilderCredits": "Varies",
+        "premiumConnectors": true,
+        "dataverseAccess": true
+      },
+      "features": [
+        "Copilot Studio entitlements vary by Dynamics 365 license type",
+        "Customer Service, Field Service, and Sales licenses include messages",
+        "Check specific D365 license for exact entitlements"
+      ]
+    }
+  },
+  "additionalCapacity": {
+    "aiBuilderCredits": {
+      "name": "AI Builder Capacity Add-on",
+      "pricePerMonth": 500,
+      "creditsIncluded": 1000000,
+      "currency": "USD"
+    },
+    "messages": {
+      "name": "Additional Messages",
+      "pricePerMessage": 0.01,
+      "currency": "USD",
+      "applicableTo": ["copilotStudioPayAsYouGo", "copilotStudioSubscription"]
+    }
+  },
+  "featureComparison": {
+    "deploymentChannels": {
+      "microsoftTeams": {
+        "m365Copilot": true,
+        "copilotStudio": true,
+        "notes": "M365 Copilot includes free Copilot Studio usage within Teams"
+      },
+      "sharePoint": {
+        "m365Copilot": true,
+        "copilotStudio": true
+      },
+      "webWidget": {
+        "m365Copilot": false,
+        "copilotStudio": true,
+        "requiresLicense": "Copilot Studio license"
+      },
+      "mobileApp": {
+        "m365Copilot": false,
+        "copilotStudio": true
+      },
+      "whatsApp": {
+        "m365Copilot": false,
+        "copilotStudio": true
+      },
+      "facebook": {
+        "m365Copilot": false,
+        "copilotStudio": true
+      },
+      "microsoftOfficeApps": {
+        "m365Copilot": true,
+        "copilotStudio": false,
+        "notes": "Word, Excel, PowerPoint, Outlook"
+      }
+    },
+    "integrations": {
+      "standardConnectors": {
+        "m365Copilot": "Limited",
+        "copilotStudio": true
+      },
+      "premiumConnectors": {
+        "m365Copilot": false,
+        "copilotStudio": "Requires Power Apps/Automate license"
+      },
+      "powerAutomate": {
+        "m365Copilot": "Basic",
+        "copilotStudio": true
+      },
+      "dataverse": {
+        "m365Copilot": "Read-only via Graph",
+        "copilotStudio": "Full with appropriate license"
+      }
+    },
+    "aiCapabilities": {
+      "generativeAI": {
+        "m365Copilot": "Built-in for M365 tasks",
+        "copilotStudio": "Fully customizable"
+      },
+      "customTopics": {
+        "m365Copilot": false,
+        "copilotStudio": true
+      },
+      "entityExtraction": {
+        "m365Copilot": "Automatic",
+        "copilotStudio": true
+      },
+      "sentimentAnalysis": {
+        "m365Copilot": false,
+        "copilotStudio": "Via AI Builder"
+      }
+    }
+  },
+  "decisionGuide": {
+    "useM365CopilotWhen": [
+      "Primary goal is enhancing productivity in Microsoft 365 apps",
+      "Users need AI assistance with documents, emails, meetings",
+      "Organization-wide deployment for knowledge workers",
+      "Budget allows for $30/user/month",
+      "No need for external customer-facing chatbots"
+    ],
+    "useCopilotStudioWhen": [
+      "Building custom chatbots or agents",
+      "Need to deploy to external channels (web, mobile, WhatsApp)",
+      "Require specific workflow automation",
+      "Integration with line-of-business systems",
+      "Message volume is predictable and calculable",
+      "Need more than basic conversation flows"
+    ],
+    "useHybridWhen": [
+      "Need both productivity enhancement AND custom automation",
+      "Have both internal users (M365) and external customers (custom agents)",
+      "Want to extend M365 Copilot with custom agents in Teams",
+      "Budget supports both licenses for different user groups"
+    ]
+  },
+  "costCalculator": {
+    "breakEvenAnalysis": {
+      "description": "Comparing Copilot Studio subscription vs pay-as-you-go",
+      "subscriptionBreakEven": 20000,
+      "note": "At 20,000 messages/month, pay-as-you-go ($200) equals subscription ($200 for 25k messages). Above 20k, subscription becomes more cost-effective."
+    },
+    "m365VsCopilotStudio": {
+      "description": "When does Copilot Studio become cheaper than M365 Copilot per user?",
+      "calculation": "If a user generates <3,000 messages/month, Copilot Studio ($30) is cheaper than M365 Copilot ($30). For high-volume bot usage by few users, Copilot Studio is more economical."
+    }
+  }
+}

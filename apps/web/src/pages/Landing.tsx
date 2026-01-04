@@ -16,17 +16,18 @@ export default function Landing() {
           <span className="text-[10px] text-gray-400 dark:text-gray-500">v1.3.0</span>
         </div>
         <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          Choose Your Copilot Path
+          Microsoft Agentic Solution Advisor
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-100 max-w-2xl mx-auto">
-          A guided decision tool to help you determine the best approach for your specific scenario:
-          Microsoft 365 Copilot for productivity, Copilot Studio for custom agents, or both working
-          together.
+          Expert guidance to help you determine the optimal Microsoft agentic platform for your
+          specific scenario: Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, Agent
+          Builder, or a hybrid approach.
         </p>
         <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg max-w-3xl mx-auto">
           <p className="text-sm text-blue-900 dark:text-blue-100">
-            <strong>Note:</strong> Most organizations use both products. This tool provides
-            per-scenario guidance to help you decide which approach fits each use case.
+            <strong>Note:</strong> Organizations often use multiple Microsoft agentic platforms
+            together. This tool provides per-scenario guidance to help you decide which platform or
+            combination fits each specific use case.
           </p>
         </div>
       </div>
@@ -71,8 +72,8 @@ export default function Landing() {
             </svg>
             <span>
               <strong>Clear Recommendation:</strong> Get a data-driven recommendation for this
-              specific scenario—whether to use Microsoft 365 Copilot, build a custom Copilot Studio
-              agent, or combine both approaches.
+              specific scenario—whether to use Microsoft 365 Copilot, Copilot Studio, Microsoft
+              Foundry, Agent Builder, or a hybrid combination of platforms.
             </span>
           </li>
           <li className="flex items-start">
@@ -116,7 +117,7 @@ export default function Landing() {
         </ul>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 dark:bg-blue-500 text-white rounded-full mb-3">
@@ -163,7 +164,45 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="card bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700">
+        <div className="card bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-600 dark:bg-orange-500 text-white rounded-full mb-3">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                />
+              </svg>
+            </div>
+            <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Microsoft Foundry</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-100">
+              Full-stack AI development with custom models, fine-tuning, and orchestration
+            </p>
+          </div>
+        </div>
+
+        <div className="card bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-700">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-teal-600 dark:bg-teal-500 text-white rounded-full mb-3">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                />
+              </svg>
+            </div>
+            <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Agent Builder</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-100">
+              Lightweight Q&A agents from knowledge bases - no code required
+            </p>
+          </div>
+        </div>
+
+        <div className="card bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 md:col-span-2 lg:col-span-1">
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-600 dark:bg-purple-500 text-white rounded-full mb-3">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +216,7 @@ export default function Landing() {
             </div>
             <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Hybrid Approach</h3>
             <p className="text-sm text-gray-600 dark:text-gray-100">
-              Combine both for comprehensive productivity and custom automation
+              Combine multiple platforms for comprehensive agentic capabilities
             </p>
           </div>
         </div>

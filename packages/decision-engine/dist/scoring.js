@@ -7,6 +7,8 @@ export function calculateRecommendation(model, userAnswers) {
     const scores = {
         m365Copilot: 0,
         copilotStudio: 0,
+        foundry: 0,
+        agentBuilder: 0,
         hybrid: 0,
     };
     const breakdown = [];
@@ -26,6 +28,8 @@ export function calculateRecommendation(model, userAnswers) {
             // Add weights to scores
             scores.m365Copilot += selectedAnswer.weights.m365Copilot;
             scores.copilotStudio += selectedAnswer.weights.copilotStudio;
+            scores.foundry += selectedAnswer.weights.foundry || 0;
+            scores.agentBuilder += selectedAnswer.weights.agentBuilder || 0;
             scores.hybrid += selectedAnswer.weights.hybrid;
             // Track breakdown for transparency
             breakdown.push({
@@ -57,6 +61,8 @@ function determineRecommendation(scores, thresholds) {
     const sortedScores = [
         { type: 'M365_COPILOT', score: scores.m365Copilot },
         { type: 'COPILOT_STUDIO', score: scores.copilotStudio },
+        { type: 'FOUNDRY', score: scores.foundry },
+        { type: 'AGENT_BUILDER', score: scores.agentBuilder },
         { type: 'HYBRID', score: scores.hybrid },
     ].sort((a, b) => b.score - a.score);
     const [highest, secondHighest] = sortedScores;

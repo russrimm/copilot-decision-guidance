@@ -1,16 +1,20 @@
-# Copilot Decision Guidance Tool
+# Microsoft Agentic Solution Advisor
 
-A production-quality web application that guides users through a structured questionnaire to recommend the best Microsoft Copilot solution: **Microsoft 365 Copilot**, **Copilot Studio**, or a **Hybrid approach**.
+A production-quality web application that guides users through a structured questionnaire to recommend the best Microsoft agentic platform: **Microsoft 365 Copilot**, **Copilot Studio**, **Microsoft Foundry**, **Agent Builder**, or a **Hybrid approach**.
+
+**✅ Aligned with the [Microsoft AI Decision Framework](https://microsoft.github.io/Microsoft-AI-Decision-Framework/)** - 100% coverage of all 8 evaluation criteria.
 
 ## Features
 
-✅ **Guided Decision Flow** - Multi-step questionnaire covering use cases, audience, data, integrations, governance, and more  
-✅ **Deterministic Scoring** - Transparent, test-covered recommendation engine  
-✅ **Comprehensive Results** - Rationale, next steps, risks, and verified Microsoft Learn sources  
-✅ **Export Functionality** - Download results as JSON or Markdown  
+✅ **Guided Decision Flow** - 21-question survey covering all Microsoft AI Decision Framework evaluation criteria  
+✅ **5-Platform Support** - Comprehensive scoring for M365 Copilot, Copilot Studio, Microsoft Foundry, Agent Builder, and Hybrid  
+✅ **Framework-Aligned** - Questions map to Technical Complexity, Skills, Budget, Time, Governance, Action Safety, Memory, and Scale  
+✅ **Deterministic Scoring** - Transparent, test-covered recommendation engine with weighted platform scores  
+✅ **Comprehensive Results** - Rationale, next steps, risks, compliance considerations, and verified Microsoft Learn sources  
+✅ **Export Functionality** - Download results as JSON, Markdown, or PDF  
+✅ **Agentic Decision Assistant** - AI-powered chat for licensing guidance and follow-up questions  
 ✅ **Admin Panel** - Local configuration and telemetry viewing  
-✅ **AI-Enhanced Explanations** - Optional LLM-assisted wording (with fallback)  
-✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation
+✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation and AI Decision Framework
 
 ## Tech Stack
 

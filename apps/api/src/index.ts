@@ -190,7 +190,7 @@ app.get('/api/sources', (_req: Request, res: Response) => {
   res.json(sources);
 });
 
-// Copilot Knowledge Agent - Chat endpoint
+// Agentic Decision Assistant - Chat endpoint
 app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
   try {
     const { message, history } = req.body;
@@ -227,12 +227,14 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
     }));
 
     // System prompt with knowledge base
-    const systemPrompt = `You are a helpful Microsoft Copilot Knowledge Agent specializing in Microsoft 365 Copilot and Copilot Studio. Your role is to help users understand:
+    const systemPrompt = `You are a helpful Microsoft Agentic Decision Assistant specializing in Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder. Your role is to help users understand:
 
 1. **Licensing & Pricing**
    - Microsoft 365 Copilot: $${licensing.licenses.m365Copilot.pricePerUserPerMonth}/user/month
    - Copilot Studio Pay-as-you-go: $${licensing.licenses.copilotStudioPayAsYouGo.pricePerMessage}/message
    - Copilot Studio Subscription: $${licensing.licenses.copilotStudioSubscription.pricePerTenant}/month (includes ${licensing.licenses.copilotStudioSubscription.messagesIncluded.toLocaleString()} messages)
+   - Microsoft Foundry: Usage-based pricing (Azure AI services, compute, storage)
+   - Agent Builder: Included with Copilot Studio licensing
 
 2. **Key Features**
    M365 Copilot:
@@ -241,10 +243,26 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
    Copilot Studio:
    ${licensing.licenses.copilotStudioPayAsYouGo.features.map((f: string) => `   - ${f}`).join('\n')}
 
+   Microsoft Foundry:
+   - Full-stack AI development platform with SDKs (Python, .NET, JavaScript)
+   - Custom model fine-tuning and deployment
+   - Advanced Prompt Flow orchestration
+   - Vector databases and RAG patterns
+   - Enterprise MLOps and evaluation tools
+
+   Agent Builder:
+   - Lightweight guided experience for Q&A agents
+   - Knowledge base from SharePoint, websites, files
+   - No-code agent creation
+   - Quick deployment to Teams, websites
+
 3. **Decision Guidance**
    ${licensing.decisionGuide.useM365CopilotWhen.map((w: string) => `   - Use M365 Copilot when: ${w}`).join('\n')}
    
    ${licensing.decisionGuide.useCopilotStudioWhen.map((w: string) => `   - Use Copilot Studio when: ${w}`).join('\n')}
+
+   - Use Microsoft Foundry when: You need pro-code AI development, custom model fine-tuning, advanced orchestration, or full control over AI workflows
+   - Use Agent Builder when: You need simple knowledge-base Q&A agents with no-code creation and quick deployment
 
 4. **Deployment Channels**
    - M365 Copilot: ${Object.entries(licensing.featureComparison.deploymentChannels)

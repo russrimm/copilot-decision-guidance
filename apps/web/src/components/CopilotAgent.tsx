@@ -17,7 +17,7 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
       id: '1',
       role: 'assistant',
       content:
-        "👋 Hi! I'm your Copilot Knowledge Agent. I can help you understand licensing, compare Microsoft 365 Copilot vs Copilot Studio, calculate costs, and answer questions about deployment. What would you like to know?",
+        "👋 Hi! I'm your Agentic Decision Assistant. I can help you understand licensing, compare Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder, calculate costs, and answer deployment questions. What would you like to know?",
       timestamp: new Date(),
     },
   ]);
@@ -95,10 +95,10 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
   };
 
   const suggestedQuestions = [
-    "What's the difference between M365 Copilot and Copilot Studio?",
+    "What's the difference between M365 Copilot, Copilot Studio, and Microsoft Foundry?",
     'How much does Microsoft 365 Copilot cost?',
-    'Can I deploy Copilot Studio agents to external channels?',
-    'What are Copilot Credits?',
+    'When should I use Microsoft Foundry vs Copilot Studio?',
+    'What is Agent Builder and when should I use it?',
     'When should I use a hybrid approach?',
   ];
 
@@ -142,7 +142,7 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Copilot Knowledge Agent
+                  Agentic Decision Assistant
                 </h3>
               </div>
               <button
@@ -184,7 +184,7 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
       <div className="mb-4 flex items-center">
         <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          💬 Copilot Knowledge Agent
+          💬 Agentic Decision Assistant
         </h2>
       </div>
 

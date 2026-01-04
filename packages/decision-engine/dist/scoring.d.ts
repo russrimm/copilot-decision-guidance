@@ -17,6 +17,8 @@ export declare function getAllQuestions(model: DecisionModel): {
         weights: {
             m365Copilot: number;
             copilotStudio: number;
+            foundry: number;
+            agentBuilder: number;
             hybrid: number;
         };
     }[];

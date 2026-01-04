@@ -18,6 +18,8 @@ export function calculateRecommendation(
   const scores: Weights = {
     m365Copilot: 0,
     copilotStudio: 0,
+    foundry: 0,
+    agentBuilder: 0,
     hybrid: 0,
   };
 
@@ -43,6 +45,8 @@ export function calculateRecommendation(
       // Add weights to scores
       scores.m365Copilot += selectedAnswer.weights.m365Copilot;
       scores.copilotStudio += selectedAnswer.weights.copilotStudio;
+      scores.foundry += selectedAnswer.weights.foundry || 0;
+      scores.agentBuilder += selectedAnswer.weights.agentBuilder || 0;
       scores.hybrid += selectedAnswer.weights.hybrid;
 
       // Track breakdown for transparency
@@ -75,7 +79,12 @@ export function calculateRecommendation(
  */
 function determineRecommendation(
   scores: Weights,
-  thresholds: { winMargin: number; hybridThreshold: number }
+  thresholds: {
+    winMargin: number;
+    hybridThreshold: number;
+    foundryThreshold?: number;
+    agentBuilderThreshold?: number;
+  }
 ): RecommendationType {
   const { winMargin, hybridThreshold } = thresholds;
 
@@ -83,6 +92,8 @@ function determineRecommendation(
   const sortedScores = [
     { type: 'M365_COPILOT' as RecommendationType, score: scores.m365Copilot },
     { type: 'COPILOT_STUDIO' as RecommendationType, score: scores.copilotStudio },
+    { type: 'FOUNDRY' as RecommendationType, score: scores.foundry },
+    { type: 'AGENT_BUILDER' as RecommendationType, score: scores.agentBuilder },
     { type: 'HYBRID' as RecommendationType, score: scores.hybrid },
   ].sort((a, b) => b.score - a.score);
 

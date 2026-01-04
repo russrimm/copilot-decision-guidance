@@ -1,10 +1,10 @@
 {
-  "name": "copilot-decision-guidance",
+  "name": "microsoft-agentic-guidance",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "main": "server-production.js",
-  "description": "Decision guidance tool for choosing between Microsoft 365 Copilot, Copilot Studio, or Hybrid approach",
+  "description": "Decision and planning guidance tool for choosing between Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, Agent Builder, or Hybrid approach",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"

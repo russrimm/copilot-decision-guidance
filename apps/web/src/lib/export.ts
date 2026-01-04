@@ -192,7 +192,7 @@ export function generatePDF(
   // Title
   doc.setFontSize(20);
   doc.setFont('helvetica', 'bold');
-  doc.text('Microsoft Copilot Decision Report', margin, yPosition);
+  doc.text('Microsoft Agentic Solution Report', margin, yPosition);
   yPosition += 15;
 
   // Recommendation Type

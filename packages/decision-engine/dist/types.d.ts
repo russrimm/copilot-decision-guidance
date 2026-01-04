@@ -2,14 +2,20 @@ import { z } from 'zod';
 export declare const WeightsSchema: z.ZodObject<{
     m365Copilot: z.ZodNumber;
     copilotStudio: z.ZodNumber;
+    foundry: z.ZodNumber;
+    agentBuilder: z.ZodNumber;
     hybrid: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
     m365Copilot: number;
     copilotStudio: number;
+    foundry: number;
+    agentBuilder: number;
     hybrid: number;
 }, {
     m365Copilot: number;
     copilotStudio: number;
+    foundry: number;
+    agentBuilder: number;
     hybrid: number;
 }>;
 export declare const AnswerSchema: z.ZodObject<{
@@ -18,14 +24,20 @@ export declare const AnswerSchema: z.ZodObject<{
     weights: z.ZodObject<{
         m365Copilot: z.ZodNumber;
         copilotStudio: z.ZodNumber;
+        foundry: z.ZodNumber;
+        agentBuilder: z.ZodNumber;
         hybrid: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
         m365Copilot: number;
         copilotStudio: number;
+        foundry: number;
+        agentBuilder: number;
         hybrid: number;
     }, {
         m365Copilot: number;
         copilotStudio: number;
+        foundry: number;
+        agentBuilder: number;
         hybrid: number;
     }>;
 }, "strip", z.ZodTypeAny, {
@@ -34,6 +46,8 @@ export declare const AnswerSchema: z.ZodObject<{
     weights: {
         m365Copilot: number;
         copilotStudio: number;
+        foundry: number;
+        agentBuilder: number;
         hybrid: number;
     };
 }, {
@@ -42,6 +56,8 @@ export declare const AnswerSchema: z.ZodObject<{
     weights: {
         m365Copilot: number;
         copilotStudio: number;
+        foundry: number;
+        agentBuilder: number;
         hybrid: number;
     };
 }>;
@@ -55,14 +71,20 @@ export declare const QuestionSchema: z.ZodObject<{
         weights: z.ZodObject<{
             m365Copilot: z.ZodNumber;
             copilotStudio: z.ZodNumber;
+            foundry: z.ZodNumber;
+            agentBuilder: z.ZodNumber;
             hybrid: z.ZodNumber;
         }, "strip", z.ZodTypeAny, {
             m365Copilot: number;
             copilotStudio: number;
+            foundry: number;
+            agentBuilder: number;
             hybrid: number;
         }, {
             m365Copilot: number;
             copilotStudio: number;
+            foundry: number;
+            agentBuilder: number;
             hybrid: number;
         }>;
     }, "strip", z.ZodTypeAny, {
@@ -71,6 +93,8 @@ export declare const QuestionSchema: z.ZodObject<{
         weights: {
             m365Copilot: number;
             copilotStudio: number;
+            foundry: number;
+            agentBuilder: number;
             hybrid: number;
         };
     }, {
@@ -79,6 +103,8 @@ export declare const QuestionSchema: z.ZodObject<{
         weights: {
             m365Copilot: number;
             copilotStudio: number;
+            foundry: number;
+            agentBuilder: number;
             hybrid: number;
         };
     }>, "many">;
@@ -92,6 +118,8 @@ export declare const QuestionSchema: z.ZodObject<{
         weights: {
             m365Copilot: number;
             copilotStudio: number;
+            foundry: number;
+            agentBuilder: number;
             hybrid: number;
         };
     }[];
@@ -105,6 +133,8 @@ export declare const QuestionSchema: z.ZodObject<{
         weights: {
             m365Copilot: number;
             copilotStudio: number;
+            foundry: number;
+            agentBuilder: number;
             hybrid: number;
         };
     }[];
@@ -123,14 +153,20 @@ export declare const QuestionGroupSchema: z.ZodObject<{
             weights: z.ZodObject<{
                 m365Copilot: z.ZodNumber;
                 copilotStudio: z.ZodNumber;
+                foundry: z.ZodNumber;
+                agentBuilder: z.ZodNumber;
                 hybrid: z.ZodNumber;
             }, "strip", z.ZodTypeAny, {
                 m365Copilot: number;
                 copilotStudio: number;
+                foundry: number;
+                agentBuilder: number;
                 hybrid: number;
             }, {
                 m365Copilot: number;
                 copilotStudio: number;
+                foundry: number;
+                agentBuilder: number;
                 hybrid: number;
             }>;
         }, "strip", z.ZodTypeAny, {
@@ -139,6 +175,8 @@ export declare const QuestionGroupSchema: z.ZodObject<{
             weights: {
                 m365Copilot: number;
                 copilotStudio: number;
+                foundry: number;
+                agentBuilder: number;
                 hybrid: number;
             };
         }, {
@@ -147,6 +185,8 @@ export declare const QuestionGroupSchema: z.ZodObject<{
             weights: {
                 m365Copilot: number;
                 copilotStudio: number;
+                foundry: number;
+                agentBuilder: number;
                 hybrid: number;
             };
         }>, "many">;
@@ -160,6 +200,8 @@ export declare const QuestionGroupSchema: z.ZodObject<{
             weights: {
                 m365Copilot: number;
                 copilotStudio: number;
+                foundry: number;
+                agentBuilder: number;
                 hybrid: number;
             };
         }[];
@@ -173,6 +215,8 @@ export declare const QuestionGroupSchema: z.ZodObject<{
             weights: {
                 m365Copilot: number;
                 copilotStudio: number;
+                foundry: number;
+                agentBuilder: number;
                 hybrid: number;
             };
         }[];
@@ -191,6 +235,8 @@ export declare const QuestionGroupSchema: z.ZodObject<{
             weights: {
                 m365Copilot: number;
                 copilotStudio: number;
+                foundry: number;
+                agentBuilder: number;
                 hybrid: number;
             };
         }[];
@@ -209,6 +255,8 @@ export declare const QuestionGroupSchema: z.ZodObject<{
             weights: {
                 m365Copilot: number;
                 copilotStudio: number;
+                foundry: number;
+                agentBuilder: number;
                 hybrid: number;
             };
         }[];
@@ -217,12 +265,18 @@ export declare const QuestionGroupSchema: z.ZodObject<{
 export declare const ThresholdsSchema: z.ZodObject<{
     winMargin: z.ZodNumber;
     hybridThreshold: z.ZodNumber;
+    foundryThreshold: z.ZodOptional<z.ZodNumber>;
+    agentBuilderThreshold: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
     winMargin: number;
     hybridThreshold: number;
+    foundryThreshold?: number | undefined;
+    agentBuilderThreshold?: number | undefined;
 }, {
     winMargin: number;
     hybridThreshold: number;
+    foundryThreshold?: number | undefined;
+    agentBuilderThreshold?: number | undefined;
 }>;
 export declare const DecisionModelSchema: z.ZodObject<{
     version: z.ZodString;
@@ -250,14 +304,20 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: z.ZodObject<{
                     m365Copilot: z.ZodNumber;
                     copilotStudio: z.ZodNumber;
+                    foundry: z.ZodNumber;
+                    agentBuilder: z.ZodNumber;
                     hybrid: z.ZodNumber;
                 }, "strip", z.ZodTypeAny, {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 }, {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 }>;
             }, "strip", z.ZodTypeAny, {
@@ -266,6 +326,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 };
             }, {
@@ -274,6 +336,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 };
             }>, "many">;
@@ -287,6 +351,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 };
             }[];
@@ -300,6 +366,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 };
             }[];
@@ -318,6 +386,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 };
             }[];
@@ -336,6 +406,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 };
             }[];
@@ -344,12 +416,18 @@ export declare const DecisionModelSchema: z.ZodObject<{
     thresholds: z.ZodObject<{
         winMargin: z.ZodNumber;
         hybridThreshold: z.ZodNumber;
+        foundryThreshold: z.ZodOptional<z.ZodNumber>;
+        agentBuilderThreshold: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
         winMargin: number;
         hybridThreshold: number;
+        foundryThreshold?: number | undefined;
+        agentBuilderThreshold?: number | undefined;
     }, {
         winMargin: number;
         hybridThreshold: number;
+        foundryThreshold?: number | undefined;
+        agentBuilderThreshold?: number | undefined;
     }>;
 }, "strip", z.ZodTypeAny, {
     version: string;
@@ -371,6 +449,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 };
             }[];
@@ -379,6 +459,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
     thresholds: {
         winMargin: number;
         hybridThreshold: number;
+        foundryThreshold?: number | undefined;
+        agentBuilderThreshold?: number | undefined;
     };
 }, {
     version: string;
@@ -400,6 +482,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
                 weights: {
                     m365Copilot: number;
                     copilotStudio: number;
+                    foundry: number;
+                    agentBuilder: number;
                     hybrid: number;
                 };
             }[];
@@ -408,6 +492,8 @@ export declare const DecisionModelSchema: z.ZodObject<{
     thresholds: {
         winMargin: number;
         hybridThreshold: number;
+        foundryThreshold?: number | undefined;
+        agentBuilderThreshold?: number | undefined;
     };
 }>;
 export type Weights = z.infer<typeof WeightsSchema>;
@@ -418,7 +504,7 @@ export type Thresholds = z.infer<typeof ThresholdsSchema>;
 export type DecisionModel = z.infer<typeof DecisionModelSchema>;
 export declare const UserAnswersSchema: z.ZodRecord<z.ZodString, z.ZodString>;
 export type UserAnswers = z.infer<typeof UserAnswersSchema>;
-export type RecommendationType = 'M365_COPILOT' | 'COPILOT_STUDIO' | 'HYBRID';
+export type RecommendationType = 'M365_COPILOT' | 'COPILOT_STUDIO' | 'FOUNDRY' | 'AGENT_BUILDER' | 'HYBRID';
 export interface ScoringResult {
     recommendation: RecommendationType;
     scores: Weights;
