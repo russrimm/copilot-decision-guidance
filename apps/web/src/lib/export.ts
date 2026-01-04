@@ -263,7 +263,7 @@ export function generatePDF(
     // Calculate needed space for this reason
     const reasonLines = wrapText(`${idx + 1}. ${reason}`, maxWidth, 11);
     const neededSpace = reasonLines.length * 6 + 4;
-    
+
     if (yPosition + neededSpace > 270) {
       doc.addPage();
       yPosition = 20;
@@ -293,7 +293,7 @@ export function generatePDF(
     // Calculate needed space for this step
     const stepLines = wrapText(`${idx + 1}. ${step}`, maxWidth, 11);
     const neededSpace = stepLines.length * 6 + 4;
-    
+
     if (yPosition + neededSpace > 270) {
       doc.addPage();
       yPosition = 20;
@@ -323,7 +323,7 @@ export function generatePDF(
     // Calculate needed space for this risk
     const riskLines = wrapText(`${idx + 1}. ${risk}`, maxWidth, 11);
     const neededSpace = riskLines.length * 6 + 4;
-    
+
     if (yPosition + neededSpace > 270) {
       doc.addPage();
       yPosition = 20;
@@ -355,7 +355,7 @@ export function generatePDF(
       // Calculate needed space for this item
       const itemLines = wrapText(`${idx + 1}. ${item}`, maxWidth, 11);
       const neededSpace = itemLines.length * 6 + 4;
-      
+
       if (yPosition + neededSpace > 270) {
         doc.addPage();
         yPosition = 20;
