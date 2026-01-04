@@ -36,10 +36,7 @@ export default function Wizard() {
           <p className="font-semibold">Error loading questionnaire</p>
           <p className="text-sm mt-2">{error}</p>
         </div>
-        <button
-          onClick={() => window.location.reload()}
-          className="btn-primary"
-        >
+        <button onClick={() => window.location.reload()} className="btn-primary">
           Try Again
         </button>
       </div>
@@ -49,13 +46,8 @@ export default function Wizard() {
   if (!model) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600 dark:text-gray-200 mb-4">
-          Unable to load questionnaire.
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="btn-primary"
-        >
+        <p className="text-gray-600 dark:text-gray-200 mb-4">Unable to load questionnaire.</p>
+        <button onClick={() => window.location.reload()} className="btn-primary">
           Reload
         </button>
       </div>

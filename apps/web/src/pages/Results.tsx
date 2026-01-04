@@ -33,7 +33,7 @@ export default function Results() {
         controller.abort();
         console.error('[Results] AI explanation request timed out after 35 seconds');
       }, 35000); // 35 second timeout (slightly longer than backend)
-      
+
       fetch('/api/explain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

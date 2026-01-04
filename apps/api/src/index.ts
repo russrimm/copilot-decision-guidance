@@ -929,7 +929,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
       // Azure OpenAI
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-      
+
       try {
         const response = await fetch(
           `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`,
@@ -991,7 +991,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
       // OpenAI
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-      
+
       try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',

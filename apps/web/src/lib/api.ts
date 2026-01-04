@@ -3,7 +3,11 @@ import type { UserAnswers, Recommendation, ScoringResult } from '../types';
 const API_BASE_URL = '/api';
 const DEFAULT_TIMEOUT = 10000; // 10 seconds for API calls
 
-async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = DEFAULT_TIMEOUT): Promise<Response> {
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeout = DEFAULT_TIMEOUT
+): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
