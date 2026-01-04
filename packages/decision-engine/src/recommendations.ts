@@ -18,6 +18,10 @@ export function generateRecommendation(scoringResult: ScoringResult): Recommenda
       return generateAgentBuilderRecommendation(scoringResult);
     case 'HYBRID':
       return generateHybridRecommendation(scoringResult);
+    default:
+      // This should never happen, but provides a fallback
+      console.error(`Unknown recommendation type: ${recommendation}`);
+      return generateHybridRecommendation(scoringResult);
   }
 }
 

@@ -70,7 +70,19 @@ export default function Wizard() {
       // Calculate and navigate to results
       setCalculating(true);
       try {
-        const result = await calculateScore({ ...answers, ...data });
+        const finalAnswers = { ...answers, ...data };
+        console.log('[Wizard] Submitting answers:', finalAnswers);
+        const result = await calculateScore(finalAnswers);
+        console.log('[Wizard] Received result:', result);
+
+        if (!result.recommendation || !result.scoringResult) {
+          console.error(
+            '[Wizard] Invalid result - missing recommendation or scoringResult:',
+            result
+          );
+          throw new Error('Invalid response from server - missing recommendation data');
+        }
+
         setRecommendation(result.recommendation, result.scoringResult);
         navigate('/results');
       } catch (error) {
