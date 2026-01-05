@@ -102,34 +102,34 @@ export default function Results() {
     // First, detect and extract URLs from the text
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const urlMatches = text.match(urlRegex);
-    
+
     // Create parts array with URLs as clickable links
     const parts: Array<{ text: string; link?: { url: string; title: string } }> = [];
-    
+
     if (urlMatches && urlMatches.length > 0) {
       let lastIndex = 0;
       urlMatches.forEach((url) => {
         const urlIndex = text.indexOf(url, lastIndex);
-        
+
         // Add text before the URL
         if (urlIndex > lastIndex) {
           parts.push({ text: text.substring(lastIndex, urlIndex) });
         }
-        
+
         // Add the URL as a link
-        parts.push({ 
-          text: url, 
-          link: { url: url, title: url } 
+        parts.push({
+          text: url,
+          link: { url: url, title: url },
         });
-        
+
         lastIndex = urlIndex + url.length;
       });
-      
+
       // Add remaining text after last URL
       if (lastIndex < text.length) {
         parts.push({ text: text.substring(lastIndex) });
       }
-      
+
       return parts;
     }
 
@@ -139,55 +139,64 @@ export default function Results() {
     sources.forEach((source) => {
       const url = source.url.toLowerCase();
       const title = source.title.toLowerCase();
-      
+
       // Microsoft 365 Copilot
       if (url.includes('microsoft-365-copilot') || title.includes('microsoft 365 copilot')) {
         linkMap['Microsoft 365 Copilot'] = source;
         linkMap['M365 Copilot'] = source;
         linkMap['Copilot for Microsoft 365'] = source;
       }
-      
+
       // Copilot Studio
-      if (url.includes('copilot-studio') || url.includes('microsoft-copilot-studio') || title.includes('copilot studio')) {
+      if (
+        url.includes('copilot-studio') ||
+        url.includes('microsoft-copilot-studio') ||
+        title.includes('copilot studio')
+      ) {
         linkMap['Copilot Studio'] = source;
         linkMap['Microsoft Copilot Studio'] = source;
       }
-      
+
       // Microsoft Foundry / Azure AI Foundry
-      if (url.includes('azure-ai-foundry') || url.includes('ai-foundry') || url.includes('/foundry') || title.includes('foundry')) {
+      if (
+        url.includes('azure-ai-foundry') ||
+        url.includes('ai-foundry') ||
+        url.includes('/foundry') ||
+        title.includes('foundry')
+      ) {
         linkMap['Microsoft Foundry'] = source;
         linkMap['Azure AI Foundry'] = source;
         linkMap['Foundry'] = source;
       }
-      
+
       // Agent Builder
       if (url.includes('agent-builder') || title.includes('agent builder')) {
         linkMap['Agent Builder'] = source;
         linkMap['Copilot Agent Builder'] = source;
       }
-      
+
       // Power Platform
       if (url.includes('power-platform') || title.includes('power platform')) {
         linkMap['Power Platform'] = source;
       }
-      
+
       // Power Automate
       if (url.includes('power-automate') || title.includes('power automate')) {
         linkMap['Power Automate'] = source;
       }
-      
+
       // Azure
       if (url.includes('/azure/') && !url.includes('foundry')) {
         linkMap['Azure'] = source;
       }
-      
+
       // Licensing
       if (url.includes('licensing') || title.includes('licensing')) {
         linkMap['licensing'] = source;
         linkMap['Licensing'] = source;
         linkMap['license'] = source;
       }
-      
+
       // Privacy & Security
       if (url.includes('privacy') || title.includes('privacy')) {
         linkMap['privacy'] = source;
@@ -198,91 +207,107 @@ export default function Results() {
         linkMap['security'] = source;
         linkMap['Security'] = source;
       }
-      
+
       // Compliance
       if (url.includes('compliance') || title.includes('compliance')) {
         linkMap['compliance'] = source;
         linkMap['Compliance'] = source;
       }
-      
+
       // HIPAA / Healthcare
       if (url.includes('hipaa') || title.includes('hipaa')) {
         linkMap['HIPAA'] = source;
         linkMap['BAA'] = source;
       }
-      
+
       // GDPR
       if (url.includes('gdpr') || title.includes('gdpr')) {
         linkMap['GDPR'] = source;
       }
-      
+
       // Data residency
-      if (url.includes('data-residency') || url.includes('residency') || title.includes('residency')) {
+      if (
+        url.includes('data-residency') ||
+        url.includes('residency') ||
+        title.includes('residency')
+      ) {
         linkMap['data residency'] = source;
         linkMap['Data Residency'] = source;
       }
-      
+
       // Governance
       if (url.includes('governance') || title.includes('governance')) {
         linkMap['governance'] = source;
         linkMap['Governance'] = source;
       }
-      
+
       // DLP (Data Loss Prevention)
       if (url.includes('dlp') || url.includes('data-loss-prevention') || title.includes('dlp')) {
         linkMap['DLP'] = source;
         linkMap['data loss prevention'] = source;
       }
-      
+
       // Microsoft Graph
       if (url.includes('graph') || title.includes('graph')) {
         linkMap['Microsoft Graph'] = source;
         linkMap['Graph'] = source;
       }
-      
+
       // Connectors
       if (url.includes('connector') || title.includes('connector')) {
         linkMap['connectors'] = source;
         linkMap['Connectors'] = source;
       }
-      
+
       // Extensibility
-      if (url.includes('extensibility') || url.includes('extend') || title.includes('extensibility')) {
+      if (
+        url.includes('extensibility') ||
+        url.includes('extend') ||
+        title.includes('extensibility')
+      ) {
         linkMap['extensibility'] = source;
         linkMap['extend'] = source;
       }
-      
+
       // Implementation Guide
       if (url.includes('implementation') || title.includes('implementation')) {
         linkMap['implementation guide'] = source;
         linkMap['Implementation Guide'] = source;
       }
-      
+
       // Getting Started / Setup
-      if (url.includes('get-started') || url.includes('getting-started') || title.includes('get started')) {
+      if (
+        url.includes('get-started') ||
+        url.includes('getting-started') ||
+        title.includes('get started')
+      ) {
         linkMap['Get Started'] = source;
         linkMap['getting started'] = source;
       }
-      
+
       // Adoption
       if (url.includes('adoption') || title.includes('adoption')) {
         linkMap['adoption'] = source;
         linkMap['Adoption'] = source;
       }
-      
+
       // Microsoft Teams
       if (url.includes('teams') || title.includes('teams')) {
         linkMap['Microsoft Teams'] = source;
         linkMap['Teams'] = source;
       }
-      
+
       // SharePoint
       if (url.includes('sharepoint') || title.includes('sharepoint')) {
         linkMap['SharePoint'] = source;
       }
-      
+
       // Azure OpenAI
-      if (url.includes('azure-openai') || url.includes('openai') || title.includes('azure openai')) {
+      if (
+        url.includes('azure-openai') ||
+        url.includes('openai') ||
+        title.includes('azure openai')
+      ) {
         linkMap['Azure OpenAI'] = source;
         linkMap['OpenAI'] = source;
       }
