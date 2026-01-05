@@ -1070,68 +1070,6 @@
       "description": "What is your budget and scale expectation?",
       "questions": [
         {
-          "id": "cost_budget",
-          "title": "What is your monthly budget range?",
-          "helperText": "Approximate monthly investment for AI capabilities (licensing + infrastructure)",
-          "answers": [
-            {
-              "id": "budget_free",
-              "label": "Free / Included (< $500/mo) - Using existing Microsoft 365 licensing",
-              "weights": {
-                "m365Copilot": 10,
-                "copilotStudio": 3,
-                "foundry": 1,
-                "agentBuilder": 8,
-                "hybrid": 4
-              }
-            },
-            {
-              "id": "budget_low",
-              "label": "$500-$2K/mo - Pilot with per-user licenses or Copilot Studio",
-              "weights": {
-                "m365Copilot": 8,
-                "copilotStudio": 9,
-                "foundry": 2,
-                "agentBuilder": 7,
-                "hybrid": 6
-              }
-            },
-            {
-              "id": "budget_medium",
-              "label": "$2K-$10K/mo - Hybrid approach with Studio + Azure AI services",
-              "weights": {
-                "m365Copilot": 4,
-                "copilotStudio": 7,
-                "foundry": 7,
-                "agentBuilder": 4,
-                "hybrid": 9
-              }
-            },
-            {
-              "id": "budget_high",
-              "label": "$10K+/mo - Enterprise scale with full Azure AI stack",
-              "weights": {
-                "m365Copilot": 2,
-                "copilotStudio": 5,
-                "foundry": 10,
-                "agentBuilder": 2,
-                "hybrid": 7
-              }
-            },
-            {
-              "id": "budget_unsure",
-              "label": "I'm not sure",
-              "weights": {
-                "m365Copilot": 5,
-                "copilotStudio": 5,
-                "foundry": 5,
-                "agentBuilder": 5,
-                "hybrid": 5
-              }
-            }
-          ]
-        },
-        {
           "id": "cost_memory",
           "title": "Do you need to store and access conversation history?",
           "helperText": "Important for audit trails, compliance, and regulated industries",
