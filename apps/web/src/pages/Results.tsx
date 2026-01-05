@@ -104,9 +104,8 @@ export default function Results() {
     const urlMatches = text.match(urlRegex);
 
     // Create parts array with URLs as clickable links
-    const parts: Array<{ text: string; link?: { url: string; title: string } }> = [];
-
     if (urlMatches && urlMatches.length > 0) {
+      const parts: Array<{ text: string; link?: { url: string; title: string } }> = [];
       let lastIndex = 0;
       urlMatches.forEach((url) => {
         const urlIndex = text.indexOf(url, lastIndex);
@@ -313,8 +312,8 @@ export default function Results() {
       }
     });
 
-    // Split text into parts and identify where to add links
-    const parts: Array<{ text: string; link?: { url: string; title: string } }> = [];
+    // Split text into parts and identify where to add links (keyword-based)
+    const keywordParts: Array<{ text: string; link?: { url: string; title: string } }> = [];
     let remainingText = text;
 
     Object.entries(linkMap).forEach(([keyword, source]) => {
@@ -323,18 +322,18 @@ export default function Results() {
       if (match) {
         const index = remainingText.search(regex);
         if (index > 0) {
-          parts.push({ text: remainingText.substring(0, index) });
+          keywordParts.push({ text: remainingText.substring(0, index) });
         }
-        parts.push({ text: match[0], link: source });
+        keywordParts.push({ text: match[0], link: source });
         remainingText = remainingText.substring(index + match[0].length);
       }
     });
 
     if (remainingText) {
-      parts.push({ text: remainingText });
+      keywordParts.push({ text: remainingText });
     }
 
-    return parts.length > 0 ? parts : [{ text }];
+    return keywordParts.length > 0 ? keywordParts : [{ text }];
   };
 
   const handleExportJSON = () => {
