@@ -110,16 +110,15 @@ app.post('/api/score', async (req, res) => {
 });
 
 // Get AI explanation (if enabled)
+// Note: This feature requires the full API server with Azure OpenAI integration
 app.post('/api/explain', async (req, res) => {
   try {
-    const { recommendation, answers } = req.body;
-
-    if (!recommendation) {
-      return res.status(400).json({ error: 'Missing recommendation in request body' });
-    }
-
-    const result = await explainRecommendation(recommendation, answers);
-    res.json(result);
+    // This endpoint is not available in production mode
+    // It requires Azure OpenAI configuration which is handled by the full API server
+    res.status(501).json({
+      error: 'AI explanation feature not available in this deployment mode',
+      message: 'This feature requires the full API server with Azure OpenAI configuration',
+    });
   } catch (error) {
     console.error('Error generating explanation:', error);
     res.status(500).json({ error: 'Failed to generate explanation' });
