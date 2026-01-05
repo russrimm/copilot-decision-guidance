@@ -38,7 +38,7 @@ yarn-error.log*
 *.tsbuildinfo
 
 # IDE
-.vscode/
+
 .idea/
 *.swp
 *.swo

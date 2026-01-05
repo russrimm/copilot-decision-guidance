@@ -1,0 +1,11 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/4b2df633-d9f8-4261-adf9-226dd6f19033/resourceGroups/Portal360/providers/Microsoft.Web/sites/portal365",
+  "appService.deploySubpath": ".",
+  "azureFunctions.deploySubpath": "azure-function",
+  "azureFunctions.postDeployTask": "npm install (functions)",
+  "azureFunctions.projectLanguage": "TypeScript",
+  "azureFunctions.projectRuntime": "~4",
+  "debug.internalConsoleOptions": "neverOpen",
+  "azureFunctions.projectLanguageModel": 4,
+  "azureFunctions.preDeployTask": "npm prune (functions)"
+}
