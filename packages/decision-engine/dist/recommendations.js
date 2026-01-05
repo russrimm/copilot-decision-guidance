@@ -345,10 +345,13 @@ function generateHybridRecommendation(scoringResult) {
             ' and ' +
             competitivePlatformNames[competitivePlatformNames.length - 1]
         : competitivePlatformNames[0] || 'multiple platforms';
+    const summaryText = competitivePlatformNames.length > 1
+        ? `For this scenario, combining ${platformList} provides the best outcome. This hybrid approach is common—organizations use different platforms for different scenarios based on complexity, audience, and requirements. Your scoring indicates multiple viable paths forward.`
+        : `For this scenario, ${platformList} is recommended, though your requirements span multiple capability areas. This hybrid scoring indicates you may benefit from multiple platforms as your needs evolve. Consider starting with ${platformList} and expanding to additional platforms based on specific use cases.`;
     return {
         type: 'HYBRID',
         title: 'Hybrid Approach (Multiple Platforms)',
-        summary: `For this scenario, combining ${platformList} provides the best outcome. This hybrid approach is common—organizations use different platforms for different scenarios based on complexity, audience, and requirements. Your scoring indicates multiple viable paths forward.`,
+        summary: summaryText,
         reasons: [
             'Your requirements span multiple capability areas, making a single platform insufficient',
             'You need both broad productivity enhancements (M365 Copilot) AND custom business process automation (Copilot Studio/Foundry)',
