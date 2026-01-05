@@ -87,7 +87,7 @@ export default function Layout() {
             </a>
           </p>
           <p className="text-center text-xs text-gray-400 dark:text-gray-400 mt-2">
-            v1.3.0 | Not official Microsoft guidance | For informational purposes only
+            v2.0.0 | Not official Microsoft guidance | For informational purposes only
           </p>
         </div>
       </footer>

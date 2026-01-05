@@ -13,7 +13,7 @@ export default function Landing() {
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-12">
         <div className="text-right mb-2">
-          <span className="text-[10px] text-gray-400 dark:text-gray-500">v1.3.0</span>
+          <span className="text-[10px] text-gray-400 dark:text-gray-500">v2.0.0</span>
         </div>
         <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
           Microsoft Agentic Solution Advisor
