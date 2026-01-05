@@ -218,6 +218,7 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
   - M365 Copilot: https://learn.microsoft.com/en-us/copilot/microsoft-365/
   - Copilot Studio: https://learn.microsoft.com/en-us/microsoft-copilot-studio/
   - Microsoft Foundry: https://learn.microsoft.com/en-us/azure/ai-studio/
+  - Microsoft AI Decision Framework: https://microsoft.github.io/Microsoft-AI-Decision-Framework/
 
 **Important:** Only provide information based on the knowledge above.`;
 

@@ -81,6 +81,10 @@ function generateM365CopilotRecommendation(scoringResult) {
                 title: 'Copilot Studio Implementation Guide',
                 url: 'https://aka.ms/copilotstudioimplementationguide',
             },
+            {
+                title: 'Microsoft AI Decision Framework',
+                url: 'https://microsoft.github.io/Microsoft-AI-Decision-Framework/',
+            },
         ],
         scoringResult,
     };
@@ -155,6 +159,10 @@ function generateCopilotStudioRecommendation(scoringResult) {
             {
                 title: 'Copilot Studio Implementation Guide',
                 url: 'https://aka.ms/copilotstudioimplementationguide',
+            },
+            {
+                title: 'Microsoft AI Decision Framework',
+                url: 'https://microsoft.github.io/Microsoft-AI-Decision-Framework/',
             },
         ],
         scoringResult,
@@ -233,6 +241,10 @@ function generateFoundryRecommendation(scoringResult) {
                 title: 'Power CAT Agent Platform Advisor',
                 url: 'https://microsoft.github.io/powercat/agent-platform-advisor/',
             },
+            {
+                title: 'Microsoft AI Decision Framework',
+                url: 'https://microsoft.github.io/Microsoft-AI-Decision-Framework/',
+            },
         ],
         scoringResult,
     };
@@ -310,6 +322,10 @@ function generateAgentBuilderRecommendation(scoringResult) {
             {
                 title: 'Power CAT Agent Platform Advisor',
                 url: 'https://microsoft.github.io/powercat/agent-platform-advisor/',
+            },
+            {
+                title: 'Microsoft AI Decision Framework',
+                url: 'https://microsoft.github.io/Microsoft-AI-Decision-Framework/',
             },
         ],
         scoringResult,
@@ -572,6 +588,10 @@ function generateHybridRecommendation(scoringResult) {
             {
                 title: 'Copilot Studio Implementation Guide',
                 url: 'https://aka.ms/copilotstudioimplementationguide',
+            },
+            {
+                title: 'Microsoft AI Decision Framework',
+                url: 'https://microsoft.github.io/Microsoft-AI-Decision-Framework/',
             },
         ],
         scoringResult,
