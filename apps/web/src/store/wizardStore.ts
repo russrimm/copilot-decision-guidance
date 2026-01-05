@@ -54,6 +54,7 @@ export const useWizardStore = create<WizardState>()(
     }),
     {
       name: 'copilot-wizard-storage',
+      version: 2, // Incremented to clear old cached data after removing budget question
     }
   )
 );
