@@ -32,8 +32,6 @@ async function loadDecisionEngine() {
     console.log('[STARTUP] Loading decision engine from @copilot-guidance/decision-engine');
     const engine = await import('@copilot-guidance/decision-engine');
 
-    console.log('[STARTUP] Engine imported, available exports:', Object.keys(engine));
-
     decisionModel = engine.decisionModel;
     calculateRecommendation = engine.calculateRecommendation;
     generateRecommendation = engine.generateRecommendation;
@@ -97,30 +95,16 @@ app.post('/api/score', async (req, res) => {
       return res.status(400).json({ error: 'Missing answers in request body' });
     }
 
-    console.log('[SCORE] Received answers:', Object.keys(answers).length, 'questions');
-    console.log('[SCORE] Decision model loaded:', !!decisionModel);
-    console.log('[SCORE] Decision model has questionGroups:', !!decisionModel?.questionGroups);
-    console.log('[SCORE] calculateRecommendation function:', typeof calculateRecommendation);
-
     // Step 1: Calculate scores and determine recommendation type
     const scoringResult = calculateRecommendation(decisionModel, answers);
-
-    console.log('[SCORE] Scoring calculation successful');
-    console.log('[SCORE] Scoring result type:', scoringResult?.recommendation);
 
     // Step 2: Generate detailed recommendation text
     const recommendation = generateRecommendation(scoringResult);
 
-    console.log('[SCORE] Recommendation generation successful');
-    console.log('[SCORE] Recommendation has summary:', !!recommendation?.summary);
-
     // Return both scoringResult and recommendation (matching API format)
     res.json({ recommendation, scoringResult });
   } catch (error) {
-    console.error('[SCORE] Error calculating recommendation:', error);
-    console.error('[SCORE] Error stack:', error.stack);
-    console.error('[SCORE] Error name:', error.name);
-    console.error('[SCORE] Error message:', error.message);
+    console.error('[SCORE] Error calculating recommendation:', error.message);
     res.status(500).json({ error: 'Failed to calculate recommendation' });
   }
 });
@@ -167,13 +151,7 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
     const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
     const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
 
-    console.log('[COPILOT] Chat request received');
-    console.log('[COPILOT] Azure Key present:', !!azureKey);
-    console.log('[COPILOT] Azure Endpoint:', azureEndpoint);
-    console.log('[COPILOT] Azure Deployment:', azureDeployment);
-
     if (!azureKey || !azureEndpoint || !azureDeployment) {
-      console.log('[COPILOT] AI not configured - missing environment variables');
       return res.status(501).json({
         error: 'AI not configured',
         message:
@@ -243,8 +221,6 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
 
 **Important:** Only provide information based on the knowledge above.`;
 
-    console.log('[COPILOT] Calling Azure OpenAI API...');
-
     // Call Azure OpenAI
     const apiUrl = `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`;
     const response = await fetch(apiUrl, {
@@ -265,21 +241,19 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error('[COPILOT] Azure OpenAI API error:', response.status, errorBody);
-      throw new Error(`Azure OpenAI API error: ${response.status} - ${errorBody}`);
+      console.error('[COPILOT] Azure OpenAI API error:', response.status);
+      throw new Error('Failed to get response from AI service');
     }
 
     const data = await response.json();
     const responseText =
       data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response.';
 
-    console.log('[COPILOT] Response generated successfully');
     res.json({ response: responseText });
   } catch (error) {
-    console.error('[COPILOT] Error:', error);
+    console.error('[COPILOT] Error:', error.message);
     res.status(500).json({
       error: 'Failed to process chat message',
-      message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 });
