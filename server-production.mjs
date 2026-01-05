@@ -25,19 +25,27 @@ app.use(cors());
 app.use(express.json());
 
 // Dynamic import of decision engine (handles TypeScript via package exports)
-let decisionModel, calculateRecommendation, explainRecommendation, getVerifiedSources;
+let decisionModel, calculateRecommendation;
 
 async function loadDecisionEngine() {
   try {
+    console.log('[STARTUP] Loading decision engine from @copilot-guidance/decision-engine');
     const engine = await import('@copilot-guidance/decision-engine');
+
+    console.log('[STARTUP] Engine imported, available exports:', Object.keys(engine));
+
     decisionModel = engine.decisionModel;
     calculateRecommendation = engine.calculateRecommendation;
-    explainRecommendation = engine.explainRecommendation;
 
-    console.log('✅ Decision engine loaded successfully');
-    console.log(`📊 Decision model v${decisionModel.metadata.version}`);
+    console.log('[STARTUP] ✅ Decision engine loaded successfully');
+    console.log(`[STARTUP] 📊 Decision model v${decisionModel.metadata?.version || 'unknown'}`);
+    console.log(
+      `[STARTUP] Decision model has ${decisionModel.questionGroups?.length || 0} question groups`
+    );
+    console.log(`[STARTUP] calculateRecommendation type: ${typeof calculateRecommendation}`);
   } catch (error) {
-    console.error('❌ Failed to load decision engine:', error);
+    console.error('[STARTUP] ❌ Failed to load decision engine:', error);
+    console.error('[STARTUP] Error stack:', error.stack);
     process.exit(1);
   }
 }
@@ -71,10 +79,23 @@ app.post('/api/score', async (req, res) => {
       return res.status(400).json({ error: 'Missing answers in request body' });
     }
 
+    console.log('[SCORE] Received answers:', Object.keys(answers).length, 'questions');
+    console.log('[SCORE] Decision model loaded:', !!decisionModel);
+    console.log('[SCORE] Decision model has questionGroups:', !!decisionModel?.questionGroups);
+    console.log('[SCORE] calculateRecommendation function:', typeof calculateRecommendation);
+
     const result = calculateRecommendation(decisionModel, answers);
+
+    console.log('[SCORE] Calculation successful, result:', !!result);
+    console.log('[SCORE] Result has recommendation:', !!result?.recommendation);
+    console.log('[SCORE] Result has scoringResult:', !!result?.scoringResult);
+
     res.json(result);
   } catch (error) {
-    console.error('Error calculating recommendation:', error);
+    console.error('[SCORE] Error calculating recommendation:', error);
+    console.error('[SCORE] Error stack:', error.stack);
+    console.error('[SCORE] Error name:', error.name);
+    console.error('[SCORE] Error message:', error.message);
     res.status(500).json({ error: 'Failed to calculate recommendation' });
   }
 });
