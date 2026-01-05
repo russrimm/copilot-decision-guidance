@@ -182,12 +182,10 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
     }
 
     // Build conversation history
-    const conversationHistory = (history || [])
-      .slice(-5)
-      .map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
+    const conversationHistory = (history || []).slice(-5).map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
 
     // System prompt with knowledge base
     const systemPrompt = `You are a helpful Microsoft Agentic Decision Assistant specializing in Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder. Your role is to help users understand:
