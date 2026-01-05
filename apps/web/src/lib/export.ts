@@ -198,8 +198,8 @@ export function generatePDF(
         doc.addPage();
         yPosition = 20;
       }
-      // Pass string directly with options to ensure proper encoding
-      doc.text(lines[i], margin, yPosition, { maxWidth: maxWidth });
+      // Don't pass maxWidth to text() - splitTextToSize already handled line breaks
+      doc.text(lines[i], margin, yPosition);
       yPosition += fontSize * 0.5 + 1;
     }
   };

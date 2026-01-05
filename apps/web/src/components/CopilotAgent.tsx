@@ -31,7 +31,10 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Only auto-scroll if there are user messages (not just the initial greeting)
+    if (messages.length > 1) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   const handleSend = async () => {

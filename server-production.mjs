@@ -25,7 +25,7 @@ app.use(cors());
 app.use(express.json());
 
 // Dynamic import of decision engine (handles TypeScript via package exports)
-let decisionModel, calculateRecommendation;
+let decisionModel, calculateRecommendation, generateRecommendation;
 
 async function loadDecisionEngine() {
   try {
@@ -36,6 +36,7 @@ async function loadDecisionEngine() {
 
     decisionModel = engine.decisionModel;
     calculateRecommendation = engine.calculateRecommendation;
+    generateRecommendation = engine.generateRecommendation;
 
     console.log('[STARTUP] ✅ Decision engine loaded successfully');
     console.log(`[STARTUP] 📊 Decision model v${decisionModel.metadata?.version || 'unknown'}`);
@@ -43,6 +44,7 @@ async function loadDecisionEngine() {
       `[STARTUP] Decision model has ${decisionModel.questionGroups?.length || 0} question groups`
     );
     console.log(`[STARTUP] calculateRecommendation type: ${typeof calculateRecommendation}`);
+    console.log(`[STARTUP] generateRecommendation type: ${typeof generateRecommendation}`);
   } catch (error) {
     console.error('[STARTUP] ❌ Failed to load decision engine:', error);
     console.error('[STARTUP] Error stack:', error.stack);
@@ -84,13 +86,20 @@ app.post('/api/score', async (req, res) => {
     console.log('[SCORE] Decision model has questionGroups:', !!decisionModel?.questionGroups);
     console.log('[SCORE] calculateRecommendation function:', typeof calculateRecommendation);
 
-    const result = calculateRecommendation(decisionModel, answers);
+    // Step 1: Calculate scores and determine recommendation type
+    const scoringResult = calculateRecommendation(decisionModel, answers);
 
-    console.log('[SCORE] Calculation successful, result:', !!result);
-    console.log('[SCORE] Result has recommendation:', !!result?.recommendation);
-    console.log('[SCORE] Result has scoringResult:', !!result?.scoringResult);
+    console.log('[SCORE] Scoring calculation successful');
+    console.log('[SCORE] Scoring result type:', scoringResult?.recommendation);
 
-    res.json(result);
+    // Step 2: Generate detailed recommendation text
+    const recommendation = generateRecommendation(scoringResult);
+
+    console.log('[SCORE] Recommendation generation successful');
+    console.log('[SCORE] Recommendation has summary:', !!recommendation?.summary);
+
+    // Return both scoringResult and recommendation (matching API format)
+    res.json({ recommendation, scoringResult });
   } catch (error) {
     console.error('[SCORE] Error calculating recommendation:', error);
     console.error('[SCORE] Error stack:', error.stack);
