@@ -153,6 +153,139 @@ app.get('/api/sources', (req, res) => {
   }
 });
 
+// Copilot Agent Chat - AI-powered assistant
+app.post('/api/copilot-agent/chat', async (req, res) => {
+  try {
+    const { message, history } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: 'Missing message in request body' });
+    }
+
+    // Check if AI is enabled
+    const azureKey = process.env.AZURE_OPENAI_API_KEY;
+    const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
+
+    console.log('[COPILOT] Chat request received');
+    console.log('[COPILOT] Azure Key present:', !!azureKey);
+    console.log('[COPILOT] Azure Endpoint:', azureEndpoint);
+    console.log('[COPILOT] Azure Deployment:', azureDeployment);
+
+    if (!azureKey || !azureEndpoint || !azureDeployment) {
+      console.log('[COPILOT] AI not configured - missing environment variables');
+      return res.status(501).json({
+        error: 'AI not configured',
+        message:
+          'Azure OpenAI environment variables (AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT) must be set to enable the Copilot Agent',
+      });
+    }
+
+    // Build conversation history
+    const conversationHistory = (history || [])
+      .slice(-5)
+      .map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+    // System prompt with knowledge base
+    const systemPrompt = `You are a helpful Microsoft Agentic Decision Assistant specializing in Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder. Your role is to help users understand:
+
+1. **Licensing & Pricing**
+   - Microsoft 365 Copilot: $30/user/month
+   - Copilot Studio Pay-as-you-go: $0.01/message
+   - Copilot Studio Subscription: $200/month (includes 25,000 messages)
+   - Microsoft Foundry: Usage-based pricing (Azure AI services, compute, storage)
+   - Agent Builder: Included with Copilot Studio licensing
+
+2. **Key Features**
+   M365 Copilot:
+   - Embedded in Microsoft 365 apps (Word, Excel, PowerPoint, Teams, Outlook)
+   - Enterprise data grounding via Microsoft Graph
+   - Premium license required
+   - No custom agent building
+
+   Copilot Studio:
+   - Custom copilot and agent creation
+   - Low-code/no-code platform
+   - Power Automate integration
+   - Deploy to multiple channels (Teams, web, WhatsApp, etc.)
+   - Extend M365 Copilot with plugins
+
+   Microsoft Foundry:
+   - Full-stack AI development platform with SDKs (Python, .NET, JavaScript)
+   - Custom model fine-tuning and deployment
+   - Advanced Prompt Flow orchestration
+   - Vector databases and RAG patterns
+   - Enterprise MLOps and evaluation tools
+
+   Agent Builder:
+   - Lightweight guided experience for Q&A agents
+   - Knowledge base from SharePoint, websites, files
+   - No-code agent creation
+   - Quick deployment to Teams, websites
+
+3. **Decision Guidance**
+   - Use M365 Copilot when: You need AI embedded in Microsoft 365 apps for productivity
+   - Use Copilot Studio when: You need custom agents, multi-channel deployment, or low-code automation
+   - Use Microsoft Foundry when: You need pro-code AI development, custom model fine-tuning, or full control
+   - Use Agent Builder when: You need simple knowledge-base Q&A agents with no-code creation
+
+**Guidelines:**
+- Be conversational and helpful
+- Provide specific, accurate information
+- If asked about costs, calculate estimates when possible
+- Clarify that organizations often use BOTH products
+- Keep responses concise (2-4 paragraphs max)
+- Include relevant links when helpful:
+  - M365 Copilot: https://learn.microsoft.com/en-us/copilot/microsoft-365/
+  - Copilot Studio: https://learn.microsoft.com/en-us/microsoft-copilot-studio/
+  - Microsoft Foundry: https://learn.microsoft.com/en-us/azure/ai-studio/
+
+**Important:** Only provide information based on the knowledge above.`;
+
+    console.log('[COPILOT] Calling Azure OpenAI API...');
+
+    // Call Azure OpenAI
+    const apiUrl = `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`;
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': azureKey,
+      },
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...conversationHistory,
+          { role: 'user', content: message },
+        ],
+        max_completion_tokens: 1000,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('[COPILOT] Azure OpenAI API error:', response.status, errorBody);
+      throw new Error(`Azure OpenAI API error: ${response.status} - ${errorBody}`);
+    }
+
+    const data = await response.json();
+    const responseText =
+      data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response.';
+
+    console.log('[COPILOT] Response generated successfully');
+    res.json({ response: responseText });
+  } catch (error) {
+    console.error('[COPILOT] Error:', error);
+    res.status(500).json({
+      error: 'Failed to process chat message',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
 // Serve static frontend files
 const frontendPath = join(__dirname, 'apps', 'web', 'dist');
 app.use(express.static(frontendPath));
