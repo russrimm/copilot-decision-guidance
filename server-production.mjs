@@ -54,12 +54,28 @@ async function loadDecisionEngine() {
 
 // API Routes
 
-// Health check
+// Health check - Azure uses this to verify app is running
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
     model: decisionModel?.metadata || null,
+  });
+});
+
+// Root health check for Azure App Service
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// Root endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Copilot Decision Guidance API',
+    version: '2.0.0',
+    endpoints: ['/api/health', '/api/model', '/api/score', '/api/sources'],
   });
 });
 
@@ -146,15 +162,62 @@ app.get('*', (req, res) => {
   res.sendFile(join(frontendPath, 'index.html'));
 });
 
+// Global error handlers to prevent process crashes
+process.on('uncaughtException', (error) => {
+  console.error('[FATAL] Uncaught Exception:', error);
+  console.error('[FATAL] Stack:', error.stack);
+  // Don't exit immediately - log and continue
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[FATAL] Unhandled Rejection at:', promise);
+  console.error('[FATAL] Reason:', reason);
+  // Don't exit immediately - log and continue
+});
+
 // Start server after loading decision engine
 loadDecisionEngine()
   .then(() => {
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`   http://localhost:${PORT}`);
+      console.log(`   Listening on 0.0.0.0:${PORT}`);
+      console.log(`   Environment: ${process.env.NODE_ENV || 'production'}`);
+      console.log(`   Process ID: ${process.pid}`);
     });
+
+    // Keep server reference to prevent garbage collection
+    server.on('error', (error) => {
+      console.error('[SERVER] Error:', error);
+      if (error.code === 'EADDRINUSE') {
+        console.error(`[SERVER] Port ${PORT} is already in use`);
+        process.exit(1);
+      }
+    });
+
+    server.on('close', () => {
+      console.log('[SERVER] Server closed');
+    });
+
+    // Graceful shutdown
+    const shutdown = (signal) => {
+      console.log(`\n[SHUTDOWN] ${signal} received, closing server gracefully...`);
+      server.close(() => {
+        console.log('[SHUTDOWN] Server closed, exiting process');
+        process.exit(0);
+      });
+
+      // Force close after 10 seconds
+      setTimeout(() => {
+        console.error('[SHUTDOWN] Forcefully shutting down after timeout');
+        process.exit(1);
+      }, 10000);
+    };
+
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
   })
   .catch((error) => {
-    console.error('Failed to start server:', error);
+    console.error('[STARTUP] Failed to start server:', error);
+    console.error('[STARTUP] Stack:', error.stack);
     process.exit(1);
   });
