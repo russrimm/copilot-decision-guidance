@@ -168,7 +168,7 @@ export function generatePDF(
     return text
       .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
       .replace(/[^\x00-\x7F]/g, (char) => {
-        // Replace common special characters
+        // Replace common special characters with ASCII equivalents
         const replacements: Record<string, string> = {
           '\u2013': '-', // en dash
           '\u2014': '--', // em dash
@@ -178,8 +178,20 @@ export function generatePDF(
           '\u201D': '"', // right double quote
           '\u2022': '*', // bullet
           '\u2026': '...', // ellipsis
+          '\u2713': 'v', // check mark
+          '\u2714': 'v', // heavy check mark
+          '\u2715': 'x', // multiplication x
+          '\u2716': 'x', // heavy multiplication x
+          '\u2717': 'x', // ballot x
+          '\u2718': 'x', // heavy ballot x
+          '\u00A0': ' ', // non-breaking space
+          '\u00B7': '*', // middle dot
+          '\u25CF': '*', // black circle
+          '\u25CB': 'o', // white circle
+          '\u25AA': '*', // black small square
+          '\u25AB': '*', // white small square
         };
-        return replacements[char] || char;
+        return replacements[char] || ''; // Remove character if no replacement found
       });
   };
 
