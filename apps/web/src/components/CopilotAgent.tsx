@@ -17,7 +17,7 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
       id: '1',
       role: 'assistant',
       content:
-        "👋 Hi! I'm your Agentic Decision Assistant. I can help you understand licensing, compare Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder, calculate costs, and answer deployment questions. What would you like to know?",
+        '⚠️ Currently out of order. The Agentic Decision Assistant is temporarily unavailable. Please check back later.',
       timestamp: new Date(),
     },
   ]);
@@ -274,21 +274,9 @@ function ChatContent({
       {/* Suggested Questions */}
       {messages.length === 1 && (
         <div className="mb-4 px-4">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Suggested questions:</p>
-          <div className="space-y-2">
-            {suggestedQuestions.slice(0, 3).map((question, i) => (
-              <button
-                key={i}
-                onClick={() => handleSuggestion(question)}
-                className="w-full text-left text-sm px-3 py-2 bg-gray-50 dark:bg-gray-700 
-                           hover:bg-gray-100 dark:hover:bg-gray-600 rounded border 
-                           border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 
-                           transition-colors"
-              >
-                {question}
-              </button>
-            ))}
-          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+            ⚠️ Service currently unavailable
+          </p>
         </div>
       )}
 
@@ -299,24 +287,24 @@ function ChatContent({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything about Copilot licensing, features, or deployment..."
+            placeholder="Currently out of order - service temporarily unavailable"
             className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
-                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none
-                       focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                       bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 resize-none
+                       cursor-not-allowed opacity-60"
             rows={2}
-            disabled={loading}
+            disabled={true}
           />
           <button
             onClick={handleSend}
-            disabled={loading || !input.trim()}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg 
-                       transition-colors disabled:opacity-50 disabled:cursor-not-allowed h-fit"
+            disabled={true}
+            className="px-4 py-2 bg-gray-400 text-white font-medium rounded-lg 
+                       cursor-not-allowed opacity-60 h-fit"
           >
-            {loading ? '⏳' : '➤'}
+            ➤
           </button>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          Press Enter to send, Shift+Enter for new line
+          ⚠️ Service temporarily unavailable
         </p>
       </div>
     </div>
