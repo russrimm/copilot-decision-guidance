@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { readFile } from 'fs/promises';
+import { DefaultAzureCredential } from '@azure/identity';
 import { calculateRecommendation, generateRecommendation, decisionModel, UserAnswersSchema, } from '@copilot-guidance/decision-engine';
 // Load environment variables from .env file
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -22,9 +23,10 @@ app.get('/api/health', (_req, res) => {
     res.json({
         status: 'ok',
         timestamp: new Date().toISOString(),
-        aiEnabled: !!(process.env.AZURE_OPENAI_API_KEY || process.env.OPENAI_API_KEY),
-        azureConfigured: !!process.env.AZURE_OPENAI_API_KEY,
+        aiEnabled: !!(process.env.AZURE_OPENAI_ENDPOINT || process.env.OPENAI_API_KEY),
+        azureConfigured: !!process.env.AZURE_OPENAI_ENDPOINT,
         openaiConfigured: !!process.env.OPENAI_API_KEY,
+        authMethod: process.env.AZURE_OPENAI_ENDPOINT ? 'entra' : 'none',
     });
 });
 // Get decision model
@@ -72,7 +74,7 @@ app.post('/api/explain', async (req, res) => {
             });
         }
         // Check if AI is enabled
-        const aiEnabled = !!process.env.AZURE_OPENAI_API_KEY || !!process.env.OPENAI_API_KEY;
+        const aiEnabled = !!process.env.AZURE_OPENAI_ENDPOINT || !!process.env.OPENAI_API_KEY;
         if (!aiEnabled) {
             // No AI mode - return deterministic template
             return res.json({
@@ -168,14 +170,13 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
             return res.status(400).json({ error: 'Missing message in request body' });
         }
         // Check if AI is enabled
-        const azureKey = process.env.AZURE_OPENAI_API_KEY;
         const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
         const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
         const openaiKey = process.env.OPENAI_API_KEY;
-        if (!azureKey && !openaiKey) {
+        if (!azureEndpoint && !openaiKey) {
             return res.status(501).json({
                 error: 'AI not configured',
-                message: 'Set AZURE_OPENAI_API_KEY or OPENAI_API_KEY to enable the Copilot Agent',
+                message: 'Set AZURE_OPENAI_ENDPOINT or OPENAI_API_KEY to enable the Copilot Agent',
             });
         }
         // Load licensing data for context
@@ -248,13 +249,15 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
 
 **Important:** Only provide information based on the knowledge above. If you don't know something, say so.`;
         let responseText;
-        if (azureKey && azureEndpoint && azureDeployment) {
-            // Azure OpenAI
+        if (azureEndpoint && azureDeployment) {
+            // Azure OpenAI with Entra authentication
+            const credential = new DefaultAzureCredential();
+            const token = await credential.getToken('https://cognitiveservices.azure.com/.default');
             const response = await fetch(`${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'api-key': azureKey,
+                    'Authorization': `Bearer ${token.token}`,
                 },
                 body: JSON.stringify({
                     messages: [
@@ -512,12 +515,11 @@ async function fetchMicrosoftLearnContext(recommendationType) {
 // AI explanation helper with comprehensive compliance-aware LLM integration
 async function generateAIExplanation(recommendation, userContext) {
     console.log(`[AI Explanation] Starting for recommendation type: ${recommendation.type}`);
-    const azureKey = process.env.AZURE_OPENAI_API_KEY;
     const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
     const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
     const openaiKey = process.env.OPENAI_API_KEY;
-    const aiConfigured = !!(azureKey || openaiKey);
-    console.log(`[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureKey}, OpenAI: ${!!openaiKey})`);
+    const aiConfigured = !!(azureEndpoint || openaiKey);
+    console.log(`[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureEndpoint}, OpenAI: ${!!openaiKey})`);
     // Helper function to generate detailed introduction based on context
     const generateDetailedIntroduction = (rec, ctx) => {
         const answers = ctx?.answers || {};
@@ -568,8 +570,8 @@ async function generateAIExplanation(recommendation, userContext) {
         intro += `This is a scenario-specific recommendation—most organizations successfully deploy multiple Microsoft AI tools across different use cases, and this guidance helps optimize for your particular requirements.`;
         return intro;
     };
-    if (!azureKey && !openaiKey) {
-        console.log(`[AI Explanation] No AI keys configured, returning deterministic template`);
+    if (!azureEndpoint && !openaiKey) {
+        console.log(`[AI Explanation] No AI configuration found, returning deterministic template`);
         return {
             introduction: generateDetailedIntroduction(recommendation, userContext),
             summary: recommendation.summary,
@@ -817,8 +819,10 @@ Return ONLY valid JSON (no markdown, no code blocks):
   ]
 }`;
         let responseText;
-        if (azureKey && azureEndpoint && azureDeployment) {
-            // Azure OpenAI
+        if (azureEndpoint && azureDeployment) {
+            // Azure OpenAI with Entra authentication
+            const credential = new DefaultAzureCredential();
+            const token = await credential.getToken('https://cognitiveservices.azure.com/.default');
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
             try {
@@ -826,7 +830,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'api-key': azureKey,
+                        'Authorization': `Bearer ${token.token}`,
                     },
                     body: JSON.stringify({
                         messages: [

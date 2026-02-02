@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { readFile } from 'fs/promises';
+import { DefaultAzureCredential } from '@azure/identity';
 import {
   calculateRecommendation,
   generateRecommendation,
@@ -35,9 +36,10 @@ app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    aiEnabled: !!(process.env.AZURE_OPENAI_API_KEY || process.env.OPENAI_API_KEY),
-    azureConfigured: !!process.env.AZURE_OPENAI_API_KEY,
+    aiEnabled: !!(process.env.AZURE_OPENAI_ENDPOINT || process.env.OPENAI_API_KEY),
+    azureConfigured: !!process.env.AZURE_OPENAI_ENDPOINT,
     openaiConfigured: !!process.env.OPENAI_API_KEY,
+    authMethod: process.env.AZURE_OPENAI_ENDPOINT ? 'entra' : 'none',
   });
 });
 
@@ -95,7 +97,7 @@ app.post('/api/explain', async (req: Request, res: Response) => {
     }
 
     // Check if AI is enabled
-    const aiEnabled = !!process.env.AZURE_OPENAI_API_KEY || !!process.env.OPENAI_API_KEY;
+    const aiEnabled = !!process.env.AZURE_OPENAI_ENDPOINT || !!process.env.OPENAI_API_KEY;
 
     if (!aiEnabled) {
       // No AI mode - return deterministic template
@@ -200,15 +202,14 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
     }
 
     // Check if AI is enabled
-    const azureKey = process.env.AZURE_OPENAI_API_KEY;
     const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
     const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
     const openaiKey = process.env.OPENAI_API_KEY;
 
-    if (!azureKey && !openaiKey) {
+    if (!azureEndpoint && !openaiKey) {
       return res.status(501).json({
         error: 'AI not configured',
-        message: 'Set AZURE_OPENAI_API_KEY or OPENAI_API_KEY to enable the Copilot Agent',
+        message: 'Set AZURE_OPENAI_ENDPOINT or OPENAI_API_KEY to enable the Copilot Agent',
       });
     }
 
@@ -289,15 +290,18 @@ app.post('/api/copilot-agent/chat', async (req: Request, res: Response) => {
 
     let responseText: string;
 
-    if (azureKey && azureEndpoint && azureDeployment) {
-      // Azure OpenAI
+    if (azureEndpoint && azureDeployment) {
+      // Azure OpenAI with Entra authentication
+      const credential = new DefaultAzureCredential();
+      const token = await credential.getToken('https://cognitiveservices.azure.com/.default');
+
       const response = await fetch(
         `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'api-key': azureKey,
+            Authorization: `Bearer ${token.token}`,
           },
           body: JSON.stringify({
             messages: [
@@ -611,14 +615,13 @@ async function fetchMicrosoftLearnContext(recommendationType: string): Promise<s
 async function generateAIExplanation(recommendation: any, userContext?: any): Promise<any> {
   console.log(`[AI Explanation] Starting for recommendation type: ${recommendation.type}`);
 
-  const azureKey = process.env.AZURE_OPENAI_API_KEY;
   const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
   const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
   const openaiKey = process.env.OPENAI_API_KEY;
 
-  const aiConfigured = !!(azureKey || openaiKey);
+  const aiConfigured = !!(azureEndpoint || openaiKey);
   console.log(
-    `[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureKey}, OpenAI: ${!!openaiKey})`
+    `[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureEndpoint}, OpenAI: ${!!openaiKey})`
   );
 
   // Helper function to generate detailed introduction based on context
@@ -672,8 +675,8 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
     return intro;
   };
 
-  if (!azureKey && !openaiKey) {
-    console.log(`[AI Explanation] No AI keys configured, returning deterministic template`);
+  if (!azureEndpoint && !openaiKey) {
+    console.log(`[AI Explanation] No AI configuration found, returning deterministic template`);
     return {
       introduction: generateDetailedIntroduction(recommendation, userContext),
       summary: recommendation.summary,
@@ -929,8 +932,11 @@ Return ONLY valid JSON (no markdown, no code blocks):
 
     let responseText: string;
 
-    if (azureKey && azureEndpoint && azureDeployment) {
-      // Azure OpenAI
+    if (azureEndpoint && azureDeployment) {
+      // Azure OpenAI with Entra authentication
+      const credential = new DefaultAzureCredential();
+      const token = await credential.getToken('https://cognitiveservices.azure.com/.default');
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
@@ -941,7 +947,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'api-key': azureKey,
+              Authorization: `Bearer ${token.token}`,
             },
             body: JSON.stringify({
               messages: [

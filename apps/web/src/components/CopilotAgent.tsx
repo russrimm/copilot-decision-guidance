@@ -17,7 +17,7 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
       id: '1',
       role: 'assistant',
       content:
-        '⚠️ Currently out of order. The Agentic Decision Assistant is temporarily unavailable. Please check back later.',
+        "👋 Hi! I'm your Agentic Decision Assistant. I can help you understand licensing, compare Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder, calculate costs, and answer deployment questions. What would you like to know?",
       timestamp: new Date(),
     },
   ]);
@@ -97,18 +97,6 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
     }
   };
 
-  const suggestedQuestions = [
-    "What's the difference between M365 Copilot, Copilot Studio, and Microsoft Foundry?",
-    'How much does Microsoft 365 Copilot cost?',
-    'When should I use Microsoft Foundry vs Copilot Studio?',
-    'What is Agent Builder and when should I use it?',
-    'When should I use a hybrid approach?',
-  ];
-
-  const handleSuggestion = (question: string) => {
-    setInput(question);
-  };
-
   if (variant === 'floating') {
     return (
       <div className="copilot-floating-container">
@@ -171,8 +159,6 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
               setInput={setInput}
               handleSend={handleSend}
               handleKeyPress={handleKeyPress}
-              suggestedQuestions={suggestedQuestions}
-              handleSuggestion={handleSuggestion}
               messagesEndRef={messagesEndRef}
             />
           </div>
@@ -198,8 +184,6 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
         setInput={setInput}
         handleSend={handleSend}
         handleKeyPress={handleKeyPress}
-        suggestedQuestions={suggestedQuestions}
-        handleSuggestion={handleSuggestion}
         messagesEndRef={messagesEndRef}
       />
     </div>
@@ -213,8 +197,6 @@ interface ChatContentProps {
   setInput: (value: string) => void;
   handleSend: () => void;
   handleKeyPress: (e: React.KeyboardEvent) => void;
-  suggestedQuestions: string[];
-  handleSuggestion: (question: string) => void;
   messagesEndRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -225,8 +207,6 @@ function ChatContent({
   setInput,
   handleSend,
   handleKeyPress,
-  suggestedQuestions,
-  handleSuggestion,
   messagesEndRef,
 }: ChatContentProps) {
   return (
@@ -271,15 +251,6 @@ function ChatContent({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Suggested Questions */}
-      {messages.length === 1 && (
-        <div className="mb-4 px-4">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-            ⚠️ Service currently unavailable
-          </p>
-        </div>
-      )}
-
       {/* Input */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-4">
         <div className="flex gap-2">
@@ -287,24 +258,24 @@ function ChatContent({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Currently out of order - service temporarily unavailable"
+            placeholder="Ask me anything about Copilot licensing, features, or deployment..."
             className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
-                       bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 resize-none
-                       cursor-not-allowed opacity-60"
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none
+                       focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             rows={2}
-            disabled={true}
+            disabled={loading}
           />
           <button
             onClick={handleSend}
-            disabled={true}
-            className="px-4 py-2 bg-gray-400 text-white font-medium rounded-lg 
-                       cursor-not-allowed opacity-60 h-fit"
+            disabled={loading || !input.trim()}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg 
+                       transition-colors disabled:opacity-50 disabled:cursor-not-allowed h-fit"
           >
-            ➤
+            {loading ? '⏳' : '➤'}
           </button>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          ⚠️ Service temporarily unavailable
+          Press Enter to send, Shift+Enter for new line
         </p>
       </div>
     </div>
