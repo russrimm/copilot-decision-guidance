@@ -100,10 +100,11 @@ export async function getCopilotStudioReleasePlannerData(options?: {
   const matches = results.filter((r) => {
     if (!r || typeof r !== 'object') return false;
     const productName = getStringField(r as Record<string, unknown>, 'Product name');
-    return productName.toLowerCase().includes('microsoft copilot studio') || 
-           productName.toLowerCase().includes('copilot studio');
+    return (
+      productName.toLowerCase().includes('microsoft copilot studio') ||
+      productName.toLowerCase().includes('copilot studio')
+    );
   }) as Array<Record<string, unknown>>;
-
 
   const upcomingPublicPreview: ReleasePlannerMilestoneItem[] = [];
   const upcomingGA: ReleasePlannerMilestoneItem[] = [];
