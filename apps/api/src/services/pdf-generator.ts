@@ -96,7 +96,10 @@ export async function generateUseCasePDF(useCase: UseCase): Promise<Buffer> {
 
     doc.fontSize(10);
     metrics.forEach((metric) => {
-      doc.font('Helvetica-Bold').fontSize(10).text(metric.label + ':', { width: 150 });
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(10)
+        .text(metric.label + ':', { width: 150 });
       doc.font('Helvetica').fontSize(12).text(metric.value, { indent: 160 });
       doc.moveDown(0.5);
     });

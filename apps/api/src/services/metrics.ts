@@ -11,7 +11,6 @@
  * All integrations are OPTIONAL and configurable via environment variables.
  */
 
-
 interface MetricsConfig {
   tenantId?: string;
   clientId?: string;
