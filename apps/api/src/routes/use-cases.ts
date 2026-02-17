@@ -5,6 +5,54 @@ import { generateUseCasePPTX, generateMultipleUseCasesPPTX } from '../services/p
 
 const router = Router();
 
+const DEPARTMENTS = [
+  { id: 'operations', label: 'Operations', icon: '🏭' },
+  { id: 'engineering', label: 'Engineering', icon: '🔧' },
+  { id: 'finance', label: 'Finance & Accounting', icon: '💰' },
+  { id: 'hr', label: 'Human Resources', icon: '👥' },
+  { id: 'it', label: 'Information Technology', icon: '💻' },
+  { id: 'legal', label: 'Legal & Compliance', icon: '⚖️' },
+  { id: 'compliance', label: 'Compliance', icon: '✅' },
+  { id: 'supply-chain', label: 'Supply Chain', icon: '📦' },
+  { id: 'procurement', label: 'Procurement', icon: '🛒' },
+  { id: 'hsse', label: 'Health, Safety & Environment', icon: '🏥' },
+  { id: 'maintenance', label: 'Maintenance', icon: '🔩' },
+  { id: 'production', label: 'Production', icon: '🏗️' },
+  { id: 'geosciences', label: 'Geosciences & Exploration', icon: '🌍' },
+  { id: 'environmental', label: 'Environmental', icon: '🌱' },
+  { id: 'marketing', label: 'Marketing & Communications', icon: '📢' },
+  { id: 'sales', label: 'Sales', icon: '📈' },
+];
+
+const DATA_SOURCES = [
+  { id: 'sharepoint', label: 'SharePoint', icon: '📄' },
+  { id: 'sql', label: 'SQL Database', icon: '🗄️' },
+  { id: 'salesforce', label: 'Salesforce', icon: '☁️' },
+  { id: 'sap', label: 'SAP', icon: '📊' },
+  { id: 'azure-datalake', label: 'Azure Data Lake', icon: '📦' },
+  { id: 'dataverse', label: 'Dataverse', icon: '🔄' },
+  { id: 'excel', label: 'Excel / CSV', icon: '📑' },
+  { id: 'scada', label: 'SCADA Systems', icon: '⚙️' },
+  { id: 'historian', label: 'Historian Database', icon: '📈' },
+  { id: 'blob-storage', label: 'Azure Blob Storage', icon: '☁️' },
+  { id: 'documents', label: 'Document Repository', icon: '📁' },
+  { id: 'email', label: 'Email Archives', icon: '📧' },
+];
+
+function toLabelSelections(
+  selections: unknown,
+  byId: Map<string, string>,
+  aliasesById?: Record<string, string>
+): string[] {
+  if (!Array.isArray(selections)) return [];
+  return selections
+    .filter((v): v is string => typeof v === 'string')
+    .map((idOrLabel) => {
+      const alias = aliasesById?.[idOrLabel];
+      return alias ?? byId.get(idOrLabel) ?? idOrLabel;
+    });
+}
+
 // Get all verticals available
 router.get('/verticals', (req: Request, res: Response) => {
   const verticals = [
@@ -17,44 +65,12 @@ router.get('/verticals', (req: Request, res: Response) => {
 
 // Get all departments (for all verticals)
 router.get('/departments', (req: Request, res: Response) => {
-  const departments = [
-    { id: 'operations', label: 'Operations', icon: '🏭' },
-    { id: 'engineering', label: 'Engineering', icon: '🔧' },
-    { id: 'finance', label: 'Finance & Accounting', icon: '💰' },
-    { id: 'hr', label: 'Human Resources', icon: '👥' },
-    { id: 'it', label: 'Information Technology', icon: '💻' },
-    { id: 'legal', label: 'Legal & Compliance', icon: '⚖️' },
-    { id: 'compliance', label: 'Compliance', icon: '✅' },
-    { id: 'supply-chain', label: 'Supply Chain', icon: '📦' },
-    { id: 'procurement', label: 'Procurement', icon: '🛒' },
-    { id: 'hsse', label: 'Health, Safety & Environment', icon: '🏥' },
-    { id: 'maintenance', label: 'Maintenance', icon: '🔩' },
-    { id: 'production', label: 'Production', icon: '🏗️' },
-    { id: 'geosciences', label: 'Geosciences & Exploration', icon: '🌍' },
-    { id: 'environmental', label: 'Environmental', icon: '🌱' },
-    { id: 'marketing', label: 'Marketing & Communications', icon: '📢' },
-    { id: 'sales', label: 'Sales', icon: '📈' },
-  ];
-  res.json(departments);
+  res.json(DEPARTMENTS);
 });
 
 // Get all data sources
 router.get('/data-sources', (req: Request, res: Response) => {
-  const dataSources = [
-    { id: 'sharepoint', label: 'SharePoint', icon: '📄' },
-    { id: 'sql', label: 'SQL Database', icon: '🗄️' },
-    { id: 'salesforce', label: 'Salesforce', icon: '☁️' },
-    { id: 'sap', label: 'SAP', icon: '📊' },
-    { id: 'azure-datalake', label: 'Azure Data Lake', icon: '📦' },
-    { id: 'dataverse', label: 'Dataverse', icon: '🔄' },
-    { id: 'excel', label: 'Excel / CSV', icon: '📑' },
-    { id: 'scada', label: 'SCADA Systems', icon: '⚙️' },
-    { id: 'historian', label: 'Historian Database', icon: '📈' },
-    { id: 'blob-storage', label: 'Azure Blob Storage', icon: '☁️' },
-    { id: 'documents', label: 'Document Repository', icon: '📁' },
-    { id: 'email', label: 'Email Archives', icon: '📧' },
-  ];
-  res.json(dataSources);
+  res.json(DATA_SOURCES);
 });
 
 // Get relevant use cases based on selection
@@ -66,19 +82,45 @@ router.post('/generate', (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Vertical is required' });
     }
 
-    const useCases = getRelevantUseCases(vertical, departments || [], dataSources || []);
+    const departmentLabelById = new Map(DEPARTMENTS.map((d) => [d.id, d.label] as const));
+    const dataSourceLabelById = new Map(DATA_SOURCES.map((d) => [d.id, d.label] as const));
+
+    const normalizedDepartments = toLabelSelections(departments, departmentLabelById);
+    const normalizedDataSources = toLabelSelections(dataSources, dataSourceLabelById);
+
+    const selectedCriteria = {
+      vertical,
+      departments: normalizedDepartments,
+      dataSources: normalizedDataSources,
+    };
+
+    let effectiveCriteria = { ...selectedCriteria };
+    let useCases = getRelevantUseCases(
+      vertical,
+      effectiveCriteria.departments,
+      effectiveCriteria.dataSources
+    );
+
+    // If filters are too restrictive (or mismatched), progressively relax them.
+    if (useCases.length === 0 && effectiveCriteria.departments.length > 0) {
+      effectiveCriteria = { ...effectiveCriteria, departments: [] };
+      useCases = getRelevantUseCases(vertical, effectiveCriteria.departments, effectiveCriteria.dataSources);
+    }
+
+    if (useCases.length === 0 && effectiveCriteria.dataSources.length > 0) {
+      effectiveCriteria = { ...effectiveCriteria, dataSources: [] };
+      useCases = getRelevantUseCases(vertical, effectiveCriteria.departments, effectiveCriteria.dataSources);
+    }
 
     if (useCases.length === 0) {
-      return res.json({
-        message: 'No use cases found for the selected criteria',
-        useCases: [],
-        selectedCriteria: { vertical, departments, dataSources },
-      });
+      effectiveCriteria = { ...effectiveCriteria, departments: [], dataSources: [] };
+      useCases = getRelevantUseCases(vertical, effectiveCriteria.departments, effectiveCriteria.dataSources);
     }
 
     res.json({
       useCases,
-      selectedCriteria: { vertical, departments, dataSources },
+      selectedCriteria,
+      effectiveCriteria,
       totalCount: useCases.length,
     });
   } catch (error) {

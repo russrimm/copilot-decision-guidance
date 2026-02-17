@@ -88,7 +88,7 @@ export const useCaseDatabase: UseCase[] = [
       'Ensures operations remain compliant with EPA, state, and local regulations by monitoring permits, inspections, and reporting requirements.',
     vertical: 'energy',
     departments: ['Compliance', 'Legal', 'Operations', 'Environmental'],
-    dataSources: ['SharePoint', 'Document Database', 'Dataverse', 'Email Archives'],
+    dataSources: ['SharePoint', 'Document Repository', 'Dataverse', 'Email Archives'],
     agentArchitecture: {
       name: 'Compliance Monitoring & Reporting System',
       overview:
@@ -257,7 +257,7 @@ export const useCaseDatabase: UseCase[] = [
       'Monitors supplier performance against SLAs, identifies risks, and recommends optimizations for procurement and vendor management.',
     vertical: 'energy',
     departments: ['Procurement', 'Finance', 'Supply Chain', 'Operations'],
-    dataSources: ['SAP', 'Supplier Portal', 'Excel Data', 'Email'],
+    dataSources: ['SAP', 'Supplier Portal', 'Excel / CSV', 'Email Archives'],
     agentArchitecture: {
       name: 'Supplier Intelligence & Performance Management',
       overview:
@@ -417,18 +417,99 @@ export const useCaseDatabase: UseCase[] = [
   },
 ];
 
+function normalizeToken(input: string): string {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/[–—]/g, '-')
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function normalizeDepartment(input: string): string {
+  const t = normalizeToken(input);
+  const map: Record<string, string> = {
+    operations: 'operations',
+    engineering: 'engineering',
+    finance: 'finance',
+    'finance-accounting': 'finance',
+    'finance-and-accounting': 'finance',
+    hr: 'hr',
+    'human-resources': 'hr',
+    it: 'it',
+    'information-technology': 'it',
+    legal: 'legal',
+    compliance: 'compliance',
+    'supply-chain': 'supply-chain',
+    supplychain: 'supply-chain',
+    procurement: 'procurement',
+    hsse: 'hsse',
+    'health-safety-environment': 'hsse',
+    'health-safety-and-environment': 'hsse',
+    'health-safety': 'hsse',
+    maintenance: 'maintenance',
+    production: 'production',
+    geosciences: 'geosciences',
+    'geosciences-exploration': 'geosciences',
+    environmental: 'environmental',
+    marketing: 'marketing',
+    'marketing-communications': 'marketing',
+    sales: 'sales',
+  };
+  return map[t] ?? t;
+}
+
+function normalizeDataSource(input: string): string {
+  const t = normalizeToken(input);
+  const map: Record<string, string> = {
+    sharepoint: 'sharepoint',
+    sql: 'sql',
+    'sql-database': 'sql',
+    salesforce: 'salesforce',
+    sap: 'sap',
+    'azure-data-lake': 'azure-datalake',
+    azuredatalake: 'azure-datalake',
+    dataverse: 'dataverse',
+    excel: 'excel',
+    'excel-csv': 'excel',
+    'excel-and-csv': 'excel',
+    'excel-data': 'excel',
+    csv: 'excel',
+    scada: 'scada',
+    'scada-systems': 'scada',
+    historian: 'historian',
+    'historian-database': 'historian',
+    'azure-blob-storage': 'blob-storage',
+    blobstorage: 'blob-storage',
+    'blob-storage': 'blob-storage',
+    documents: 'documents',
+    'document-repository': 'documents',
+    'document-database': 'documents',
+    email: 'email',
+    'email-archives': 'email',
+  };
+  return map[t] ?? t;
+}
+
 export function getRelevantUseCases(
   vertical: 'oil' | 'gas' | 'energy',
   departments: string[],
   dataSources: string[]
 ): UseCase[] {
+  const requestedDeptIds = new Set(departments.map(normalizeDepartment));
+  const requestedSourceIds = new Set(dataSources.map(normalizeDataSource));
+
   return useCaseDatabase.filter((useCase) => {
     const verticalMatch = useCase.vertical === vertical;
+    const useCaseDeptIds = useCase.departments.map(normalizeDepartment);
+    const useCaseSourceIds = useCase.dataSources.map(normalizeDataSource);
+
     const deptMatch =
-      departments.length === 0 || departments.some((dept) => useCase.departments.includes(dept));
+      requestedDeptIds.size === 0 || useCaseDeptIds.some((dept) => requestedDeptIds.has(dept));
     const dataMatch =
-      dataSources.length === 0 ||
-      dataSources.some((source) => useCase.dataSources.includes(source));
+      requestedSourceIds.size === 0 ||
+      useCaseSourceIds.some((source) => requestedSourceIds.has(source));
 
     return verticalMatch && deptMatch && dataMatch;
   });

@@ -54,7 +54,7 @@ export const useCaseDatabase = [
         description: 'Ensures operations remain compliant with EPA, state, and local regulations by monitoring permits, inspections, and reporting requirements.',
         vertical: 'energy',
         departments: ['Compliance', 'Legal', 'Operations', 'Environmental'],
-        dataSources: ['SharePoint', 'Document Database', 'Dataverse', 'Email Archives'],
+        dataSources: ['SharePoint', 'Document Repository', 'Dataverse', 'Email Archives'],
         agentArchitecture: {
             name: 'Compliance Monitoring & Reporting System',
             overview: 'Agent tracks regulatory requirements, monitors permit expiration, flags non-compliance risks, and auto-generates required reports.',
@@ -216,7 +216,7 @@ export const useCaseDatabase = [
         description: 'Monitors supplier performance against SLAs, identifies risks, and recommends optimizations for procurement and vendor management.',
         vertical: 'energy',
         departments: ['Procurement', 'Finance', 'Supply Chain', 'Operations'],
-        dataSources: ['SAP', 'Supplier Portal', 'Excel Data', 'Email'],
+        dataSources: ['SAP', 'Supplier Portal', 'Excel / CSV', 'Email Archives'],
         agentArchitecture: {
             name: 'Supplier Intelligence & Performance Management',
             overview: 'Aggregates supplier metrics, contract terms, performance data to provide visibility and predictive alerts on supplier health.',
@@ -368,12 +368,88 @@ export const useCaseDatabase = [
         },
     },
 ];
+function normalizeToken(input) {
+    return input
+        .trim()
+        .toLowerCase()
+        .replace(/[–—]/g, '-')
+        .replace(/&/g, 'and')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+function normalizeDepartment(input) {
+    const t = normalizeToken(input);
+    const map = {
+        operations: 'operations',
+        engineering: 'engineering',
+        finance: 'finance',
+        'finance-accounting': 'finance',
+        'finance-and-accounting': 'finance',
+        hr: 'hr',
+        'human-resources': 'hr',
+        it: 'it',
+        'information-technology': 'it',
+        legal: 'legal',
+        compliance: 'compliance',
+        'supply-chain': 'supply-chain',
+        supplychain: 'supply-chain',
+        procurement: 'procurement',
+        hsse: 'hsse',
+        'health-safety-environment': 'hsse',
+        'health-safety-and-environment': 'hsse',
+        'health-safety': 'hsse',
+        maintenance: 'maintenance',
+        production: 'production',
+        geosciences: 'geosciences',
+        'geosciences-exploration': 'geosciences',
+        environmental: 'environmental',
+        marketing: 'marketing',
+        'marketing-communications': 'marketing',
+        sales: 'sales',
+    };
+    return map[t] ?? t;
+}
+function normalizeDataSource(input) {
+    const t = normalizeToken(input);
+    const map = {
+        sharepoint: 'sharepoint',
+        sql: 'sql',
+        'sql-database': 'sql',
+        salesforce: 'salesforce',
+        sap: 'sap',
+        'azure-data-lake': 'azure-datalake',
+        azuredatalake: 'azure-datalake',
+        dataverse: 'dataverse',
+        excel: 'excel',
+        'excel-csv': 'excel',
+        'excel-and-csv': 'excel',
+        'excel-data': 'excel',
+        csv: 'excel',
+        scada: 'scada',
+        'scada-systems': 'scada',
+        historian: 'historian',
+        'historian-database': 'historian',
+        'azure-blob-storage': 'blob-storage',
+        blobstorage: 'blob-storage',
+        'blob-storage': 'blob-storage',
+        documents: 'documents',
+        'document-repository': 'documents',
+        'document-database': 'documents',
+        email: 'email',
+        'email-archives': 'email',
+    };
+    return map[t] ?? t;
+}
 export function getRelevantUseCases(vertical, departments, dataSources) {
+    const requestedDeptIds = new Set(departments.map(normalizeDepartment));
+    const requestedSourceIds = new Set(dataSources.map(normalizeDataSource));
     return useCaseDatabase.filter((useCase) => {
         const verticalMatch = useCase.vertical === vertical;
-        const deptMatch = departments.length === 0 || departments.some((dept) => useCase.departments.includes(dept));
-        const dataMatch = dataSources.length === 0 ||
-            dataSources.some((source) => useCase.dataSources.includes(source));
+        const useCaseDeptIds = useCase.departments.map(normalizeDepartment);
+        const useCaseSourceIds = useCase.dataSources.map(normalizeDataSource);
+        const deptMatch = requestedDeptIds.size === 0 || useCaseDeptIds.some((dept) => requestedDeptIds.has(dept));
+        const dataMatch = requestedSourceIds.size === 0 ||
+            useCaseSourceIds.some((source) => requestedSourceIds.has(source));
         return verticalMatch && deptMatch && dataMatch;
     });
 }
