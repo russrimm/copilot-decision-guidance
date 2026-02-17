@@ -27,7 +27,6 @@ permissions:
   contents: read
   issues: write
   pull-requests: write
-  actions: write
 
 jobs:
   validate-updates:
@@ -75,53 +74,6 @@ jobs:
 
           echo "report-path=validation-report.md" >> $GITHUB_OUTPUT
 
-      - name: Cleanup old validation artifacts
-        if: steps.validation.outputs.has-changes == 'true' || github.event.inputs.force_notification == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const artifactName = 'validation-report';
-            const keepCount = 5;
-            const perPage = 100;
-
-            const all = [];
-            for (let page = 1; page <= 10; page++) {
-              const res = await github.rest.actions.listArtifactsForRepo({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                per_page: perPage,
-                page,
-              });
-              all.push(...res.data.artifacts);
-              if (res.data.artifacts.length < perPage) break;
-            }
-
-            const matching = all
-              .filter(a => a.name === artifactName)
-              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-            const toDelete = matching.slice(keepCount);
-            core.info(`Found ${matching.length} '${artifactName}' artifacts. Keeping ${keepCount}, deleting ${toDelete.length}.`);
-
-            for (const a of toDelete) {
-              core.info(`Deleting artifact id=${a.id} created_at=${a.created_at}`);
-              await github.rest.actions.deleteArtifact({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                artifact_id: a.id,
-              });
-            }
-
-      - name: Upload validation report
-        if: steps.validation.outputs.has-changes == 'true' || github.event.inputs.force_notification == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: validation-report
-          path: |
-            validation-report.md
-            validation-results.json
-          retention-days: 14
-
       - name: Read validation results
         if: steps.validation.outputs.has-changes == 'true' || github.event.inputs.force_notification == 'true'
         id: read-results
@@ -167,10 +119,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download validation artifacts
-        uses: actions/download-artifact@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: validation-report
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g typescript ts-node
+
+      - name: Regenerate validation report
+        run: |
+          ts-node scripts/validate-microsoft-updates.ts || true
 
       - name: Trigger Power Automate Flow
         id: trigger-flow
@@ -248,10 +210,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download validation artifacts
-        uses: actions/download-artifact@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: validation-report
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g typescript ts-node
+
+      - name: Regenerate validation report
+        run: |
+          ts-node scripts/validate-microsoft-updates.ts || true
 
       - name: Create update branch
         run: |
