@@ -185,6 +185,17 @@ describe('Decision Engine', () => {
       expect(result.scores.copilotStudio).toBe(0);
       expect(result.scores.hybrid).toBe(0);
     });
+
+    it('should support multi-select answers for a question', () => {
+      const answers: UserAnswers = {
+        ttv_skills: ['skills_lowcode', 'skills_developer'],
+      };
+
+      const result = calculateRecommendation(model, answers);
+
+      const skillsBreakdown = result.breakdown.filter((b) => b.questionId === 'ttv_skills');
+      expect(skillsBreakdown.length).toBe(2);
+    });
   });
 
   describe('Answer Validation', () => {
@@ -297,8 +308,11 @@ describe('Decision Engine', () => {
 
       expect(recommendation.type).toBe('HYBRID');
       expect(recommendation.title).toContain('Hybrid');
-      expect(recommendation.summary).toContain('Microsoft 365 Copilot');
       expect(recommendation.summary).toContain('Copilot Studio');
+      const mentionsASecondPlatform = ['Microsoft 365 Copilot', 'Agent Builder', 'Foundry'].some(
+        (name) => recommendation.summary.includes(name)
+      );
+      expect(mentionsASecondPlatform).toBe(true);
     });
 
     it('should include valid Microsoft Learn source URLs', () => {

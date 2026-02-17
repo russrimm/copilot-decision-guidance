@@ -1,7 +1,8 @@
 // Type definitions for the decision engine
 // This file provides browser-compatible types without importing Node.js packages
 
-export type UserAnswers = Record<string, string>;
+export type UserAnswerValue = string | string[];
+export type UserAnswers = Record<string, UserAnswerValue>;
 
 export type RecommendationType =
   | 'M365_COPILOT'
@@ -100,4 +101,67 @@ export interface DecisionModel {
   };
   questionGroups: QuestionGroup[];
   thresholds: Thresholds;
+}
+
+// Enterprise Dashboard Types
+export interface TenantMetrics {
+  configured: boolean;
+  timestamp: string;
+  costs?: {
+    totalCost: number;
+    currency: string;
+    billingPeriod: string;
+    aiCopilotCosts: number;
+    breakdown: Array<{
+      category: string;
+      cost: number;
+    }>;
+  };
+  licenses?: {
+    totalUsers: number;
+    m365CopilotLicenses: number;
+    copilotStudioLicenses: number;
+    breakdown: Array<{
+      skuName: string;
+      assignedCount: number;
+    }>;
+  };
+  powerPlatform?: {
+    environmentCount: number;
+    totalCapacityUsed: number;
+    environments: Array<{
+      displayName: string;
+      type: string;
+      region: string;
+    }>;
+  };
+  secureScore?: {
+    currentScore: number;
+    maxScore: number;
+    percentage: number;
+    topRecommendations: Array<{
+      title: string;
+      impact: string;
+      implementationCost: string;
+    }>;
+  };
+  readinessScore?: {
+    overall: number;
+    technical: number;
+    security: number;
+    financial: number;
+  };
+}
+
+// AI-Powered Recommendation Types
+export interface AIRecommendation {
+  summary: string;
+  detailedAnalysis?: string;
+  strategicGuidance?: string;
+  implementationRoadmap?: string[];
+  riskMitigation?: string;
+  costConsiderations?: string;
+  timelineEstimate?: string;
+  nextSteps?: string;
+  personalizationFactors?: string[];
 }

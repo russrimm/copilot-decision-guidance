@@ -502,7 +502,7 @@ export type Question = z.infer<typeof QuestionSchema>;
 export type QuestionGroup = z.infer<typeof QuestionGroupSchema>;
 export type Thresholds = z.infer<typeof ThresholdsSchema>;
 export type DecisionModel = z.infer<typeof DecisionModelSchema>;
-export declare const UserAnswersSchema: z.ZodRecord<z.ZodString, z.ZodString>;
+export declare const UserAnswersSchema: z.ZodRecord<z.ZodString, z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
 export type UserAnswers = z.infer<typeof UserAnswersSchema>;
 export type RecommendationType = 'M365_COPILOT' | 'COPILOT_STUDIO' | 'FOUNDRY' | 'AGENT_BUILDER' | 'HYBRID';
 export interface ScoringResult {

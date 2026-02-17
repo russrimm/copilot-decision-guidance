@@ -1,20 +1,74 @@
 # Microsoft Agentic Solution Advisor
 
-A production-quality web application that guides users through a structured questionnaire to recommend the best Microsoft agentic platform: **Microsoft 365 Copilot**, **Copilot Studio**, **Microsoft Foundry**, **Agent Builder**, or a **Hybrid approach**.
+A production-quality web application that guides users through a structured questionnaire to determine which Microsoft agentic platform—**Microsoft 365 Copilot**, **Copilot Studio**, or **Microsoft Foundry**—fits each specific use case in their organization. Most organizations use all three platforms; this tool helps you decide which to use when.
 
 **✅ Aligned with the [Microsoft AI Decision Framework](https://microsoft.github.io/Microsoft-AI-Decision-Framework/)** - 100% coverage of all 8 evaluation criteria.
+
+## 🚀 Quick Links
+
+- **[Customer Deployment Guide](./docs/CUSTOMER_DEPLOYMENT_GUIDE.md)** - Complete setup guide for customers cloning this repo
+- **[Configuration Guide](./docs/CONFIGURATION_GUIDE.md)** - Detailed Azure integration and environment variable documentation
+- **[Recurring Maintenance Tasks](./docs/RECURRING-MAINTENANCE.md)** - Monthly licensing validation, weekly updates, and other scheduled tasks
+- **[Monthly Licensing Validation](./docs/MONTHLY-LICENSING-VALIDATION.md)** - Automated validation of Copilot Studio licensing information
+- **[Weekly Validation Process](./docs/weekly-validation-process.md)** - Automated monitoring of official Microsoft release notes
+- **[Quick Start](#quick-start)** - Get running in 5 minutes (no configuration required)
 
 ## Features
 
 ✅ **Guided Decision Flow** - 21-question survey covering all Microsoft AI Decision Framework evaluation criteria  
-✅ **5-Platform Support** - Comprehensive scoring for M365 Copilot, Copilot Studio, Microsoft Foundry, Agent Builder, and Hybrid  
+✅ **3-Platform Focus** - Per-scenario guidance for Microsoft 365 Copilot, Copilot Studio, and Microsoft Foundry  
 ✅ **Framework-Aligned** - Questions map to Technical Complexity, Skills, Budget, Time, Governance, Action Safety, Memory, and Scale  
 ✅ **Deterministic Scoring** - Transparent, test-covered recommendation engine with weighted platform scores  
 ✅ **Comprehensive Results** - Rationale, next steps, risks, compliance considerations, and verified Microsoft Learn sources  
+✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms  
 ✅ **Export Functionality** - Download results as JSON, Markdown, or PDF  
 ✅ **Agentic Decision Assistant** - AI-powered chat for licensing guidance and follow-up questions  
 ✅ **Admin Panel** - Local configuration and telemetry viewing  
-✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation and AI Decision Framework
+✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation and AI Decision Framework  
+✅ **Optional Enterprise Dashboard** - Holistic view of Azure costs, Power Platform inventory, licenses, and Secure Score  
+✅ **AI-Powered Personalized Recommendations** - Context-aware recommendations based on survey responses and tenant metrics  
+✅ **Self-Hostable** - Customer-cloneable solution with optional Azure integrations
+
+## Optional Enterprise Features
+
+### 🎯 Holistic Tenant Dashboard
+
+When Azure credentials are configured, the tool can display a comprehensive enterprise dashboard showing:
+
+- **Organizational Readiness Scores**: Overall, Technical, Security, and Financial readiness for Copilot adoption
+- **Cost Analysis**: Azure subscription costs with AI/Copilot-specific cost breakdowns
+- **License Overview**: Microsoft 365 Copilot and Copilot Studio license counts
+- **Power Platform Inventory**: Environment counts, capacity consumption, and app statistics
+- **Secure Score**: Microsoft Secure Score and top security recommendations
+
+**Dashboard URL**: [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
+
+**Demo Mode**: When Azure credentials are not configured, the dashboard displays **realistic sample data** so customers can explore features before connecting their tenant.
+
+### 🤖 AI-Powered Personalized Recommendations
+
+After completing the survey, users see:
+
+- **Completion Timestamp**: Exact date and time when the assessment was completed
+- **AI-Generated Insights**: Comprehensive personalized recommendations including:
+  - Executive Summary
+  - Detailed Analysis
+  - Implementation Roadmap
+  - Timeline Estimate
+  - Cost Considerations
+  - Personalization Factors (when tenant metrics are available)
+
+**How It Works**:
+
+1. User completes the guided questionnaire
+2. Deterministic scoring engine calculates recommendation
+3. Optional: AI service generates enhanced personalized insights by combining:
+   - Survey responses
+   - Scoring results
+   - Organizational context (if Azure integration enabled)
+4. Results page displays both the deterministic recommendation and AI-enhanced guidance
+
+**Configuration**: See [Configuration Guide](#configuration-guide) below for setup instructions.
 
 ## Tech Stack
 
@@ -62,13 +116,15 @@ This will install dependencies for all workspaces (apps/web, apps/api, packages/
 
 ### 2. Configure Environment Variables
 
-Create a `.env` file in the **root** directory:
+Create a `.env` file in the **root** directory. All features are **optional** - the tool works in demo mode without any configuration.
 
 ```bash
-# Optional: AI-enhanced explanations (Azure OpenAI or OpenAI)
-# If not provided, app runs in "No AI mode" with deterministic templates
+# ============================================
+# Core AI Features (Optional)
+# ============================================
 
-# Option 1: Azure OpenAI
+# AI-enhanced explanations (Azure OpenAI or OpenAI)
+# Option 1: Azure OpenAI (Recommended for enterprise)
 AZURE_OPENAI_API_KEY=your_azure_openai_key
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 AZURE_OPENAI_DEPLOYMENT=your-deployment-name
@@ -76,9 +132,41 @@ AZURE_OPENAI_DEPLOYMENT=your-deployment-name
 # Option 2: OpenAI
 OPENAI_API_KEY=your_openai_key
 
+# Enable AI recommendations (default: false when no API keys provided)
+ENABLE_AI_RECOMMENDATIONS=true
+
+# ============================================
+# Optional: Enterprise Dashboard Features
+# ============================================
+
+# Azure Authentication (Required for dashboard features)
+AZURE_TENANT_ID=your-tenant-id
+AZURE_CLIENT_ID=your-client-id
+AZURE_CLIENT_SECRET=your-client-secret
+AZURE_SUBSCRIPTION_ID=your-subscription-id
+
+# Feature Flags - Enable/disable specific dashboard components
+ENABLE_COST_REPORTS=true          # Azure Cost Management API
+ENABLE_POWER_PLATFORM=true        # Power Platform inventory
+ENABLE_LICENSES=true              # Microsoft 365 license counts
+ENABLE_SECURE_SCORE=true          # Microsoft Secure Score
+
+# ============================================
+# Server Configuration
+# ============================================
+
 # API Server Port (optional, defaults to 3001)
-PORT=3001
+PORT=3000
+
+# Node environment
+NODE_ENV=development
 ```
+
+**Configuration Modes:**
+
+1. **Demo Mode** (No configuration): Tool works with sample data, shows questionnaire and deterministic recommendations
+2. **AI Mode** (OpenAI keys only): Adds AI-enhanced explanations and personalized recommendations
+3. **Enterprise Mode** (Azure credentials + OpenAI): Full dashboard with tenant metrics + AI recommendations
 
 **Note:** The `.env` and `.env.local` files are the **ONLY files you may edit manually**. All other work must be done via this agent.
 
@@ -168,27 +256,135 @@ When API keys are configured:
 
 ## API Endpoints
 
-### `GET /api/health`
+### Core Endpoints
 
-Health check endpoint
+#### `GET /api/health`
 
-### `GET /api/model`
+Health check endpoint with feature status
+
+**Returns:**
+
+```json
+{
+  "status": "ok",
+  "aiEnabled": true,
+  "microsoftLearnIntegration": "active",
+  "dashboardFeaturesEnabled": true
+}
+```
+
+#### `GET /api/model`
 
 Returns the decision model (questions and weights)
 
-### `POST /api/score`
+#### `POST /api/score`
 
 **Body:** `{ "answers": { "questionId": "answerId", ... } }`  
 **Returns:** `{ "recommendation": {...}, "scoringResult": {...} }`
 
-### `POST /api/explain`
+#### `POST /api/explain`
 
 **Body:** `{ "recommendation": {...}, "userContext": {...} }`  
-**Returns:** AI-enhanced explanation (or fallback)
+**Returns:** AI-enhanced explanation (or deterministic fallback)
 
-### `GET /api/sources`
+#### `GET /api/sources`
 
 Returns curated Microsoft Learn source URLs
+
+---
+
+### Enterprise Dashboard Endpoints
+
+#### `GET /api/metrics`
+
+Fetches tenant metrics (costs, licenses, Power Platform, Secure Score)
+
+**Returns:**
+
+```json
+{
+  "configured": true,
+  "costs": { ... },
+  "licenses": { ... },
+  "powerPlatform": { ... },
+  "secureScore": { ... },
+  "readinessScore": { ... }
+}
+```
+
+**Demo Mode:** Returns sample data when Azure credentials not configured
+
+#### `GET /api/metrics/config`
+
+Returns dashboard configuration status
+
+**Returns:**
+
+```json
+{
+  "configured": true,
+  "features": {
+    "costReports": true,
+    "powerPlatform": true,
+    "licenses": true,
+    "secureScore": true
+  }
+}
+```
+
+---
+
+### AI Recommendation Endpoints
+
+#### `POST /api/recommendation/ai`
+
+Generates AI-powered personalized recommendation based on survey responses and optional tenant metrics
+
+**Body:**
+
+```json
+{
+  "surveyResponses": { ... },
+  "scoringResult": { ... },
+  "includeMetrics": true
+}
+```
+
+**Returns:**
+
+```json
+{
+  "recommendation": {
+    "summary": "...",
+    "detailedAnalysis": "...",
+    "strategicGuidance": "...",
+    "implementationRoadmap": ["step1", "step2", ...],
+    "riskMitigation": "...",
+    "costConsiderations": "...",
+    "timelineEstimate": "...",
+    "nextSteps": "...",
+    "personalizationFactors": ["factor1", "factor2", ...]
+  }
+}
+```
+
+**Requires:** OpenAI or Azure OpenAI credentials in `.env`
+
+---
+
+## Configuration Guide
+
+For detailed setup instructions for Azure integration and all configuration options, see:
+
+📘 **[Configuration Guide](./docs/CONFIGURATION_GUIDE.md)**
+
+Topics covered:
+
+- Configuration modes (Demo, AI, Enterprise)
+- Azure service principal setup
+- API permissions and role assignments
+- Environment variables reference
+- Testing and troubleshooting
 
 ## Project Structure
 
@@ -395,6 +591,174 @@ If deployment fails with "Cannot find module" error:
 3. **Secrets management** - Use Azure Key Vault, AWS Secrets Manager, etc. in production
 4. **Authentication** - Add auth middleware for admin routes in production
 5. **CORS** - Configure CORS properly for production domains
+
+## Automated Documentation Updates
+
+This repository includes **automated validation systems** that monitor official Microsoft sources to ensure the repository, survey questions, and documentation remain accurate and up-to-date.
+
+### 🗓️ Monthly: Licensing & Survey Question Validation
+
+Every **1st of the month at 9 AM UTC**, a GitHub Action automatically runs **two comprehensive validations**:
+
+#### 1. Licensing Guide Validation
+
+✅ **Validates Copilot Studio licensing information:**
+
+- Downloads latest [Power Platform Licensing Guide](https://go.microsoft.com/fwlink/?linkid=2320995)
+- Checks Appendix for pricing and entitlement changes
+- Validates 100% accuracy of licensing topics in repository
+- Compares with previous month's snapshot
+
+🔍 **Checks for updates to:**
+
+- Microsoft 365 Copilot pricing ($30/user/month)
+- Copilot Studio pricing ($0.01/message or $200/25k messages/month)
+- Premium connector entitlements
+- AI Builder capacity allocations
+- Feature availability and usage limits
+
+#### 2. Survey Question Validation
+
+✅ **Validates survey questions against primary Microsoft sources:**
+
+- [Microsoft 365 Copilot Documentation Hub](https://learn.microsoft.com/en-us/copilot/microsoft-365/) (Primary Source)
+- [M365 Copilot Enablement Resources](https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-enablement-resources) (Primary Source)
+- [M365 Copilot Release Notes](https://learn.microsoft.com/en-us/copilot/microsoft-365/release-notes)
+- [Copilot Studio What's New](https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new)
+- [Azure AI Foundry](https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio)
+
+🔍 **Validates question accuracy:**
+
+- Question relevance against current Microsoft guidance
+- Answer options comprehensiveness
+- Alignment with M365 Copilot capabilities
+- Integration patterns and architectures
+- Deployment guidance and best practices
+- Role-specific recommendations
+- Success metrics and measurement approaches
+
+📧 **Creates combined GitHub issue** when ANY changes detected:
+
+- Detailed findings from both validations
+- Files requiring updates
+- Manual verification steps (PDF requires human review)
+- Direct links to licensing guide and M365 Copilot docs
+
+**Run manually:**
+
+```bash
+# Run licensing validation
+npm run validate:licensing
+
+# Run survey question validation
+npm run validate:survey
+
+# Run both
+npm run validate:licensing && npm run validate:survey
+```
+
+**Documentation:** [Monthly Licensing & Survey Validation Guide](docs/MONTHLY-LICENSING-VALIDATION.md)
+
+---
+
+### 📅 Weekly: Product Updates Validation
+
+Every **Monday at 9 AM UTC**, a GitHub Action automatically:
+
+1. ✅ **Checks official Microsoft sources for updates:**
+   - [Microsoft 365 Copilot Documentation Hub](https://learn.microsoft.com/en-us/copilot/microsoft-365/) (Primary Source)
+   - [M365 Copilot Enablement Resources](https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-enablement-resources) (Primary Source)
+   - [Microsoft 365 Copilot Release Notes](https://learn.microsoft.com/en-us/copilot/microsoft-365/release-notes) (Official)
+   - [Copilot Studio What's New](https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new) (Official)
+   - [Azure AI Foundry Documentation](https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio)
+   - Microsoft 365 Roadmap (Copilot filter)
+   - Power Platform Release Planner
+   - Microsoft Learn documentation
+   - Pricing pages
+
+2. 🔍 **Validates repository accuracy:**
+   - Licensing information and pricing
+   - Product features and capabilities
+   - Survey questions alignment with current features
+   - Documentation currency
+
+3. 📧 **Sends notifications** when changes are detected
+4. 📋 **Creates GitHub issues** with detailed change reports
+5. 📝 **Creates draft PRs** for review and approval
+6. ⏰ **Awaits manual review** before applying updates
+
+### 🚀 Quick Setup
+
+1. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+2. **Test validation locally:**
+
+   ```bash
+   # Monthly validations
+   npm run validate:licensing
+   npm run validate:survey
+
+   # Weekly validation
+   npm run validate
+   ```
+
+3. **Setup notifications (optional):**
+   - See [Weekly Validation Process Guide](docs/weekly-validation-process.md)
+   - Configure Power Automate or Azure Logic Apps for email alerts
+   - Add webhook URL to GitHub Secrets as `POWER_AUTOMATE_WEBHOOK_URL` or `LOGIC_APP_WEBHOOK_URL`
+
+4. **First run:**
+   ```bash
+   # Manual trigger via GitHub Actions UI
+   # Or use GitHub CLI
+   gh workflow run validate-licensing-monthly.yml -f force_notification=true
+   gh workflow run validate-microsoft-updates.yml -f force_notification=true
+   ```
+
+### 📚 Documentation
+
+- **[Recurring Maintenance Tasks](docs/RECURRING-MAINTENANCE.md)** - Complete overview of all automated and manual maintenance tasks
+- **[Monthly Licensing Validation](docs/MONTHLY-LICENSING-VALIDATION.md)** - Detailed guide for Copilot Studio licensing validation
+- **[Weekly Validation Process](docs/weekly-validation-process.md)** - Complete guide with setup instructions, source monitoring, and troubleshooting
+
+### 🔧 Commands
+
+```bash
+# Run monthly licensing validation
+npm run validate:licensing
+
+# Run weekly product updates validation
+npm run validate
+
+# Watch mode for development
+npm run validate:watch
+
+# Trigger GitHub Actions (requires gh CLI)
+gh workflow run validate-licensing-monthly.yml    # Monthly licensing
+gh workflow run validate-microsoft-updates.yml    # Weekly updates
+```
+
+### 📊 Monitoring
+
+The workflows run automatically:
+
+- **Monthly** (1st of month at 9 AM UTC): Licensing guide + survey question validation
+- **Weekly** (Mondays at 9 AM UTC): Product updates validation
+
+You can:
+
+- View runs in the **Actions** tab
+- Check validation reports in artifacts:
+  - **Monthly validations:** Kept for 365 days (1 year)
+  - **Weekly validations:** Kept for 90 days
+- Review GitHub issues for detected changes
+- Approve updates via Power Automate (optional)
+
+See [Recurring Maintenance Tasks](docs/RECURRING-MAINTENANCE.md) for a complete overview of all scheduled tasks.
 
 ## Contributing
 

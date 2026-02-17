@@ -963,7 +963,7 @@
         {
           "id": "ttv_skills",
           "title": "What technical skills are available?",
-          "helperText": "Consider your team's capabilities",
+          "helperText": "Select all that apply. Consider your team's capabilities.",
           "answers": [
             {
               "id": "skills_none",
@@ -1262,6 +1262,53 @@
                 "foundry": 5,
                 "agentBuilder": 5,
                 "hybrid": 5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "support",
+      "title": "Microsoft Support & Account Management",
+      "description": "Information about your Microsoft support relationship",
+      "questions": [
+        {
+          "id": "support_unified_agreement",
+          "title": "Do you have a Microsoft Unified Support Agreement with a named CSAM (Customer Success Account Manager)?",
+          "helperText": "If you have a Microsoft Unified Support contract, you may have a dedicated CSAM who can help with implementation guidance",
+          "answers": [
+            {
+              "id": "support_yes_csam",
+              "label": "Yes, I have a Unified Support Agreement with a named CSAM",
+              "weights": {
+                "m365Copilot": 0,
+                "copilotStudio": 0,
+                "foundry": 0,
+                "agentBuilder": 0,
+                "hybrid": 0
+              }
+            },
+            {
+              "id": "support_no_csam",
+              "label": "No, I don't have a Unified Support Agreement or CSAM",
+              "weights": {
+                "m365Copilot": 0,
+                "copilotStudio": 0,
+                "foundry": 0,
+                "agentBuilder": 0,
+                "hybrid": 0
+              }
+            },
+            {
+              "id": "support_unsure",
+              "label": "I'm not sure",
+              "weights": {
+                "m365Copilot": 0,
+                "copilotStudio": 0,
+                "foundry": 0,
+                "agentBuilder": 0,
+                "hybrid": 0
               }
             }
           ]

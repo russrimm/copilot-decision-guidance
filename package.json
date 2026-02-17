@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "main": "server-production.js",
-  "description": "Decision and planning guidance tool for choosing between Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, Agent Builder, or Hybrid approach",
+  "description": "Decision and planning guidance tool to determine which Microsoft agentic platform—Microsoft 365 Copilot, Copilot Studio, or Microsoft Foundry—fits each specific use case",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
@@ -25,6 +25,10 @@
     "start:dev": "node server.js",
     "test": "npm run test --workspaces --if-present",
     "test:prod": "node scripts/test-production.js",
+    "validate": "ts-node scripts/validate-microsoft-updates.ts",
+    "validate:watch": "nodemon --watch scripts --exec npm run validate",
+    "validate:licensing": "ts-node scripts/validate-licensing-guide.ts",
+    "validate:survey": "ts-node scripts/validate-survey-questions.ts",
     "lint": "npm run lint --workspaces --if-present",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
   },
@@ -32,7 +36,9 @@
     "@types/node": "^22.10.5",
     "concurrently": "^9.1.2",
     "node-fetch": "^3.3.2",
+    "nodemon": "^3.0.2",
     "prettier": "^3.4.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {

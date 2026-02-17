@@ -7,16 +7,19 @@ import {
   generateMarkdownSummary,
   downloadPDF,
 } from '../lib/export';
-import type { DecisionModel, Question } from '../types';
+import type { DecisionModel, Question, AIRecommendation } from '../types';
 
 export default function Results() {
   const navigate = useNavigate();
-  const { recommendation, scoringResult, answers, reset } = useWizardStore();
+  const { recommendation, scoringResult, answers, reset, csamEmail } = useWizardStore();
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [showResponses, setShowResponses] = useState(false);
   const [model, setModel] = useState<DecisionModel | null>(null);
   const [enhancedExplanation, setEnhancedExplanation] = useState<any>(null);
   const [loadingEnhancement, setLoadingEnhancement] = useState(true);
+  const [aiRecommendation, setAiRecommendation] = useState<AIRecommendation | null>(null);
+  const [loadingAiRec, setLoadingAiRec] = useState(false);
+  const [completionTimestamp] = useState(new Date().toISOString());
 
   useEffect(() => {
     // Fetch model from API
@@ -379,6 +382,53 @@ export default function Results() {
     downloadMarkdown(markdown, `copilot-recommendation-${Date.now()}.md`);
   };
 
+  const handleEmailToCSAM = () => {
+    if (!model || !csamEmail) return;
+
+    // Get all questions from model
+    const allQuestions: Question[] = [];
+    model.questionGroups.forEach((group) => {
+      group.questions.forEach((q) => allQuestions.push(q));
+    });
+
+    const qaData = allQuestions.map((q) => {
+      const answer = answers[q.id];
+      const selectedAnswer = q.answers.find((a) => a.id === answer);
+      const answerLabel = selectedAnswer?.label || 'Not answered';
+
+      return {
+        question: q.title,
+        answer: answerLabel,
+      };
+    });
+
+    const enhancedRecommendation = {
+      ...recommendation,
+      introduction: displayIntroduction,
+      summary: displaySummary,
+      reasons: displayReasons,
+      nextSteps: displayNextSteps,
+      complianceConsiderations: displayCompliance,
+    };
+    const markdown = generateMarkdownSummary(enhancedRecommendation, qaData);
+
+    // Create mailto link
+    const subject = encodeURIComponent(
+      `Microsoft Agentic Solution Assessment - ${recommendation.title}`
+    );
+    const body = encodeURIComponent(
+      `Hi,\n\nI've completed a Microsoft Agentic Solution assessment and wanted to share the results with you.\n\n` +
+        `Recommendation: ${recommendation.title}\n` +
+        `Confidence Level: ${scoringResult.confidenceLevel}\n\n` +
+        `Please find the detailed report below:\n\n` +
+        `---\n\n${markdown}\n\n` +
+        `Best regards`
+    );
+
+    const mailtoLink = `mailto:${csamEmail}?subject=${subject}&body=${body}`;
+    window.location.href = mailtoLink;
+  };
+
   const handleExportPDF = () => {
     if (!model) return;
 
@@ -442,8 +492,75 @@ export default function Results() {
     }
   };
 
+  // Function to fetch AI-powered recommendation
+  const fetchAiRecommendation = async () => {
+    if (loadingAiRec || aiRecommendation) return;
+
+    setLoadingAiRec(true);
+    try {
+      const response = await fetch('/api/recommendation/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          surveyResponses: answers,
+          scoringResult,
+          includeMetrics: true,
+        }),
+      });
+      const data = await response.json();
+      setAiRecommendation(data.recommendation);
+    } catch (error) {
+      console.error('Failed to fetch AI recommendation:', error);
+    } finally {
+      setLoadingAiRec(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Timestamp Banner */}
+      <div className="card bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-700">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-1">
+              Assessment Completed
+            </h3>
+            <p className="text-green-700 dark:text-green-300 text-sm">
+              {new Date(completionTimestamp).toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              {(() => {
+                const scores = scoringResult.scores;
+                const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
+                const recommendedScore =
+                  scoringResult.recommendation === 'M365_COPILOT'
+                    ? scores.m365Copilot
+                    : scoringResult.recommendation === 'COPILOT_STUDIO'
+                      ? scores.copilotStudio
+                      : scoringResult.recommendation === 'FOUNDRY'
+                        ? scores.foundry
+                        : scoringResult.recommendation === 'AGENT_BUILDER'
+                          ? scores.agentBuilder
+                          : scores.hybrid;
+
+                return total > 0 ? Math.round((recommendedScore / total) * 100) : 0;
+              })()}
+              %
+            </div>
+            <div className="text-xs text-green-600 dark:text-green-400">Match Score</div>
+          </div>
+        </div>
+      </div>
+
       {/* Loading State - Show spinner while AI enhancement is loading */}
       {loadingEnhancement && (
         <div className="card text-center py-12">
@@ -480,6 +597,140 @@ export default function Results() {
       {/* Content - Only show when AI enhancement is complete */}
       {!loadingEnhancement && (
         <>
+          {/* AI-Powered Personalized Recommendation */}
+          <div className="card bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-purple-900/20 dark:via-blue-900/20 dark:to-indigo-900/20 border-2 border-purple-300 dark:border-purple-700">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center">
+                <svg
+                  className="w-8 h-8 text-purple-600 dark:text-purple-400 mr-3"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 00-1-1h-.5a1.5 1.5 0 010-3H4a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" />
+                </svg>
+                <div>
+                  <h3 className="text-xl font-bold text-purple-900 dark:text-purple-100">
+                    AI-Powered Analysis
+                  </h3>
+                  <p className="text-sm text-purple-700 dark:text-purple-300">
+                    Personalized recommendation based on your responses
+                  </p>
+                </div>
+              </div>
+              {!aiRecommendation && !loadingAiRec && (
+                <button
+                  onClick={fetchAiRecommendation}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-semibold transition-colors"
+                >
+                  Generate AI Insights
+                </button>
+              )}
+            </div>
+
+            {loadingAiRec && (
+              <div className="flex items-center justify-center py-8">
+                <svg
+                  className="animate-spin h-8 w-8 text-purple-600 dark:text-purple-400 mr-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span className="text-purple-700 dark:text-purple-300">
+                  Generating personalized insights...
+                </span>
+              </div>
+            )}
+
+            {aiRecommendation && (
+              <div className="space-y-4">
+                <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
+                  <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                    Executive Summary
+                  </h4>
+                  <p className="text-gray-700 dark:text-gray-300">{aiRecommendation.summary}</p>
+                </div>
+
+                {aiRecommendation.detailedAnalysis && (
+                  <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                      Detailed Analysis
+                    </h4>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {aiRecommendation.detailedAnalysis}
+                    </p>
+                  </div>
+                )}
+
+                {aiRecommendation.implementationRoadmap &&
+                  aiRecommendation.implementationRoadmap.length > 0 && (
+                    <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
+                      <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                        Implementation Roadmap
+                      </h4>
+                      <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                        {aiRecommendation.implementationRoadmap.map(
+                          (step: string, index: number) => (
+                            <li key={index}>{step}</li>
+                          )
+                        )}
+                      </ol>
+                    </div>
+                  )}
+
+                {aiRecommendation.timelineEstimate && (
+                  <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                      Timeline Estimate
+                    </h4>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {aiRecommendation.timelineEstimate}
+                    </p>
+                  </div>
+                )}
+
+                {aiRecommendation.costConsiderations && (
+                  <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                      Cost Considerations
+                    </h4>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {aiRecommendation.costConsiderations}
+                    </p>
+                  </div>
+                )}
+
+                {aiRecommendation.personalizationFactors &&
+                  aiRecommendation.personalizationFactors.length > 0 && (
+                    <div className="bg-purple-100/50 dark:bg-purple-900/30 rounded-lg p-3">
+                      <h5 className="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                        Personalization Factors
+                      </h5>
+                      <ul className="text-sm text-purple-800 dark:text-purple-200 space-y-1">
+                        {aiRecommendation.personalizationFactors.map(
+                          (factor: string, index: number) => (
+                            <li key={index}>• {factor}</li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  )}
+              </div>
+            )}
+          </div>
+
           {/* Introduction Section */}
           {displayIntroduction && (
             <div className="card bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700">
@@ -943,6 +1194,37 @@ export default function Results() {
             </div>
           </div>
 
+          {/* Strategic Comparison Infographic */}
+          <div className="card bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                  Want the full picture?
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-100">
+                  View a one-page strategic comparison of all Microsoft AI solutions, licensing, and
+                  a phased hybrid adoption strategy.
+                </p>
+              </div>
+              <a
+                href="/infographic.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 text-sm font-semibold text-primary-700 dark:text-primary-300 bg-white dark:bg-gray-800 border border-primary-300 dark:border-primary-600 rounded-lg hover:bg-primary-50 dark:hover:bg-gray-700 transition-colors flex-shrink-0 ml-4"
+              >
+                View Infographic
+                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+
           {/* How We Scored This */}
           <div className="card">
             <button
@@ -990,6 +1272,11 @@ export default function Results() {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-4 justify-center pt-4">
+            {csamEmail && (
+              <button onClick={handleEmailToCSAM} className="btn-primary">
+                ✉️ Email to CSAM
+              </button>
+            )}
             <button onClick={handleExportJSON} className="btn-secondary">
               📥 Export JSON
             </button>

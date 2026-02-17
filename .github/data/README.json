@@ -1,0 +1,10 @@
+{
+  "description": "This directory stores licensing validation check data and snapshots",
+  "created": "2026-02-16",
+  "purpose": "Track Copilot Studio licensing guide changes over time",
+  "retention": "Keep all snapshots for compliance/audit purposes (7 years recommended)",
+  "files": {
+    "last-licensing-check.json": "Most recent check metadata (version, date, changes)",
+    "licensing-snapshots/": "Monthly snapshots organized by YYYY-MM/"
+  }
+}

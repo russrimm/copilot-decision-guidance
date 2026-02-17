@@ -1,0 +1,278 @@
+name: Monthly Copilot Studio Licensing & Survey Validation
+
+# This workflow validates Copilot Studio licensing and survey questions monthly by:
+# 1. Running automated checks against the Microsoft licensing guide
+# 2. Comparing with repository content for accuracy
+# 3. Validating survey questions against M365 Copilot enablement resources
+# 4. Creating an issue if changes are detected or information is outdated
+#
+# Primary Sources:
+# - https://go.microsoft.com/fwlink/?linkid=2320995 (Power Platform Licensing Guide)
+# - https://learn.microsoft.com/en-us/copilot/microsoft-365/
+# - https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-enablement-resources
+#
+# Frequency: 1st of each month at 9 AM UTC
+
+on:
+  # Run monthly on the 1st at 9 AM UTC
+  schedule:
+    - cron: '0 9 1 * *'
+
+  # Allow manual trigger with optional force notification
+  workflow_dispatch:
+    inputs:
+      force_notification:
+        description: 'Create issue even if no changes detected'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  validate-licensing:
+    name: Validate Copilot Studio Licensing Guide
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g typescript ts-node
+
+      - name: Run licensing validation
+        id: validation
+        continue-on-error: true
+        run: |
+          echo "🔍 Starting Copilot Studio Licensing Guide validation..."
+          echo "📅 Check Date: $(date)"
+          echo "🔗 Source: https://go.microsoft.com/fwlink/?linkid=2320995"
+          echo ""
+
+          ts-node scripts/validate-licensing-guide.ts
+          EXIT_CODE=$?
+
+          if [ $EXIT_CODE -eq 1 ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "✅ Validation complete - changes or outdated content detected"
+          elif [ $EXIT_CODE -eq 0 ]; then
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "✅ Validation complete - all licensing information accurate"
+          else
+            echo "has-changes=error" >> $GITHUB_OUTPUT
+            echo "❌ Validation failed with error"
+            exit 1
+          fi
+
+      - name: Run survey question validation
+        id: survey-validation
+        continue-on-error: true
+        run: |
+          echo ""
+          echo "📋 Starting Survey Question Validation..."
+          echo "📅 Check Date: $(date)"
+          echo "📚 Primary Sources:"
+          echo "   - https://learn.microsoft.com/en-us/copilot/microsoft-365/"
+          echo "   - https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-enablement-resources"
+          echo ""
+
+          ts-node scripts/validate-survey-questions.ts
+          SURVEY_EXIT_CODE=$?
+
+          if [ $SURVEY_EXIT_CODE -eq 1 ]; then
+            echo "survey-has-changes=true" >> $GITHUB_OUTPUT
+            echo "✅ Survey validation complete - questions need review"
+          elif [ $SURVEY_EXIT_CODE -eq 0 ]; then
+            echo "survey-has-changes=false" >> $GITHUB_OUTPUT
+            echo "✅ Survey validation complete - all questions accurate"
+          else
+            echo "survey-has-changes=error" >> $GITHUB_OUTPUT
+            echo "❌ Survey validation failed with error"
+            exit 1
+          fi
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monthly-validation-report-${{ github.run_number }}
+          path: |
+            licensing-validation-report.md
+            licensing-validation-results.json
+            survey-validation-report.md
+            survey-validation-results.json
+          retention-days: 365 # Keep for 1 year for compliance/audit
+
+      - name: Read validation results
+        if: steps.validation.outputs.has-changes == 'true' || steps.survey-validation.outputs.survey-has-changes == 'true' || github.event.inputs.force_notification == 'true'
+        id: read-results
+        run: |
+          if [ -f licensing-validation-results.json ]; then
+            RESULTS=$(cat licensing-validation-results.json)
+            echo "results<<EOF" >> $GITHUB_OUTPUT
+            echo "$RESULTS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+          if [ -f licensing-validation-report.md ]; then
+            REPORT=$(cat licensing-validation-report.md)
+            echo "report<<EOF" >> $GITHUB_OUTPUT
+            echo "$REPORT" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create issue for monthly updates
+        if: steps.validation.outputs.has-changes == 'true' || steps.survey-validation.outputs.survey-has-changes == 'true' || github.event.inputs.force_notification == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Read the markdown reports
+            let reportBody = '# Monthly Validation - Licensing & Survey Questions\n\n';
+            reportBody += '⚠️ **Action Required:** The monthly validation has detected changes or issues requiring attention.\n\n';
+
+            // Licensing validation
+            if (fs.existsSync('licensing-validation-report.md')) {
+              reportBody += '## 💰 Licensing Validation\n\n';
+              const report = fs.readFileSync('licensing-validation-report.md', 'utf-8');
+              reportBody += report.replace(/^# .*\n\n/, ''); // Remove duplicate title
+              reportBody += '\n\n---\n\n';
+            }
+
+            // Survey validation
+            if (fs.existsSync('survey-validation-report.md')) {
+              reportBody += '## 📋 Survey Question Validation\n\n';
+              const surveyReport = fs.readFileSync('survey-validation-report.md', 'utf-8');
+              reportBody += surveyReport.replace(/^# .*\n\n/, ''); // Remove duplicate title
+              reportBody += '\n\n---\n\n';
+            }
+
+            // Combined next steps
+            reportBody += '\n\n## ✅ Action Items\n\n';
+            reportBody += '### Licensing Updates\n';
+            reportBody += '1. Download the latest licensing guide: https://go.microsoft.com/fwlink/?linkid=2320995\n';
+            reportBody += '2. Review the **Appendix** section for changes\n';
+            reportBody += '3. Update affected files listed in the licensing report\n';
+            reportBody += '4. Verify all pricing and entitlement information\n\n';
+
+            reportBody += '### Survey Question Updates\n';
+            reportBody += '1. Review flagged questions against Microsoft 365 Copilot enablement resources\n';
+            reportBody += '2. Visit: https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-enablement-resources\n';
+            reportBody += '3. Check: https://learn.microsoft.com/en-us/copilot/microsoft-365/ for comprehensive updates\n';
+            reportBody += '4. Update `decision-model.v1.json` if questions need changes\n';
+            reportBody += '5. Update scoring weights if product capabilities have changed\n\n';
+
+            reportBody += '### Completion\n';
+            reportBody += '6. Test all changes locally\n';
+            reportBody += '7. Commit with message: `chore: monthly validation updates (Month YYYY)`\n';
+            reportBody += '8. Close this issue once complete\n\n';
+            reportBody += '---\n\n';
+            reportBody += `*Automated check run: ${new Date().toISOString()}*\n`;
+            reportBody += '*Next scheduled check: 1st of next month*\n';
+
+            // Create the issue
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🔄 Monthly Validation Required - ${new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })}`,
+              body: reportBody,
+              labels: ['licensing', 'survey-questions', 'documentation', 'monthly-maintenance']
+            });
+
+            console.log(`✅ Created issue #${issue.data.number}`);
+
+      - name: Post summary
+        if: always()
+        run: |
+          echo "## 📋 Licensing Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Check Date:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ steps.validation.outputs.has-changes == 'true' && '⚠️ Changes Detected' || '✅ Up to Date' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f licensing-validation-report.md ]; then
+            echo "### Detailed Report" >> $GITHUB_STEP_SUMMARY
+            cat licensing-validation-report.md >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Resources" >> $GITHUB_STEP_SUMMARY
+          echo "- [Power Platform Licensing Guide](https://go.microsoft.com/fwlink/?linkid=2320995)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Copilot Studio Documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit validation data
+        if: steps.validation.outputs.has-changes != 'error'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Ensure data directory exists
+          mkdir -p .github/data
+
+          # Commit the check data (not the report)
+          if [ -f .github/data/last-licensing-check.json ]; then
+            git add .github/data/last-licensing-check.json
+            git commit -m "chore: update licensing check data [skip ci]" || echo "No changes to commit"
+            git push || echo "Nothing to push"
+          fi
+
+  notify-slack:
+    name: Notify team (optional)
+    runs-on: ubuntu-latest
+    needs: validate-licensing
+    if: needs.validate-licensing.outputs.has-changes == 'true' && vars.SLACK_WEBHOOK_URL != ''
+
+    steps:
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "🔄 Monthly Copilot Studio Licensing Update Required",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "⚠️ *Monthly licensing validation detected changes*\n\nThe Copilot Studio licensing guide has been updated. Please review and update the repository documentation."
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Issue"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/issues"
+                    },
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Download Guide"
+                      },
+                      "url": "https://go.microsoft.com/fwlink/?linkid=2320995"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

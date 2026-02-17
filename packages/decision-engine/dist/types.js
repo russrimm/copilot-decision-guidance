@@ -40,4 +40,4 @@ export const DecisionModelSchema = z.object({
     thresholds: ThresholdsSchema,
 });
 // User answers
-export const UserAnswersSchema = z.record(z.string(), z.string());
+export const UserAnswersSchema = z.record(z.string(), z.union([z.string(), z.array(z.string()).min(1)]));

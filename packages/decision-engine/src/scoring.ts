@@ -35,28 +35,34 @@ export function calculateRecommendation(
         continue;
       }
 
-      const selectedAnswer = question.answers.find((a) => a.id === selectedAnswerId);
+      const selectedAnswerIds = Array.isArray(selectedAnswerId)
+        ? selectedAnswerId
+        : [selectedAnswerId];
 
-      if (!selectedAnswer) {
-        // Invalid answer ID
-        continue;
+      for (const answerId of selectedAnswerIds) {
+        const selectedAnswer = question.answers.find((a) => a.id === answerId);
+
+        if (!selectedAnswer) {
+          // Invalid answer ID
+          continue;
+        }
+
+        // Add weights to scores
+        scores.m365Copilot += selectedAnswer.weights.m365Copilot;
+        scores.copilotStudio += selectedAnswer.weights.copilotStudio;
+        scores.foundry += selectedAnswer.weights.foundry || 0;
+        scores.agentBuilder += selectedAnswer.weights.agentBuilder || 0;
+        scores.hybrid += selectedAnswer.weights.hybrid;
+
+        // Track breakdown for transparency
+        breakdown.push({
+          questionId: question.id,
+          questionTitle: question.title,
+          answerId: selectedAnswer.id,
+          answerLabel: selectedAnswer.label,
+          weights: selectedAnswer.weights,
+        });
       }
-
-      // Add weights to scores
-      scores.m365Copilot += selectedAnswer.weights.m365Copilot;
-      scores.copilotStudio += selectedAnswer.weights.copilotStudio;
-      scores.foundry += selectedAnswer.weights.foundry || 0;
-      scores.agentBuilder += selectedAnswer.weights.agentBuilder || 0;
-      scores.hybrid += selectedAnswer.weights.hybrid;
-
-      // Track breakdown for transparency
-      breakdown.push({
-        questionId: question.id,
-        questionTitle: question.title,
-        answerId: selectedAnswer.id,
-        answerLabel: selectedAnswer.label,
-        weights: selectedAnswer.weights,
-      });
     }
   }
 
@@ -191,7 +197,10 @@ export function validateAnswers(
   const missingQuestions: string[] = [];
 
   for (const question of allQuestions) {
-    if (!userAnswers[question.id]) {
+    const value = userAnswers[question.id];
+    const isMissing = value == null || value === '' || (Array.isArray(value) && value.length === 0);
+
+    if (isMissing) {
       missingQuestions.push(question.id);
     }
   }

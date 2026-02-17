@@ -1,3 +1,18 @@
+// Debug output at the very start
+console.log('=== API Server Initialization Started ===');
+console.log('Node version:', process.version);
+console.log('Working directory:', process.cwd());
+console.log('Script path:', import.meta.url);
+// Global error handlers
+process.on('uncaughtException', (error) => {
+    console.error('💥 UNCAUGHT EXCEPTION:', error);
+    process.exit(1);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('💥 UNHANDLED REJECTION at:', promise, 'reason:', reason);
+    process.exit(1);
+});
+console.log('[1/10] Starting imports...');
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -5,25 +20,106 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { readFile } from 'fs/promises';
 import { DefaultAzureCredential } from '@azure/identity';
-import { calculateRecommendation, generateRecommendation, decisionModel, UserAnswersSchema, } from '@copilot-guidance/decision-engine';
+import useCasesRouter from './routes/use-cases.js';
+console.log('[2/10] Core imports loaded successfully');
+let decisionModel;
+let calculateRecommendation;
+let generateRecommendation;
+let UserAnswersSchema;
+let MetricsService;
+let AIRecommendationService;
+try {
+    console.log('[3/10] Loading decision-engine package...');
+    const decisionEngine = await import('@copilot-guidance/decision-engine');
+    calculateRecommendation = decisionEngine.calculateRecommendation;
+    generateRecommendation = decisionEngine.generateRecommendation;
+    decisionModel = decisionEngine.decisionModel;
+    UserAnswersSchema = decisionEngine.UserAnswersSchema;
+    console.log('[3/10] ✅ Decision-engine loaded:', {
+        hasModel: !!decisionModel,
+        modelVersion: decisionModel?.version,
+    });
+}
+catch (error) {
+    console.error('[3/10] ❌ Failed to load decision-engine:', error);
+    process.exit(1);
+}
+try {
+    console.log('[4/10] Loading service modules...');
+    const metricsModule = await import('./services/metrics.js');
+    const aiModule = await import('./services/ai-recommendations.js');
+    MetricsService = metricsModule.MetricsService;
+    AIRecommendationService = aiModule.AIRecommendationService;
+    console.log('[4/10] ✅ Service modules loaded');
+}
+catch (error) {
+    console.error('[4/10] ❌ Failed to load service modules:', error);
+    process.exit(1);
+}
 // Load environment variables from .env file
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+console.log('[5/10] Loading environment variables...');
+const envPath = path.resolve(process.cwd(), '.env');
+console.log('Looking for .env at:', envPath);
+dotenv.config({ path: envPath });
+console.log('[5/10] ✅ Environment loaded. PORT =', process.env.PORT || '3001 (default)');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+console.log('[6/10] Creating Express app...');
 const app = express();
 const PORT = process.env.PORT || 3001;
+console.log('[6/10] ✅ Express app created. Will listen on port:', PORT);
+// Initialize services with error handling
+console.log('[7/10] Initializing services...');
+let metricsService;
+let aiRecommendationService;
+try {
+    metricsService = new MetricsService({
+        tenantId: process.env.AZURE_TENANT_ID,
+        clientId: process.env.AZURE_CLIENT_ID,
+        clientSecret: process.env.AZURE_CLIENT_SECRET,
+        subscriptionId: process.env.AZURE_SUBSCRIPTION_ID,
+        enableCostReports: process.env.ENABLE_COST_REPORTS === 'true',
+        enablePowerPlatform: process.env.ENABLE_POWER_PLATFORM === 'true',
+        enableLicenses: process.env.ENABLE_LICENSES === 'true',
+        enableSecureScore: process.env.ENABLE_SECURE_SCORE === 'true',
+    });
+    console.log('[7/10] ✅ MetricsService initialized');
+}
+catch (error) {
+    console.error('[7/10] ⚠️  MetricsService initialization failed:', error);
+    // Continue anyway - metrics are optional
+    metricsService = { isEnabled: () => false };
+}
+try {
+    aiRecommendationService = new AIRecommendationService(process.env.AZURE_OPENAI_API_KEY || process.env.OPENAI_API_KEY, process.env.AZURE_OPENAI_ENDPOINT || process.env.OPENAI_ENDPOINT, process.env.AZURE_OPENAI_DEPLOYMENT || process.env.OPENAI_MODEL);
+    console.log('[7/10] ✅ AIRecommendationService initialized');
+}
+catch (error) {
+    console.error('[7/10] ⚠️  AIRecommendationService initialization failed:', error);
+    // Continue anyway - AI is optional
+    aiRecommendationService = { isEnabled: () => false };
+}
+console.log('[8/10] Configuring middleware...');
 // Middleware
 app.use(cors());
 app.use(express.json());
+console.log('[8/10] ✅ Middleware configured');
 // Serve static files from web dist folder in production
+console.log('[9/10] Configuring static file serving...');
 const webDistPath = path.join(__dirname, '../../web/dist');
 app.use(express.static(webDistPath));
+console.log('[9/10] ✅ Static files configured:', webDistPath);
+console.log('[10/10] Registering routes...');
 // Health check
 app.get('/api/health', (_req, res) => {
     res.json({
         status: 'ok',
         timestamp: new Date().toISOString(),
-        aiEnabled: !!(process.env.AZURE_OPENAI_ENDPOINT || process.env.OPENAI_API_KEY),
+        features: {
+            aiEnabled: !!(process.env.AZURE_OPENAI_ENDPOINT || process.env.OPENAI_API_KEY),
+            metricsEnabled: metricsService.isEnabled(),
+            aiRecommendationsEnabled: aiRecommendationService.isEnabled(),
+        },
         azureConfigured: !!process.env.AZURE_OPENAI_ENDPOINT,
         openaiConfigured: !!process.env.OPENAI_API_KEY,
         authMethod: process.env.AZURE_OPENAI_ENDPOINT ? 'entra' : 'none',
@@ -33,6 +129,8 @@ app.get('/api/health', (_req, res) => {
 app.get('/api/model', (_req, res) => {
     res.json(decisionModel);
 });
+// Use Cases Assistant routes
+app.use('/api/use-cases', useCasesRouter);
 // Calculate score and recommendation
 app.post('/api/score', (req, res) => {
     try {
@@ -257,7 +355,7 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token.token}`,
+                    Authorization: `Bearer ${token.token}`,
                 },
                 body: JSON.stringify({
                     messages: [
@@ -830,7 +928,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token.token}`,
+                        Authorization: `Bearer ${token.token}`,
                     },
                     body: JSON.stringify({
                         messages: [
@@ -956,12 +1054,102 @@ Return ONLY valid JSON (no markdown, no code blocks):
         };
     }
 }
+// Get tenant metrics (optional feature)
+app.get('/api/metrics', async (_req, res) => {
+    try {
+        if (!metricsService.isEnabled()) {
+            // Return sample data if not configured
+            return res.json({
+                enabled: false,
+                data: MetricsService.getSampleMetrics(),
+                message: 'Metrics integration not configured. Showing sample data. To enable, set AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET environment variables.',
+            });
+        }
+        const metrics = await metricsService.getAllMetrics();
+        res.json({
+            enabled: true,
+            data: metrics,
+        });
+    }
+    catch (error) {
+        console.error('Error fetching metrics:', error);
+        res.status(500).json({
+            error: 'Failed to fetch metrics',
+            message: error instanceof Error ? error.message : 'Unknown error',
+            data: MetricsService.getSampleMetrics(),
+        });
+    }
+});
+// Get metrics configuration status
+app.get('/api/metrics/config', (_req, res) => {
+    res.json({
+        enabled: metricsService.isEnabled(),
+        features: {
+            costReports: process.env.ENABLE_COST_REPORTS === 'true',
+            powerPlatform: process.env.ENABLE_POWER_PLATFORM === 'true',
+            licenses: process.env.ENABLE_LICENSES === 'true',
+            secureScore: process.env.ENABLE_SECURE_SCORE === 'true',
+        },
+        configured: {
+            tenantId: !!process.env.AZURE_TENANT_ID,
+            clientId: !!process.env.AZURE_CLIENT_ID,
+            clientSecret: !!process.env.AZURE_CLIENT_SECRET,
+            subscriptionId: !!process.env.AZURE_SUBSCRIPTION_ID,
+        },
+    });
+});
+// Generate AI-powered recommendation
+app.post('/api/recommendation/ai', async (req, res) => {
+    try {
+        const { surveyResponses, scoringResult, includeMetrics } = req.body;
+        if (!surveyResponses || !scoringResult) {
+            return res.status(400).json({
+                error: 'Invalid request',
+                message: 'surveyResponses and scoringResult are required',
+            });
+        }
+        // Optionally include tenant metrics
+        let tenantMetrics;
+        if (includeMetrics && metricsService.isEnabled()) {
+            try {
+                tenantMetrics = await metricsService.getAllMetrics();
+            }
+            catch (error) {
+                console.error('Failed to fetch metrics for AI recommendation:', error);
+                // Continue without metrics
+            }
+        }
+        const recommendation = await aiRecommendationService.generateRecommendation({
+            surveyResponses,
+            scoringResult,
+            tenantMetrics,
+            timestamp: new Date().toISOString(),
+        });
+        res.json({
+            recommendation,
+            timestamp: new Date().toISOString(),
+            aiEnabled: aiRecommendationService.isEnabled(),
+            metricsIncluded: !!tenantMetrics,
+        });
+    }
+    catch (error) {
+        console.error('Error generating AI recommendation:', error);
+        res.status(500).json({
+            error: 'Failed to generate recommendation',
+            message: error instanceof Error ? error.message : 'Unknown error',
+        });
+    }
+});
 // Catch-all route to serve index.html for client-side routing
 app.get('*', (_req, res) => {
     res.sendFile(path.join(webDistPath, 'index.html'));
 });
-// Start server
-app.listen(PORT, () => {
+console.log('[10/10] ✅ All routes registered');
+console.log('\n=== Starting HTTP Server ===');
+console.log('Attempting to listen on port:', PORT);
+// Start server with error handling
+const server = app.listen(PORT, () => {
+    console.log('\n✅✅✅ SERVER STARTED SUCCESSFULLY ✅✅✅');
     console.log(`🚀 API server running on http://localhost:${PORT}`);
     console.log(`📊 Decision model loaded: v${decisionModel.version}`);
     // Check AI configuration
@@ -974,5 +1162,20 @@ app.listen(PORT, () => {
     console.log(`🚀 Azure OpenAI Deployment: ${hasAzureDeployment ? '✅ Present' : '❌ Missing'}`);
     console.log(`🔑 OpenAI Key: ${hasOpenAIKey ? '✅ Present' : '❌ Missing'}`);
     console.log(`🤖 AI mode: ${hasAzureKey || hasOpenAIKey ? 'ENABLED' : 'DISABLED (No AI keys configured)'}`);
+    console.log('\n=== Ready to accept connections ===\n');
+});
+server.on('error', (error) => {
+    console.error('\n💥 SERVER ERROR:', error);
+    if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is already in use. Please free the port or change PORT in .env`);
+    }
+    else if (error.code === 'EACCES') {
+        console.error(`❌ Permission denied to bind to port ${PORT}`);
+    }
+    process.exit(1);
+});
+server.on('listening', () => {
+    const addr = server.address();
+    console.log('Server address:', addr);
 });
 export default app;

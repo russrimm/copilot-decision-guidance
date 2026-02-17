@@ -74,40 +74,40 @@
         },
         {
           "id": "outcome_tasks",
-          "title": "What types of tasks do you need AI assistance with?",
-          "helperText": "Select the option that best describes your needs",
+          "title": "Do you need read-only retrieval or agents that take real actions?",
+          "helperText": "Consider if the agent should only answer questions or also create tickets, update records, and trigger workflows",
           "answers": [
             {
               "id": "tasks_assist",
-              "label": "Assistive tasks (help me draft, summarize, answer questions from my content)",
+              "label": "Read-only retrieval—answer questions, summarize, and draft content only",
               "weights": {
                 "m365Copilot": 10,
                 "copilotStudio": 2,
                 "hybrid": 4,
                 "foundry": 2,
-                "agentBuilder": 6
+                "agentBuilder": 10
               }
             },
             {
               "id": "tasks_action",
-              "label": "Action-oriented tasks (create tickets, update records, trigger workflows)",
+              "label": "Take real actions—create tickets, update records, trigger workflows in external systems",
               "weights": {
-                "m365Copilot": 2,
+                "m365Copilot": 1,
                 "copilotStudio": 10,
                 "hybrid": 5,
                 "foundry": 5,
-                "agentBuilder": 7
+                "agentBuilder": 2
               }
             },
             {
               "id": "tasks_both",
-              "label": "Both assistive and action-oriented",
+              "label": "Both—retrieval and actions depending on the scenario",
               "weights": {
                 "m365Copilot": 4,
-                "copilotStudio": 5,
+                "copilotStudio": 8,
                 "hybrid": 10,
                 "foundry": 5,
-                "agentBuilder": 7
+                "agentBuilder": 5
               }
             },
             {
@@ -125,34 +125,34 @@
         },
         {
           "id": "outcome_development",
-          "title": "What is your preferred development approach?",
-          "helperText": "Consider how much control and customization you need",
+          "title": "Who will build and maintain the agents?",
+          "helperText": "Consider whether end users, makers, or developers will create the solution",
           "answers": [
             {
-              "id": "dev_nocode",
-              "label": "No-code/low-code—visual tools and guided experiences",
+              "id": "dev_enduser",
+              "label": "End users—need simple agent creation without coding (upload files, chat)",
               "weights": {
-                "m365Copilot": 7,
-                "copilotStudio": 8,
+                "m365Copilot": 5,
+                "copilotStudio": 4,
                 "foundry": 1,
-                "agentBuilder": 9,
-                "hybrid": 5
+                "agentBuilder": 10,
+                "hybrid": 4
               }
             },
             {
-              "id": "dev_config",
-              "label": "Configuration-based—customizable but not coding",
+              "id": "dev_nocode",
+              "label": "Citizen makers—low-code with topics, flows, and visual tools",
               "weights": {
-                "m365Copilot": 6,
-                "copilotStudio": 9,
-                "foundry": 2,
-                "agentBuilder": 7,
+                "m365Copilot": 3,
+                "copilotStudio": 10,
+                "foundry": 1,
+                "agentBuilder": 6,
                 "hybrid": 6
               }
             },
             {
               "id": "dev_code",
-              "label": "Pro-code development—full programmatic control with SDKs",
+              "label": "Developers—pro-code extensibility with SDKs, VS Code, custom models",
               "weights": {
                 "m365Copilot": 2,
                 "copilotStudio": 5,
@@ -163,13 +163,13 @@
             },
             {
               "id": "dev_mixed",
-              "label": "Mixed—both low-code and pro-code depending on the scenario",
+              "label": "Mixed team—both makers and developers depending on the scenario",
               "weights": {
                 "m365Copilot": 4,
-                "copilotStudio": 7,
+                "copilotStudio": 8,
                 "foundry": 7,
-                "agentBuilder": 4,
-                "hybrid": 9
+                "agentBuilder": 5,
+                "hybrid": 10
               }
             },
             {
@@ -314,40 +314,51 @@
       "questions": [
         {
           "id": "data_sources",
-          "title": "What data does the AI need to access?",
-          "helperText": "Select the primary data sources",
+          "title": "Where does your data primarily live?",
+          "helperText": "Consider your primary data sources for grounding the agent's responses",
           "answers": [
             {
               "id": "data_m365",
-              "label": "Primarily Microsoft 365 content (emails, documents, Teams chats, meetings)",
+              "label": "Microsoft Graph (emails, documents, Teams chats, SharePoint, OneDrive)",
               "weights": {
                 "m365Copilot": 10,
                 "copilotStudio": 3,
                 "hybrid": 5,
                 "foundry": 2,
-                "agentBuilder": 6
+                "agentBuilder": 9
               }
             },
             {
               "id": "data_lob",
-              "label": "Line-of-business systems (CRM, ERP, ticketing, databases)",
+              "label": "Enterprise systems (SAP, SQL databases, CRM, ERP, ticketing systems)",
               "weights": {
-                "m365Copilot": 2,
+                "m365Copilot": 1,
                 "copilotStudio": 10,
                 "hybrid": 5,
-                "foundry": 4,
-                "agentBuilder": 8
+                "foundry": 7,
+                "agentBuilder": 3
               }
             },
             {
               "id": "data_both",
-              "label": "Both Microsoft 365 and line-of-business systems",
+              "label": "Both Microsoft Graph and enterprise systems",
               "weights": {
                 "m365Copilot": 4,
-                "copilotStudio": 6,
+                "copilotStudio": 8,
                 "hybrid": 10,
-                "foundry": 2,
+                "foundry": 5,
                 "agentBuilder": 6
+              }
+            },
+            {
+              "id": "data_azure_search",
+              "label": "Azure AI Search indexes or custom models (BYO models)",
+              "weights": {
+                "m365Copilot": 2,
+                "copilotStudio": 7,
+                "hybrid": 6,
+                "foundry": 10,
+                "agentBuilder": 4
               }
             },
             {
@@ -536,15 +547,15 @@
       "questions": [
         {
           "id": "integration_complexity",
-          "title": "What level of orchestration complexity do you need?",
-          "helperText": "Consider if you need simple Q&A, workflows, or multi-agent coordination",
+          "title": "How complex are your business processes?",
+          "helperText": "Consider if you need simple Q&A, multi-step workflows, or orchestration across systems",
           "answers": [
             {
               "id": "orchestration_simple",
-              "label": "Simple Q&A—single-turn conversations",
+              "label": "Simple knowledge retrieval—single-turn Q&A from documents",
               "weights": {
-                "m365Copilot": 9,
-                "copilotStudio": 6,
+                "m365Copilot": 10,
+                "copilotStudio": 5,
                 "foundry": 2,
                 "agentBuilder": 10,
                 "hybrid": 5
@@ -552,9 +563,9 @@
             },
             {
               "id": "orchestration_workflows",
-              "label": "Deterministic workflows with checkpoints and approvals",
+              "label": "Multi-step workflow automation with approval gates and integrations",
               "weights": {
-                "m365Copilot": 2,
+                "m365Copilot": 1,
                 "copilotStudio": 10,
                 "foundry": 7,
                 "agentBuilder": 2,
@@ -562,8 +573,19 @@
               }
             },
             {
+              "id": "orchestration_deep_integration",
+              "label": "Deep system integrations (SAP, SQL, enterprise APIs) with complex logic",
+              "weights": {
+                "m365Copilot": 1,
+                "copilotStudio": 9,
+                "foundry": 10,
+                "agentBuilder": 1,
+                "hybrid": 7
+              }
+            },
+            {
               "id": "orchestration_multiagent",
-              "label": "Multi-agent coordination with specialized agents",
+              "label": "Multi-agent orchestration with specialized agents collaborating",
               "weights": {
                 "m365Copilot": 1,
                 "copilotStudio": 7,
@@ -574,7 +596,7 @@
             },
             {
               "id": "orchestration_custom",
-              "label": "Custom orchestration patterns with full programmatic control",
+              "label": "Custom orchestration patterns requiring full programmatic control",
               "weights": {
                 "m365Copilot": 1,
                 "copilotStudio": 5,
@@ -598,51 +620,51 @@
         },
         {
           "id": "integration_channels",
-          "title": "Where do users need to access this?",
-          "helperText": "Select the primary interface",
+          "title": "Where do users need to access the agent?",
+          "helperText": "Consider deployment requirements—inside M365, external channels, or both",
           "answers": [
             {
               "id": "channels_m365",
-              "label": "Within Microsoft 365 apps (Word, Teams, Outlook, etc.)",
+              "label": "Inside M365 Copilot Chat (Word, Teams, Outlook, BizChat)",
               "weights": {
                 "m365Copilot": 10,
-                "copilotStudio": 4,
-                "hybrid": 6,
+                "copilotStudio": 7,
+                "hybrid": 8,
                 "foundry": 2,
-                "agentBuilder": 6
+                "agentBuilder": 10
               }
             },
             {
               "id": "channels_teams",
-              "label": "Microsoft Teams only",
+              "label": "Microsoft Teams only (standalone Teams app)",
               "weights": {
-                "m365Copilot": 7,
-                "copilotStudio": 7,
+                "m365Copilot": 6,
+                "copilotStudio": 9,
                 "hybrid": 7,
                 "foundry": 2,
-                "agentBuilder": 6
+                "agentBuilder": 7
               }
             },
             {
               "id": "channels_web",
-              "label": "Custom website or portal",
+              "label": "External channels (website, mobile app, WhatsApp, SMS)",
               "weights": {
                 "m365Copilot": 1,
                 "copilotStudio": 10,
-                "hybrid": 3,
-                "foundry": 4,
-                "agentBuilder": 8
+                "hybrid": 4,
+                "foundry": 5,
+                "agentBuilder": 2
               }
             },
             {
               "id": "channels_multiple",
-              "label": "Multiple channels (Microsoft 365, Teams, website)",
+              "label": "Multiple channels (M365 Copilot Chat + external website/apps)",
               "weights": {
                 "m365Copilot": 4,
-                "copilotStudio": 8,
+                "copilotStudio": 10,
                 "hybrid": 10,
-                "foundry": 2,
-                "agentBuilder": 6
+                "foundry": 3,
+                "agentBuilder": 5
               }
             },
             {
@@ -667,37 +689,37 @@
       "questions": [
         {
           "id": "governance_needs",
-          "title": "What compliance and trust boundary requirements do you have?",
-          "helperText": "Consider data residency, network isolation, and regulatory compliance",
+          "title": "What governance and lifecycle management capabilities do you need?",
+          "helperText": "Consider DLP, RBAC, analytics, environment management, and audit requirements",
           "answers": [
             {
               "id": "compliance_m365",
-              "label": "Microsoft 365 trust boundary is sufficient—data stays within M365 tenant",
+              "label": "Microsoft 365 compliance boundary is sufficient—inherits M365 DLP and RBAC",
               "weights": {
                 "m365Copilot": 10,
-                "copilotStudio": 4,
+                "copilotStudio": 3,
                 "foundry": 2,
-                "agentBuilder": 7,
+                "agentBuilder": 9,
                 "hybrid": 6
               }
             },
             {
               "id": "compliance_powerplatform",
-              "label": "Power Platform boundary—need region-specific data residency",
+              "label": "Need enterprise governance—DLP policies, lifecycle management, analytics, RBAC",
               "weights": {
-                "m365Copilot": 3,
+                "m365Copilot": 2,
                 "copilotStudio": 10,
                 "foundry": 5,
-                "agentBuilder": 6,
+                "agentBuilder": 4,
                 "hybrid": 7
               }
             },
             {
               "id": "compliance_azure",
-              "label": "Azure landing zone—need network isolation and customer-managed keys",
+              "label": "Need Azure-grade controls—network isolation, customer-managed keys, VNet",
               "weights": {
                 "m365Copilot": 1,
-                "copilotStudio": 5,
+                "copilotStudio": 4,
                 "foundry": 10,
                 "agentBuilder": 2,
                 "hybrid": 6
@@ -705,7 +727,7 @@
             },
             {
               "id": "compliance_hybrid",
-              "label": "Hybrid approach with centralized policy enforcement",
+              "label": "Hybrid approach—centralized policy enforcement across M365 and custom infra",
               "weights": {
                 "m365Copilot": 3,
                 "copilotStudio": 7,
@@ -941,7 +963,7 @@
         {
           "id": "ttv_skills",
           "title": "What technical skills are available?",
-          "helperText": "Consider your team's capabilities",
+          "helperText": "Select all that apply. Consider your team's capabilities.",
           "answers": [
             {
               "id": "skills_none",
@@ -1133,12 +1155,12 @@
         },
         {
           "id": "cost_performance",
-          "title": "What are your performance requirements?",
-          "helperText": "Response time expectations for user interactions",
+          "title": "What are your scale and performance requirements?",
+          "helperText": "Consider dataset size, response time, and whether you might outgrow platform limits",
           "answers": [
             {
               "id": "perf_relaxed",
-              "label": "Relaxed (1-3 seconds acceptable) - Managed platform is fine",
+              "label": "Standard scale with managed platform—typical dataset sizes and response times",
               "weights": {
                 "m365Copilot": 8,
                 "copilotStudio": 9,
@@ -1148,24 +1170,35 @@
               }
             },
             {
-              "id": "perf_fast",
-              "label": "Fast (<1 second preferred) - Need optimized performance",
+              "id": "perf_large_datasets",
+              "label": "Large datasets with performance constraints—may hit SQL connector limits",
               "weights": {
-                "m365Copilot": 6,
-                "copilotStudio": 7,
-                "foundry": 7,
-                "agentBuilder": 5,
+                "m365Copilot": 3,
+                "copilotStudio": 6,
+                "foundry": 9,
+                "agentBuilder": 3,
+                "hybrid": 7
+              }
+            },
+            {
+              "id": "perf_outgrow",
+              "label": "Anticipate outgrowing Copilot Studio retrieval limits—need Azure AI Foundry scale",
+              "weights": {
+                "m365Copilot": 2,
+                "copilotStudio": 4,
+                "foundry": 10,
+                "agentBuilder": 2,
                 "hybrid": 7
               }
             },
             {
               "id": "perf_realtime",
-              "label": "Real-time (<100ms) - Mission critical applications",
+              "label": "Mission-critical real-time (<100ms) with custom infrastructure",
               "weights": {
-                "m365Copilot": 2,
+                "m365Copilot": 1,
                 "copilotStudio": 3,
                 "foundry": 10,
-                "agentBuilder": 2,
+                "agentBuilder": 1,
                 "hybrid": 5
               }
             },
@@ -1178,6 +1211,104 @@
                 "foundry": 5,
                 "agentBuilder": 5,
                 "hybrid": 5
+              }
+            }
+          ]
+        },
+        {
+          "id": "cost_strategy",
+          "title": "What is your long-term AI strategy?",
+          "helperText": "Consider if you're building one agent or a portfolio across the enterprise",
+          "answers": [
+            {
+              "id": "strategy_single",
+              "label": "Single use case or pilot—minimal long-term commitment",
+              "weights": {
+                "m365Copilot": 7,
+                "copilotStudio": 5,
+                "foundry": 4,
+                "agentBuilder": 9,
+                "hybrid": 5
+              }
+            },
+            {
+              "id": "strategy_portfolio",
+              "label": "Portfolio of agents across departments—need centralized governance",
+              "weights": {
+                "m365Copilot": 4,
+                "copilotStudio": 10,
+                "foundry": 6,
+                "agentBuilder": 5,
+                "hybrid": 8
+              }
+            },
+            {
+              "id": "strategy_autonomy",
+              "label": "Multi-agent orchestration with autonomy and specialized collaboration",
+              "weights": {
+                "m365Copilot": 2,
+                "copilotStudio": 8,
+                "foundry": 10,
+                "agentBuilder": 2,
+                "hybrid": 9
+              }
+            },
+            {
+              "id": "strategy_unsure",
+              "label": "I'm not sure",
+              "weights": {
+                "m365Copilot": 5,
+                "copilotStudio": 5,
+                "foundry": 5,
+                "agentBuilder": 5,
+                "hybrid": 5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "support",
+      "title": "Microsoft Support & Account Management",
+      "description": "Information about your Microsoft support relationship",
+      "questions": [
+        {
+          "id": "support_unified_agreement",
+          "title": "Do you have a Microsoft Unified Support Agreement with a named CSAM (Customer Success Account Manager)?",
+          "helperText": "If you have a Microsoft Unified Support contract, you may have a dedicated CSAM who can help with implementation guidance",
+          "answers": [
+            {
+              "id": "support_yes_csam",
+              "label": "Yes, I have a Unified Support Agreement with a named CSAM",
+              "weights": {
+                "m365Copilot": 0,
+                "copilotStudio": 0,
+                "foundry": 0,
+                "agentBuilder": 0,
+                "hybrid": 0
+              }
+            },
+            {
+              "id": "support_no_csam",
+              "label": "No, I don't have a Unified Support Agreement or CSAM",
+              "weights": {
+                "m365Copilot": 0,
+                "copilotStudio": 0,
+                "foundry": 0,
+                "agentBuilder": 0,
+                "hybrid": 0
+              }
+            },
+            {
+              "id": "support_unsure",
+              "label": "I'm not sure",
+              "weights": {
+                "m365Copilot": 0,
+                "copilotStudio": 0,
+                "foundry": 0,
+                "agentBuilder": 0,
+                "hybrid": 0
               }
             }
           ]

@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Microsoft AI Solutions Infographic</title>
+    <style>
+      :root {
+        /* Light Mode Colors */
+        --header-bg: linear-gradient(135deg, #2b5396 0%, #2b7696d1 100%);
+        --header-text: #ffffff;
+        --header-text-secondary: #e6f0f5;
+        --header-description: #edf5fa;
+        --page-bg: #f5f9fc;
+        --page-bg-alt: #ffffff;
+        --text-primary: #1a2b3c;
+        --text-secondary: #2f455c;
+        --text-muted: #4f5f6f;
+        --brand: #2d7a9f;
+        --brand-hover: #2b7696;
+        --accent-bg: #e6f3fa;
+        --accent: #2d7a9f;
+        --border: #d0dbe5;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          /* Dark Mode Colors */
+          --header-bg: linear-gradient(135deg, #2b5396 0%, #2b7696d1 100%);
+          --header-text: #ffffff;
+          --header-text-secondary: #cfdbe4;
+          --header-description: #d8e5ed;
+          --page-bg: #121a23;
+          --page-bg-alt: #18242f;
+          --text-primary: #e8f0f7;
+          --text-secondary: #c5d3df;
+          --text-muted: #9fb2c4;
+          --brand: #5bb8e6;
+          --brand-hover: #4aa1c7;
+          --accent-bg: #1f2e3a;
+          --accent: #5bb8e6;
+          --border: #2f4354;
+        }
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', 'SF Pro Display', 'SF Pro', sans-serif;
+        background: var(--page-bg);
+        color: var(--text-primary);
+        min-height: 100vh;
+      }
+      .poster-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: var(--page-bg-alt);
+        border-radius: 32px;
+        box-shadow: 0 8px 32px rgba(58, 143, 183, 0.12);
+        padding: 0;
+        overflow: hidden;
+      }
+      header {
+        background: var(--header-bg);
+        color: var(--header-text);
+        text-align: center;
+        padding: 56px 32px 40px 32px;
+        position: relative;
+      }
+      .header-title {
+        font-size: clamp(40px, 6vw, 60px);
+        font-weight: 900;
+        margin-bottom: 12px;
+        letter-spacing: 0.01em;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .header-subtitle {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--header-text-secondary);
+      }
+      .header-description {
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 32px;
+        max-width: 700px;
+        margin: 0 auto;
+        color: var(--header-description);
+      }
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding: 40px;
+      }
+      .column {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .card {
+        background: var(--accent-bg);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 24px;
+      }
+      .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+      }
+      /* Stat Grid */
+      .stat-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: space-between;
+      }
+      .stat-card {
+        flex: 1 1 45%;
+        background: var(--page-bg);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 16px;
+        text-align: center;
+      }
+      .stat-number {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .stat-label {
+        font-size: 14px;
+        color: var(--text-muted);
+      }
+      /* Bullet List */
+      ul {
+        padding-left: 20px;
+      }
+      ul li {
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+      ul li strong {
+        color: var(--text-primary);
+      }
+      /* Timeline */
+      .timeline {
+        border-left: 3px solid var(--brand);
+        padding-left: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .timeline-item {
+        position: relative;
+        padding-left: 12px;
+      }
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -25px;
+        top: 4px;
+        width: 15px;
+        height: 15px;
+        background: var(--brand);
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 4px var(--page-bg-alt),
+          0 0 0 8px var(--accent-bg);
+      }
+      .timeline-title {
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+        font-size: 16px;
+      }
+      .timeline-text {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        font-size: 15px;
+      }
+      @media (forced-colors: active) {
+        header {
+          background: Canvas;
+          color: CanvasText;
+        }
+        .poster-container,
+        .stat-card {
+          background: Canvas;
+          border: 1px solid CanvasText;
+          box-shadow: none;
+        }
+        .timeline {
+          border-left: 2px solid CanvasText;
+        }
+        .timeline-item::before {
+          background: CanvasText;
+          box-shadow: none;
+          border: 1px solid Canvas;
+        }
+      }
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+        * {
+          overflow-wrap: anywhere;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="poster-container">
+      <header>
+        <h1 class="header-title">Choosing the Right Microsoft AI Solution</h1>
+        <div class="header-subtitle">A One-Page Strategic Comparison</div>
+        <div class="header-description">
+          A visual summary of Microsoft 365 Copilot, Copilot Agents, SharePoint Agents, Copilot
+          Studio, and Azure AI Foundry.
+        </div>
+      </header>
+      <div class="main-content">
+        <div class="column">
+          <div class="card">
+            <h2 class="section-title">Top Takeaways</h2>
+            <ul>
+              <li>
+                <strong>Out-of-box Copilot</strong> delivers instant productivity with no
+                development.
+              </li>
+              <li>
+                <strong>Declarative agents</strong> add domain-specific Q&A using internal
+                knowledge.
+              </li>
+              <li>
+                <strong>SharePoint agents</strong> turn intranet content into fast, site-specific
+                answers.
+              </li>
+              <li>
+                <strong>Copilot Studio</strong> integrates external systems and custom workflows.
+              </li>
+              <li>
+                <strong>Azure AI Foundry</strong> supports fully custom AI apps with maximum
+                flexibility.
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Licensing Snapshot</h2>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <div class="stat-number">$30</div>
+                <div class="stat-label">Monthly per-user cost for M365 Copilot</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">Included</div>
+                <div class="stat-label">Declarative Agents w/ Copilot License</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">No Extra</div>
+                <div class="stat-label">SharePoint Agents Cost</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">Usage</div>
+                <div class="stat-label">Azure Foundry Consumption-based</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="card">
+            <h2 class="section-title">Best-Fit Scenarios</h2>
+            <ul>
+              <li><strong>M365 Copilot:</strong> General productivity improvements.</li>
+              <li>
+                <strong>Declarative Agents:</strong> HR/IT FAQs, onboarding, internal policy bots.
+              </li>
+              <li><strong>SharePoint Agents:</strong> Intranet Q&A and content discovery.</li>
+              <li>
+                <strong>Copilot Studio:</strong> Multi-step workflows and external API integration.
+              </li>
+              <li><strong>Azure Foundry:</strong> Bespoke AI apps or customer-facing bots.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Hybrid Strategy</h2>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-title">Phase 1</div>
+                <div class="timeline-text">Deploy out-of-box Copilot for quick wins.</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-title">Phase 2</div>
+                <div class="timeline-text">
+                  Add declarative agents for role-specific knowledge gaps.
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-title">Phase 3</div>
+                <div class="timeline-text">Introduce Copilot Studio for complex workflows.</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-title">Phase 4</div>
+                <div class="timeline-text">
+                  Use Azure Foundry for fully custom, large-scale AI apps.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

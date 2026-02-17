@@ -55,7 +55,10 @@ export type Thresholds = z.infer<typeof ThresholdsSchema>;
 export type DecisionModel = z.infer<typeof DecisionModelSchema>;
 
 // User answers
-export const UserAnswersSchema = z.record(z.string(), z.string());
+export const UserAnswersSchema = z.record(
+  z.string(),
+  z.union([z.string(), z.array(z.string()).min(1)])
+);
 export type UserAnswers = z.infer<typeof UserAnswersSchema>;
 
 // Recommendation types

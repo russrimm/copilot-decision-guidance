@@ -1,0 +1,228 @@
+{
+  "name": "Microsoft-Copilot-Documentation-Updates",
+  "id": "/providers/Microsoft.Flow/flows/00000000-0000-0000-0000-000000000000",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+    "displayName": "Microsoft Copilot Documentation Updates",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Http",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "report": {
+                  "type": "string",
+                  "title": "Validation Report",
+                  "description": "Markdown formatted validation report"
+                },
+                "results": {
+                  "type": "object",
+                  "title": "Validation Results",
+                  "description": "Detailed JSON validation results"
+                },
+                "repository": {
+                  "type": "string",
+                  "title": "Repository URL"
+                },
+                "workflowRun": {
+                  "type": "string",
+                  "title": "Workflow Run URL"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "title": "Timestamp"
+                }
+              },
+              "required": ["report", "results", "timestamp"]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_HasCriticalChanges": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "HasCriticalChanges",
+                "type": "boolean",
+                "value": "@greater(triggerBody()?['results']?['totalChanges'], 0)"
+              }
+            ]
+          },
+          "runAfter": {}
+        },
+        "Condition_Check_Changes": {
+          "type": "If",
+          "expression": {
+            "and": [
+              {
+                "greater": ["@triggerBody()?['results']?['totalChanges']", 0]
+              }
+            ]
+          },
+          "actions": {
+            "Start_Approval": {
+              "type": "ApiConnectionWebhook",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['approvals']['connectionId']"
+                  }
+                },
+                "path": "/approvalflows/v2/$subscriptions",
+                "body": {
+                  "approvalType": "Basic",
+                  "title": "Review Microsoft Product Updates",
+                  "assignedTo": "your-email@example.com",
+                  "details": "Changes detected in Microsoft Copilot documentation:\n\nTotal Changes: @{triggerBody()?['results']?['totalChanges']}\n\nPlease review the validation report and approve to proceed with updates.\n\nView Report: @{triggerBody()?['workflowRun']}",
+                  "itemLink": "@{triggerBody()?['workflowRun']}",
+                  "itemLinkDescription": "View Workflow Run"
+                }
+              },
+              "runAfter": {}
+            },
+            "Condition_Approval_Response": {
+              "type": "If",
+              "expression": {
+                "and": [
+                  {
+                    "equals": ["@body('Start_Approval')?['outcome']", "Approve"]
+                  }
+                ]
+              },
+              "actions": {
+                "Send_Approval_Email": {
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['office365']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "body": {
+                      "To": "your-email@example.com",
+                      "Subject": "✅ Microsoft Product Updates Approved - @{formatDateTime(triggerBody()?['timestamp'], 'yyyy-MM-dd')}",
+                      "Body": "<html><body><h2 style='color: #107c10;'>✅ Updates Approved</h2><p>The Microsoft product documentation updates have been approved and are ready for implementation.</p><h3>Summary</h3><ul><li><strong>Timestamp:</strong> @{triggerBody()?['timestamp']}</li><li><strong>Total Changes:</strong> @{triggerBody()?['results']?['totalChanges']}</li><li><strong>Approved By:</strong> @{body('Start_Approval')?['responder']?['displayName']}</li><li><strong>Approval Comments:</strong> @{body('Start_Approval')?['comments']}</li></ul><h3>Next Steps</h3><ol><li>Review the auto-generated PR in GitHub</li><li>Update documentation files as indicated in the validation report</li><li>Test the changes</li><li>Merge the PR</li></ol><h3>Quick Links</h3><ul><li><a href='@{triggerBody()?['repository']}/pulls'>View Pull Requests</a></li><li><a href='@{triggerBody()?['repository']}/issues'>View Issues</a></li><li><a href='@{triggerBody()?['workflowRun']}'>Workflow Run Details</a></li></ul><hr><h3>Validation Report Preview</h3><pre style='background: #f5f5f5; padding: 15px; border-left: 4px solid #107c10;'>@{substring(triggerBody()?['report'], 0, 500)}...</pre><p><a href='@{triggerBody()?['workflowRun']}'>View Full Report</a></p><hr><p style='color: #666; font-size: 12px;'><em>This is an automated notification from the Microsoft Copilot Decision Guidance validation workflow.</em></p></body></html>",
+                      "Importance": "High"
+                    },
+                    "path": "/v2/Mail"
+                  },
+                  "runAfter": {}
+                },
+                "Post_to_Teams": {
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['teams']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "body": {
+                      "rootMessage": {
+                        "body": {
+                          "contentType": "html",
+                          "content": "<h3 style='color: #107c10;'>✅ Microsoft Product Updates Approved</h3><p><strong>Changes Detected:</strong> @{triggerBody()?['results']?['totalChanges']}</p><p><strong>Approved By:</strong> @{body('Start_Approval')?['responder']?['displayName']}</p><p><a href='@{triggerBody()?['repository']}/pulls'>Review Pull Request</a> | <a href='@{triggerBody()?['workflowRun']}'>View Report</a></p>"
+                        }
+                      }
+                    },
+                    "path": "/v1.0/teams/@{encodeURIComponent('YOUR_TEAM_ID')}/channels/@{encodeURIComponent('YOUR_CHANNEL_ID')}/messages"
+                  },
+                  "runAfter": {
+                    "Send_Approval_Email": ["Succeeded"]
+                  }
+                }
+              },
+              "runAfter": {
+                "Start_Approval": ["Succeeded"]
+              },
+              "else": {
+                "actions": {
+                  "Send_Rejection_Email": {
+                    "type": "ApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connection": {
+                          "name": "@parameters('$connections')['office365']['connectionId']"
+                        }
+                      },
+                      "method": "post",
+                      "body": {
+                        "To": "your-email@example.com",
+                        "Subject": "❌ Microsoft Product Updates Rejected",
+                        "Body": "<html><body><h2 style='color: #d13438;'>❌ Updates Rejected</h2><p>The Microsoft product documentation updates have been rejected.</p><p><strong>Rejected By:</strong> @{body('Start_Approval')?['responder']?['displayName']}</p><p><strong>Comments:</strong> @{body('Start_Approval')?['comments']}</p><p>No changes will be applied. The validation report is available for reference.</p><p><a href='@{triggerBody()?['workflowRun']}'>View Validation Report</a></p></body></html>",
+                        "Importance": "Normal"
+                      },
+                      "path": "/v2/Mail"
+                    },
+                    "runAfter": {}
+                  }
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Initialize_HasCriticalChanges": ["Succeeded"]
+          },
+          "else": {
+            "actions": {
+              "Send_No_Changes_Email": {
+                "type": "ApiConnection",
+                "inputs": {
+                  "host": {
+                    "connection": {
+                      "name": "@parameters('$connections')['office365']['connectionId']"
+                    }
+                  },
+                  "method": "post",
+                  "body": {
+                    "To": "your-email@example.com",
+                    "Subject": "✅ Microsoft Product Validation Complete - No Changes",
+                    "Body": "<html><body><h2 style='color: #107c10;'>✅ Validation Complete</h2><p>The weekly Microsoft product documentation validation has completed successfully.</p><p><strong>Result:</strong> No changes detected. All documentation is up to date.</p><p><strong>Timestamp:</strong> @{triggerBody()?['timestamp']}</p><p><a href='@{triggerBody()?['workflowRun']}'>View Workflow Run</a></p><hr><p style='color: #666; font-size: 12px;'><em>This is an automated notification from the Microsoft Copilot Decision Guidance validation workflow.</em></p></body></html>",
+                    "Importance": "Low"
+                  },
+                  "path": "/v2/Mail"
+                },
+                "runAfter": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "connectionReferences": {
+      "office365": {
+        "connectionName": "shared-office365",
+        "source": "Embedded",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_office365",
+        "tier": "NotSpecified"
+      },
+      "approvals": {
+        "connectionName": "shared-approvals",
+        "source": "Embedded",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_approvals",
+        "tier": "NotSpecified"
+      },
+      "teams": {
+        "connectionName": "shared-teams",
+        "source": "Embedded",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_teams",
+        "tier": "NotSpecified"
+      }
+    }
+  }
+}

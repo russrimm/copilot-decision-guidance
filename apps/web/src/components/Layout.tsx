@@ -26,7 +26,7 @@ export default function Layout() {
               </svg>
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Agentic Solution Advisor
+                  Microsoft Agentic Solution Advisor
                 </h1>
                 <p className="text-xs text-gray-500 dark:text-gray-300">
                   Platform Decision & Planning
@@ -43,6 +43,20 @@ export default function Layout() {
                   >
                     Home
                   </Link>
+                  <Link
+                    to="/use-cases"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    Use Cases
+                  </Link>
+                  <a
+                    href="/infographic.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    Infographic
+                  </a>
                   {__ENABLE_ADMIN__ && (
                     <Link
                       to="/admin"
