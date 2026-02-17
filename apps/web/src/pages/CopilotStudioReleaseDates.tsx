@@ -28,7 +28,20 @@ function MilestoneTable({ items }: { items: ReleasePlannerMilestoneItem[] }) {
               className="border-t border-gray-200 dark:border-gray-700"
             >
               <td className="py-2 pr-4 whitespace-nowrap font-medium">{item.date}</td>
-              <td className="py-2 pr-4">{item.featureName}</td>
+              <td className="py-2 pr-4">
+                {item.releasePlanId ? (
+                  <a
+                    href={`https://releaseplans.microsoft.com/?productId=1019ec3d-1dc5-e911-a969-000d3a4f36ce&app=Copilot+Studio&planID=${item.releasePlanId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary-600 dark:text-primary-400 hover:underline"
+                  >
+                    {item.featureName}
+                  </a>
+                ) : (
+                  item.featureName
+                )}
+              </td>
               <td className="py-2 pr-4 whitespace-nowrap">{item.releaseWave || '—'}</td>
             </tr>
           ))}

@@ -305,7 +305,7 @@ export default function Landing() {
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-              Mindset & Behaviour Shifts
+              Mindset & Behavior Shifts
             </h3>
             <ul className="mt-2 space-y-2 text-sm text-gray-700 dark:text-gray-100">
               <li>
