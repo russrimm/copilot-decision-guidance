@@ -84,3 +84,31 @@ export async function getSources() {
   }
   return response.json();
 }
+
+export type ReleasePlannerMilestoneItem = {
+  date: string; // YYYY-MM-DD
+  featureName: string;
+  releaseWave?: string;
+  releasePlanId?: string;
+};
+
+export type CopilotStudioReleasePlannerResponse = {
+  sourceUrl: string;
+  fetchedAt: string;
+  product: string;
+  totalMatchingItems: number;
+  upcomingPublicPreview: ReleasePlannerMilestoneItem[];
+  upcomingGA: ReleasePlannerMilestoneItem[];
+};
+
+export async function getCopilotStudioReleasePlanner(): Promise<CopilotStudioReleasePlannerResponse> {
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/release-planner/copilot-studio`,
+    {},
+    20000
+  );
+  if (!response.ok) {
+    throw new Error('Failed to fetch Copilot Studio release planner data');
+  }
+  return response.json();
+}

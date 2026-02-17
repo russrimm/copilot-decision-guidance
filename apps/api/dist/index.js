@@ -18,9 +18,12 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { DefaultAzureCredential } from '@azure/identity';
 import useCasesRouter from './routes/use-cases.js';
+import { generateExecutiveOverviewPPTX } from './services/executive-overview-pptx.js';
+import { getCopilotStudioReleasePlannerData } from './services/release-planner.js';
 console.log('[2/10] Core imports loaded successfully');
 let decisionModel;
 let calculateRecommendation;
@@ -58,9 +61,21 @@ catch (error) {
 }
 // Load environment variables from .env file
 console.log('[5/10] Loading environment variables...');
-const envPath = path.resolve(process.cwd(), '.env');
-console.log('Looking for .env at:', envPath);
-dotenv.config({ path: envPath });
+const envCandidates = [
+    // When running from apps/api (dev)
+    path.resolve(process.cwd(), '.env'),
+    // When using the repo-root .env from within apps/api
+    path.resolve(process.cwd(), '..', '..', '.env'),
+];
+const resolvedEnvPath = envCandidates.find((p) => existsSync(p));
+if (resolvedEnvPath) {
+    console.log('Using .env at:', resolvedEnvPath);
+    dotenv.config({ path: resolvedEnvPath });
+}
+else {
+    console.log('No .env found in expected locations; falling back to default dotenv behavior');
+    dotenv.config();
+}
 console.log('[5/10] ✅ Environment loaded. PORT =', process.env.PORT || '3001 (default)');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -259,6 +274,20 @@ app.get('/api/sources', (_req, res) => {
         ],
     };
     res.json(sources);
+});
+// Power Platform Release Planner (Copilot Studio only)
+app.get('/api/release-planner/copilot-studio', async (_req, res) => {
+    try {
+        const data = await getCopilotStudioReleasePlannerData();
+        res.json(data);
+    }
+    catch (error) {
+        console.error('Error fetching Copilot Studio release planner data:', error);
+        res.status(502).json({
+            error: 'Bad Gateway',
+            message: error instanceof Error ? error.message : 'Failed to fetch release planner data',
+        });
+    }
 });
 // Agentic Decision Assistant - Chat endpoint
 app.post('/api/copilot-agent/chat', async (req, res) => {
@@ -1101,7 +1130,7 @@ app.get('/api/metrics/config', (_req, res) => {
 // Generate AI-powered recommendation
 app.post('/api/recommendation/ai', async (req, res) => {
     try {
-        const { surveyResponses, scoringResult, includeMetrics } = req.body;
+        const { surveyResponses, scoringResult, includeMetrics, comments } = req.body;
         if (!surveyResponses || !scoringResult) {
             return res.status(400).json({
                 error: 'Invalid request',
@@ -1121,6 +1150,7 @@ app.post('/api/recommendation/ai', async (req, res) => {
         }
         const recommendation = await aiRecommendationService.generateRecommendation({
             surveyResponses,
+            comments,
             scoringResult,
             tenantMetrics,
             timestamp: new Date().toISOString(),
@@ -1136,6 +1166,35 @@ app.post('/api/recommendation/ai', async (req, res) => {
         console.error('Error generating AI recommendation:', error);
         res.status(500).json({
             error: 'Failed to generate recommendation',
+            message: error instanceof Error ? error.message : 'Unknown error',
+        });
+    }
+});
+// Export Executive Overview as PPTX
+app.post('/api/export/executive-overview/pptx', async (req, res) => {
+    try {
+        const { timestamp, scoringResult, recommendation, qaData, aiRecommendation } = req.body;
+        if (!timestamp || !scoringResult || !recommendation || !Array.isArray(qaData)) {
+            return res.status(400).json({
+                error: 'Invalid request',
+                message: 'timestamp, scoringResult, recommendation, and qaData[] are required',
+            });
+        }
+        const pptxBuffer = await generateExecutiveOverviewPPTX({
+            timestamp,
+            scoringResult,
+            recommendation,
+            qaData,
+            aiRecommendation,
+        });
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+        res.setHeader('Content-Disposition', 'attachment; filename="executive-overview.pptx"');
+        res.send(pptxBuffer);
+    }
+    catch (error) {
+        console.error('Executive overview PPTX generation error:', error);
+        res.status(500).json({
+            error: 'Failed to generate PowerPoint',
             message: error instanceof Error ? error.message : 'Unknown error',
         });
     }

@@ -14,7 +14,8 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev": "concurrently -k -s first -n api,web \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:gated": "concurrently -k -s first -n api,web \"npm run dev:api\" \"wait-on --timeout 120000 http://localhost:3001/api/health && npm run dev:web\"",
     "dev:web": "npm run dev --workspace=apps/web",
     "dev:api": "npm run dev --workspace=apps/api",
     "build": "npm run build:packages && npm run build:api",
@@ -39,6 +40,7 @@
     "nodemon": "^3.0.2",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
+    "wait-on": "^8.0.4",
     "typescript": "^5.7.2"
   },
   "dependencies": {

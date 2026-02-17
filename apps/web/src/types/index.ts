@@ -3,6 +3,7 @@
 
 export type UserAnswerValue = string | string[];
 export type UserAnswers = Record<string, UserAnswerValue>;
+export type UserComments = Record<string, string>;
 
 export type RecommendationType =
   | 'M365_COPILOT'

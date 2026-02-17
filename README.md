@@ -156,7 +156,7 @@ ENABLE_SECURE_SCORE=true          # Microsoft Secure Score
 # ============================================
 
 # API Server Port (optional, defaults to 3001)
-PORT=3000
+PORT=3001
 
 # Node environment
 NODE_ENV=development
@@ -181,9 +181,21 @@ This starts:
 - Frontend dev server on `http://localhost:3000`
 - Backend API server on `http://localhost:3001`
 
+If you prefer to start the frontend only after the API health check succeeds, use:
+
+```powershell
+npm run dev:gated
+```
+
 ### 4. Open the Application
 
 Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Copilot Studio release dates
+
+The app includes a page that shows upcoming **Public Preview** and **GA** dates for **Copilot Studio** based on the Power Platform Release Planner API.
+
+- Page: [http://localhost:3000/copilot-studio-release-dates](http://localhost:3000/copilot-studio-release-dates)
 
 ## Build for Production
 

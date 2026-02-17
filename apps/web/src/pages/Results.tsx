@@ -11,7 +11,7 @@ import type { DecisionModel, Question, AIRecommendation } from '../types';
 
 export default function Results() {
   const navigate = useNavigate();
-  const { recommendation, scoringResult, answers, reset, csamEmail } = useWizardStore();
+  const { recommendation, scoringResult, answers, comments, reset, csamEmail } = useWizardStore();
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [showResponses, setShowResponses] = useState(false);
   const [model, setModel] = useState<DecisionModel | null>(null);
@@ -20,6 +20,41 @@ export default function Results() {
   const [aiRecommendation, setAiRecommendation] = useState<AIRecommendation | null>(null);
   const [loadingAiRec, setLoadingAiRec] = useState(false);
   const [completionTimestamp] = useState(new Date().toISOString());
+
+  const resolveAnswerLabel = (question: Question, answerValue: any): string => {
+    if (answerValue == null) return 'Not answered';
+    if (Array.isArray(answerValue)) {
+      const labels = answerValue
+        .map((id) => question.answers.find((a) => a.id === id)?.label)
+        .filter(Boolean) as string[];
+      return labels.length > 0 ? labels.join(', ') : 'Not answered';
+    }
+    const selectedAnswer = question.answers.find((a) => a.id === answerValue);
+    return selectedAnswer?.label || 'Not answered';
+  };
+
+  const getAllQuestions = (decisionModel: DecisionModel): Question[] => {
+    const allQuestions: Question[] = [];
+    decisionModel.questionGroups.forEach((group) => {
+      group.questions.forEach((q) => allQuestions.push(q));
+    });
+    return allQuestions;
+  };
+
+  const buildQaData = (decisionModel: DecisionModel) => {
+    const allQuestions = getAllQuestions(decisionModel);
+    return allQuestions.map((q) => {
+      const answerValue = answers[q.id];
+      const answerLabel = resolveAnswerLabel(q, answerValue);
+      const comment = (comments?.[q.id] ?? '').trim();
+      return {
+        questionId: q.id,
+        question: q.title,
+        answer: answerLabel,
+        comment,
+      };
+    });
+  };
 
   useEffect(() => {
     // Fetch model from API
@@ -353,22 +388,7 @@ export default function Results() {
   const handleExportMarkdown = () => {
     if (!model) return;
 
-    // Get all questions and answers
-    const allQuestions: Question[] = [];
-    model.questionGroups.forEach((group) => {
-      group.questions.forEach((q) => allQuestions.push(q));
-    });
-
-    const qaData = allQuestions.map((q) => {
-      const answer = answers[q.id];
-      const selectedAnswer = q.answers.find((a) => a.id === answer);
-      const answerLabel = selectedAnswer?.label || 'Not answered';
-
-      return {
-        question: q.title,
-        answer: answerLabel,
-      };
-    });
+    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer }));
 
     const enhancedRecommendation = {
       ...recommendation,
@@ -385,22 +405,7 @@ export default function Results() {
   const handleEmailToCSAM = () => {
     if (!model || !csamEmail) return;
 
-    // Get all questions from model
-    const allQuestions: Question[] = [];
-    model.questionGroups.forEach((group) => {
-      group.questions.forEach((q) => allQuestions.push(q));
-    });
-
-    const qaData = allQuestions.map((q) => {
-      const answer = answers[q.id];
-      const selectedAnswer = q.answers.find((a) => a.id === answer);
-      const answerLabel = selectedAnswer?.label || 'Not answered';
-
-      return {
-        question: q.title,
-        answer: answerLabel,
-      };
-    });
+    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer }));
 
     const enhancedRecommendation = {
       ...recommendation,
@@ -432,22 +437,7 @@ export default function Results() {
   const handleExportPDF = () => {
     if (!model) return;
 
-    // Get all questions from model
-    const allQuestions: Question[] = [];
-    model.questionGroups.forEach((group) => {
-      group.questions.forEach((q) => allQuestions.push(q));
-    });
-
-    const qaData = allQuestions.map((q) => {
-      const answer = answers[q.id];
-      const selectedAnswer = q.answers.find((a) => a.id === answer);
-      const answerLabel = selectedAnswer?.label || 'Not answered';
-
-      return {
-        question: q.title,
-        answer: answerLabel,
-      };
-    });
+    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer }));
 
     const enhancedRecommendation = {
       ...recommendation,
@@ -459,6 +449,50 @@ export default function Results() {
     };
 
     downloadPDF(enhancedRecommendation, qaData, `copilot-recommendation-${Date.now()}.pdf`);
+  };
+
+  const handleExportExecutiveOverviewPPTX = async () => {
+    if (!model) return;
+
+    try {
+      const qaData = buildQaData(model);
+      const payload = {
+        timestamp: completionTimestamp,
+        scoringResult,
+        recommendation: {
+          type: recommendation.type,
+          title: recommendation.title,
+          summary: displaySummary,
+          reasons: displayReasons,
+          nextSteps: displayNextSteps,
+        },
+        qaData,
+        aiRecommendation: aiRecommendation || undefined,
+      };
+
+      const res = await fetch('/api/export/executive-overview/pptx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Export failed (${res.status})`);
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `executive-overview-${Date.now()}.pptx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to export Executive Overview PPTX:', error);
+      alert('Failed to export Executive Overview PPTX. Please try again.');
+    }
   };
 
   const handleStartOver = () => {
@@ -503,6 +537,7 @@ export default function Results() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           surveyResponses: answers,
+          comments,
           scoringResult,
           includeMetrics: true,
         }),
@@ -1285,6 +1320,9 @@ export default function Results() {
             </button>
             <button onClick={handleExportPDF} className="btn-secondary">
               📋 Export PDF
+            </button>
+            <button onClick={handleExportExecutiveOverviewPPTX} className="btn-secondary">
+              📊 Executive Overview PPTX
             </button>
             <button onClick={handleStartOver} className="btn-primary">
               🔄 Start Over

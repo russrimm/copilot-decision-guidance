@@ -1,9 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { UserAnswers, UserAnswerValue, Recommendation, ScoringResult } from '../types';
+import type {
+  UserAnswers,
+  UserAnswerValue,
+  UserComments,
+  Recommendation,
+  ScoringResult,
+} from '../types';
 
 interface WizardState {
   answers: UserAnswers;
+  comments: UserComments;
   currentStep: number;
   recommendation: Recommendation | null;
   scoringResult: ScoringResult | null;
@@ -12,6 +19,8 @@ interface WizardState {
   // Actions
   setAnswer: (questionId: string, answerId: UserAnswerValue) => void;
   setAnswers: (answers: UserAnswers) => void;
+  setComment: (questionId: string, comment: string) => void;
+  setComments: (comments: UserComments) => void;
   setCurrentStep: (step: number) => void;
   nextStep: () => void;
   previousStep: () => void;
@@ -24,6 +33,7 @@ export const useWizardStore = create<WizardState>()(
   persist(
     (set) => ({
       answers: {},
+      comments: {},
       currentStep: 0,
       recommendation: null,
       scoringResult: null,
@@ -39,6 +49,20 @@ export const useWizardStore = create<WizardState>()(
 
       setAnswers: (answers) => set({ answers }),
 
+      setComment: (questionId, comment) =>
+        set((state) => {
+          const next = { ...state.comments };
+          const trimmed = (comment ?? '').trim();
+          if (!trimmed) {
+            delete next[questionId];
+          } else {
+            next[questionId] = trimmed;
+          }
+          return { comments: next };
+        }),
+
+      setComments: (comments) => set({ comments }),
+
       setCurrentStep: (step) => set({ currentStep: step }),
 
       nextStep: () => set((state) => ({ currentStep: state.currentStep + 1 })),
@@ -52,6 +76,7 @@ export const useWizardStore = create<WizardState>()(
       reset: () =>
         set({
           answers: {},
+          comments: {},
           currentStep: 0,
           recommendation: null,
           scoringResult: null,
@@ -60,7 +85,7 @@ export const useWizardStore = create<WizardState>()(
     }),
     {
       name: 'copilot-wizard-storage',
-      version: 4, // Incremented to support multi-select answers (e.g., ttv_skills)
+      version: 5, // v5 adds per-question comments
       migrate: (persistedState: any, version: number) => {
         if (!persistedState || typeof persistedState !== 'object') {
           return persistedState;
@@ -78,6 +103,14 @@ export const useWizardStore = create<WizardState>()(
               },
             };
           }
+        }
+
+        // v4 -> v5: add comments map
+        if (version < 5 && !persistedState.comments) {
+          return {
+            ...persistedState,
+            comments: {},
+          };
         }
 
         return persistedState;

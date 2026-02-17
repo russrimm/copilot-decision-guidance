@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useWizardStore } from '../store/wizardStore';
 import { getDecisionModel, calculateScore } from '../lib/api';
 import { useForm } from 'react-hook-form';
-import type { DecisionModel } from '../types';
+import type { DecisionModel, UserAnswers, UserAnswerValue } from '../types';
 
 export default function Wizard() {
   const navigate = useNavigate();
   const {
     answers,
+    comments,
     currentStep,
     setAnswer,
+    setComment,
     nextStep,
     previousStep,
     setRecommendation,
@@ -69,10 +71,18 @@ export default function Wizard() {
   const isLastStep = currentStep === groups.length - 1;
 
   const onSubmit = async (data: any) => {
-    // Save answers for current group
-    Object.keys(data).forEach((questionId) => {
-      if (data[questionId]) {
-        setAnswer(questionId, data[questionId]);
+    // Save answers + comments for current group
+    const nextAnswers: Partial<UserAnswers> = {};
+    Object.keys(data).forEach((key) => {
+      if (key.startsWith('comment__')) {
+        const questionId = key.replace(/^comment__/, '');
+        setComment(questionId, String(data[key] ?? ''));
+        return;
+      }
+
+      if (data[key]) {
+        nextAnswers[key] = data[key] as UserAnswerValue;
+        setAnswer(key, data[key] as UserAnswerValue);
       }
     });
 
@@ -89,7 +99,7 @@ export default function Wizard() {
       // Calculate and navigate to results
       setCalculating(true);
       try {
-        const finalAnswers = { ...answers, ...data };
+        const finalAnswers: UserAnswers = { ...answers, ...nextAnswers } as UserAnswers;
         console.log('[Wizard] Submitting answers:', finalAnswers);
         const result = await calculateScore(finalAnswers);
         console.log('[Wizard] Received result:', result);
@@ -190,6 +200,19 @@ export default function Wizard() {
                     </label>
                   );
                 })}
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Comments (optional)
+                </label>
+                <textarea
+                  {...register(`comment__${question.id}`)}
+                  defaultValue={comments[question.id] ?? ''}
+                  rows={3}
+                  placeholder="Add any context, constraints, or notes..."
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                />
               </div>
             </div>
           ))}

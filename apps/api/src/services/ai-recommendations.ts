@@ -12,6 +12,7 @@ import type { TenantMetrics } from './metrics';
 
 interface AIRecommendationRequest {
   surveyResponses: Record<string, unknown>;
+  comments?: Record<string, string>;
   scoringResult: ScoringResult;
   tenantMetrics?: TenantMetrics;
   timestamp: string;
@@ -105,7 +106,7 @@ export class AIRecommendationService {
    * Build comprehensive prompt for AI
    */
   private buildPrompt(request: AIRecommendationRequest): string {
-    const { surveyResponses, scoringResult, tenantMetrics } = request;
+    const { surveyResponses, comments, scoringResult, tenantMetrics } = request;
 
     let prompt = `Generate a comprehensive recommendation for an organization evaluating Microsoft Copilot products.\n\n`;
 
@@ -126,6 +127,17 @@ export class AIRecommendationService {
         const rendered = Array.isArray(value) ? value.join(', ') : String(value);
         prompt += `- **${key}:** ${rendered}\n`;
       }
+    }
+
+    // Add optional per-question comments
+    if (comments && Object.keys(comments).length > 0) {
+      prompt += `\n## User Comments (Per Question)\n`;
+      for (const [questionId, comment] of Object.entries(comments)) {
+        const trimmed = String(comment ?? '').trim();
+        if (!trimmed) continue;
+        prompt += `- **${questionId}:** ${trimmed}\n`;
+      }
+      prompt += `\nUse these comments to adjust assumptions, highlight constraints, and propose governance decisions (for example Power Platform DLP boundaries, environment strategy, and automation for environment requests) that align with the organization’s intent.\n`;
     }
 
     // Add tenant metrics if available

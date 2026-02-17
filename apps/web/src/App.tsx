@@ -5,6 +5,7 @@ import Wizard from './pages/Wizard';
 import Results from './pages/Results';
 import Roadmap from './pages/Roadmap';
 import UseCaseAssistant from './pages/UseCaseAssistant';
+import CopilotStudioReleaseDates from './pages/CopilotStudioReleaseDates';
 import Layout from './components/Layout';
 import { CopilotAgent } from './components/CopilotAgent';
 
@@ -19,6 +20,7 @@ function App() {
             <Route path="results" element={<Results />} />
             <Route path="roadmap" element={<Roadmap />} />
             <Route path="use-cases" element={<UseCaseAssistant />} />
+            <Route path="copilot-studio-release-dates" element={<CopilotStudioReleaseDates />} />
             {/* Admin route excluded from production builds via __ENABLE_ADMIN__ flag */}
             {__ENABLE_ADMIN__ && (
               <Route

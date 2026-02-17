@@ -178,6 +178,25 @@ export default function Landing() {
       </div>
 
       <div className="card mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Copilot Studio release dates
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-100">
+              View upcoming Public Preview and GA dates from the Power Platform Release Planner.
+            </p>
+          </div>
+          <Link
+            to="/copilot-studio-release-dates"
+            className="btn btn-primary w-full md:w-auto text-center"
+          >
+            View dates
+          </Link>
+        </div>
+      </div>
+
+      <div className="card mb-8">
         <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
           What This Tool Does
         </h2>
