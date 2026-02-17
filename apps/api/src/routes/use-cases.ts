@@ -104,17 +104,29 @@ router.post('/generate', (req: Request, res: Response) => {
     // If filters are too restrictive (or mismatched), progressively relax them.
     if (useCases.length === 0 && effectiveCriteria.departments.length > 0) {
       effectiveCriteria = { ...effectiveCriteria, departments: [] };
-      useCases = getRelevantUseCases(vertical, effectiveCriteria.departments, effectiveCriteria.dataSources);
+      useCases = getRelevantUseCases(
+        vertical,
+        effectiveCriteria.departments,
+        effectiveCriteria.dataSources
+      );
     }
 
     if (useCases.length === 0 && effectiveCriteria.dataSources.length > 0) {
       effectiveCriteria = { ...effectiveCriteria, dataSources: [] };
-      useCases = getRelevantUseCases(vertical, effectiveCriteria.departments, effectiveCriteria.dataSources);
+      useCases = getRelevantUseCases(
+        vertical,
+        effectiveCriteria.departments,
+        effectiveCriteria.dataSources
+      );
     }
 
     if (useCases.length === 0) {
       effectiveCriteria = { ...effectiveCriteria, departments: [], dataSources: [] };
-      useCases = getRelevantUseCases(vertical, effectiveCriteria.departments, effectiveCriteria.dataSources);
+      useCases = getRelevantUseCases(
+        vertical,
+        effectiveCriteria.departments,
+        effectiveCriteria.dataSources
+      );
     }
 
     res.json({
