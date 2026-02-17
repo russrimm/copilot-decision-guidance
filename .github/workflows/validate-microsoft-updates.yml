@@ -194,7 +194,7 @@ jobs:
             }')
 
           # Send to Power Automate HTTP trigger
-          # Note: Store the Flow URL in GitHub Secrets as POWER_AUTOMATE_WEBHOOK_URL
+          # Note: Store the Flow URL in KeyVault or Github as POWER_AUTOMATE_WEBHOOK_URL
           if [ -n "${{ secrets.POWER_AUTOMATE_WEBHOOK_URL }}" ]; then
             curl -X POST \
               -H "Content-Type: application/json" \
