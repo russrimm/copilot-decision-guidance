@@ -10,6 +10,24 @@
 import type { RecommendationType, ScoringResult, Weights } from '@copilot-guidance/decision-engine';
 import type { TenantMetrics } from './metrics';
 
+const getOpenAIChatCompletionsUrl = (endpoint?: string): string => {
+  const rawEndpoint = (endpoint || '').trim();
+  if (!rawEndpoint) {
+    return 'https://api.openai.com/v1/chat/completions';
+  }
+
+  const normalized = rawEndpoint.replace(/\/+$/, '');
+  if (normalized.includes('/chat/completions')) {
+    return normalized;
+  }
+
+  if (normalized.includes('api.openai.com') && !normalized.includes('/v1')) {
+    return `${normalized}/v1/chat/completions`;
+  }
+
+  return `${normalized}/chat/completions`;
+};
+
 interface AIRecommendationRequest {
   surveyResponses: Record<string, unknown>;
   comments?: Record<string, string>;
@@ -37,7 +55,7 @@ export class AIRecommendationService {
 
   constructor(apiKey?: string, endpoint?: string, model?: string) {
     this.apiKey = apiKey;
-    this.endpoint = endpoint || 'https://api.openai.com/v1/chat/completions';
+    this.endpoint = getOpenAIChatCompletionsUrl(endpoint);
     this.model = model || 'gpt-4o';
   }
 

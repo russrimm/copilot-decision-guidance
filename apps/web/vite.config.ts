@@ -16,6 +16,7 @@ export default defineConfig({
     alias: {
       '@': '/src',
     },
+    dedupe: ['react', 'react-dom'],
   },
   define: {
     // Explicitly set to false in production builds

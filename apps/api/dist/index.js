@@ -79,6 +79,20 @@ else {
 console.log('[5/10] ✅ Environment loaded. PORT =', process.env.PORT || '3001 (default)');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const getOpenAIChatCompletionsUrl = () => {
+    const rawEndpoint = (process.env.OPENAI_ENDPOINT || '').trim();
+    if (!rawEndpoint) {
+        return 'https://api.openai.com/v1/chat/completions';
+    }
+    const normalized = rawEndpoint.replace(/\/+$/, '');
+    if (normalized.includes('/chat/completions')) {
+        return normalized;
+    }
+    if (normalized.includes('api.openai.com') && !normalized.includes('/v1')) {
+        return `${normalized}/v1/chat/completions`;
+    }
+    return `${normalized}/chat/completions`;
+};
 console.log('[6/10] Creating Express app...');
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -405,14 +419,16 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
         }
         else if (openaiKey) {
             // OpenAI
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            const openaiEndpoint = getOpenAIChatCompletionsUrl();
+            const openaiModel = process.env.OPENAI_MODEL || 'gpt-4o';
+            const response = await fetch(openaiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${openaiKey}`,
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4o',
+                    model: openaiModel,
                     messages: [
                         { role: 'system', content: systemPrompt },
                         ...conversationHistory,
@@ -1003,14 +1019,16 @@ Return ONLY valid JSON (no markdown, no code blocks):
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
             try {
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                const openaiEndpoint = getOpenAIChatCompletionsUrl();
+                const openaiModel = process.env.OPENAI_MODEL || 'gpt-4o';
+                const response = await fetch(openaiEndpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${openaiKey}`,
                     },
                     body: JSON.stringify({
-                        model: 'gpt-4o',
+                        model: openaiModel,
                         messages: [
                             {
                                 role: 'system',

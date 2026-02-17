@@ -71,8 +71,10 @@ In **Demo Mode**, you get:
    AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    AZURE_OPENAI_DEPLOYMENT=gpt-4
 
-   # Option 2: OpenAI
-   OPENAI_API_KEY=sk-...
+   # Option 2: OpenAI-compatible (OpenAI, GitHub Models)
+   OPENAI_API_KEY=your-openai-or-github-key
+   OPENAI_ENDPOINT=https://models.github.ai
+   OPENAI_MODEL=openai/gpt-4.1
 
    # Enable AI features
    ENABLE_AI_RECOMMENDATIONS=true
