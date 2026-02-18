@@ -171,32 +171,35 @@ jobs:
           fi
 
       - name: Alternative - Trigger Azure Logic App
-        if: secrets.LOGIC_APP_WEBHOOK_URL != ''
         run: |
-          # Alternative: Use Azure Logic App instead of Power Automate
-          REPORT=$(cat validation-report.md)
-          RESULTS=$(cat validation-results.json)
+          if [ -n "${{ secrets.LOGIC_APP_WEBHOOK_URL }}" ]; then
+            # Alternative: Use Azure Logic App instead of Power Automate
+            REPORT=$(cat validation-report.md)
+            RESULTS=$(cat validation-results.json)
 
-          PAYLOAD=$(jq -n \
-            --arg report "$REPORT" \
-            --argjson results "$RESULTS" \
-            --arg repoUrl "${{ github.server_url }}/${{ github.repository }}" \
-            --arg runUrl "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-            '{
-              emailSubject: "Microsoft Product Updates Validation Report",
-              emailBody: $report,
-              validationResults: $results,
-              repositoryUrl: $repoUrl,
-              workflowRunUrl: $runUrl,
-              requiresApproval: true
-            }')
+            PAYLOAD=$(jq -n \
+              --arg report "$REPORT" \
+              --argjson results "$RESULTS" \
+              --arg repoUrl "${{ github.server_url }}/${{ github.repository }}" \
+              --arg runUrl "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              '{
+                emailSubject: "Microsoft Product Updates Validation Report",
+                emailBody: $report,
+                validationResults: $results,
+                repositoryUrl: $repoUrl,
+                workflowRunUrl: $runUrl,
+                requiresApproval: true
+              }')
 
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -d "$PAYLOAD" \
-            "${{ secrets.LOGIC_APP_WEBHOOK_URL }}"
+            curl -X POST \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD" \
+              "${{ secrets.LOGIC_APP_WEBHOOK_URL }}"
 
-          echo "✅ Notification sent to Azure Logic App"
+            echo "✅ Notification sent to Azure Logic App"
+          else
+            echo "⚠️ LOGIC_APP_WEBHOOK_URL not configured - skipping Logic App notification"
+          fi
 
   create-update-pr:
     name: Create Draft PR with Suggested Updates
