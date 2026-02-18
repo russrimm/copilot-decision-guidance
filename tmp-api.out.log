@@ -1,0 +1,45 @@
+
+> @copilot-guidance/api@1.0.0 dev
+> tsx watch src/index.ts
+
+=== API Server Initialization Started ===
+Node version: v25.6.1
+Working directory: C:\repos\copilot-decision-guidance\apps\api
+Script path: file:///C:/repos/copilot-decision-guidance/apps/api/src/index.ts
+[1/10] Starting imports...
+[2/10] Core imports loaded successfully
+[3/10] Loading decision-engine package...
+[3/10] ✅ Decision-engine loaded: { hasModel: true, modelVersion: '1.0' }
+[4/10] Loading service modules...
+[4/10] ✅ Service modules loaded
+[5/10] Loading environment variables...
+Using .env at: C:\repos\copilot-decision-guidance\.env
+[dotenv@17.3.1] injecting env (7) from ..\..\.env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+[5/10] ✅ Environment loaded. PORT = 3001
+[6/10] Creating Express app...
+[6/10] ✅ Express app created. Will listen on port: 3001
+[7/10] Initializing services...
+[7/10] ✅ MetricsService initialized
+[7/10] ✅ AIRecommendationService initialized
+[8/10] Configuring middleware...
+[8/10] ✅ Middleware configured
+[9/10] Configuring static file serving...
+[9/10] ✅ Static files configured: C:\repos\copilot-decision-guidance\apps\web\dist
+[10/10] Registering routes...
+[10/10] ✅ All routes registered
+
+=== Starting HTTP Server ===
+Attempting to listen on port: 3001
+
+✅✅✅ SERVER STARTED SUCCESSFULLY ✅✅✅
+🚀 API server running on http://localhost:3001
+📊 Decision model loaded: v1.0
+🔑 Azure OpenAI Key: ❌ Missing
+🌐 Azure OpenAI Endpoint: ❌ Missing
+🚀 Azure OpenAI Deployment: ❌ Missing
+🔑 OpenAI Key: ✅ Present
+🤖 AI mode: ENABLED
+
+=== Ready to accept connections ===
+
+Server address: { address: '::', family: 'IPv6', port: 3001 }

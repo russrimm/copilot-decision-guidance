@@ -3,6 +3,10 @@ import type { UserAnswers, Recommendation, ScoringResult } from '../types';
 const API_BASE_URL = '/api';
 const DEFAULT_TIMEOUT = 10000; // 10 seconds for API calls
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
@@ -202,11 +206,24 @@ export async function getCopilotStudioReleasePlanner(): Promise<CopilotStudioRel
 }
 
 export async function getReadinessModel(): Promise<ReadinessModelResponse> {
-  const response = await fetchWithTimeout(`${API_BASE_URL}/readiness/model`, {}, 15000);
-  if (!response.ok) {
-    throw new Error('Failed to fetch readiness model');
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/readiness/model`, {}, 15000);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch readiness model (HTTP ${response.status})`);
+      }
+      return response.json();
+    } catch (error: any) {
+      lastError = error instanceof Error ? error : new Error('Failed to fetch readiness model');
+      if (attempt < 2) {
+        await sleep(750);
+      }
+    }
   }
-  return response.json();
+
+  throw lastError || new Error('Failed to fetch readiness model');
 }
 
 export async function assessReadiness(

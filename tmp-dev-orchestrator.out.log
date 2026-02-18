@@ -1,0 +1,64 @@
+
+> microsoft-agentic-guidance@1.0.0 dev
+> npm run dev:ports && node scripts/dev-orchestrator.mjs
+
+
+> microsoft-agentic-guidance@1.0.0 dev:ports
+> node scripts/free-dev-ports.mjs
+
+
+> @copilot-guidance/api@1.0.0 dev
+> tsx watch src/index.ts
+
+=== API Server Initialization Started ===
+Node version: v25.6.1
+Working directory: C:\repos\copilot-decision-guidance\apps\api
+Script path: file:///C:/repos/copilot-decision-guidance/apps/api/src/index.ts
+[1/10] Starting imports...
+[2/10] Core imports loaded successfully
+[3/10] Loading decision-engine package...
+[3/10] ✅ Decision-engine loaded: { hasModel: true, modelVersion: '1.0' }
+[4/10] Loading service modules...
+[4/10] ✅ Service modules loaded
+[5/10] Loading environment variables...
+Using .env at: C:\repos\copilot-decision-guidance\.env
+[dotenv@17.3.1] injecting env (7) from ..\..\.env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[5/10] ✅ Environment loaded. PORT = 3001
+[6/10] Creating Express app...
+[6/10] ✅ Express app created. Will listen on port: 3001
+[7/10] Initializing services...
+[7/10] ✅ MetricsService initialized
+[7/10] ✅ AIRecommendationService initialized
+[8/10] Configuring middleware...
+[8/10] ✅ Middleware configured
+[9/10] Configuring static file serving...
+[9/10] ✅ Static files configured: C:\repos\copilot-decision-guidance\apps\web\dist
+[10/10] Registering routes...
+[10/10] ✅ All routes registered
+
+=== Starting HTTP Server ===
+Attempting to listen on port: 3001
+
+✅✅✅ SERVER STARTED SUCCESSFULLY ✅✅✅
+🚀 API server running on http://localhost:3001
+📊 Decision model loaded: v1.0
+🔑 Azure OpenAI Key: ❌ Missing
+🌐 Azure OpenAI Endpoint: ❌ Missing
+🚀 Azure OpenAI Deployment: ❌ Missing
+🔑 OpenAI Key: ✅ Present
+🤖 AI mode: ENABLED
+
+=== Ready to accept connections ===
+
+Server address: { address: '::', family: 'IPv6', port: 3001 }
+[dev] API health check passed.
+
+> @copilot-guidance/web@1.0.0 dev
+> vite
+
+
+  [32m[1mVITE[22m v6.4.1[39m  [2mready in [0m[1m1320[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m3000[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
