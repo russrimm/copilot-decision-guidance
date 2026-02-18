@@ -13,6 +13,52 @@ A production-quality web application that guides users through a structured ques
 - **[Weekly Validation Process](./docs/weekly-validation-process.md)** - Automated monitoring of official Microsoft release notes
 - **[Quick Start](#quick-start)** - Get running in 5 minutes (no configuration required)
 
+## Copilot Operating Guides (Instructions, Agents, Skills)
+
+This repository includes custom Copilot guidance assets to make delivery more consistent and lower-risk.
+
+### Instructions (`.github/instructions/`)
+
+- **`azure-appservice-deployment.instructions.md`**: App Service deployment standards (startup command, health checks, rollback discipline)
+- **`monorepo-dependency-policy.instructions.md`**: safe dependency upgrade policy for workspace packages
+- **`release-planner-data-contract.instructions.md`**: schema and fallback behavior for release planner integration
+- **`portal-feature-delivery.instructions.md`**: feature definition quality gates (acceptance criteria, KPI mapping, rollout strategy)
+- **`observability-runbook.instructions.md`**: runtime diagnostics and incident triage expectations
+- **`security-secrets-guardrails.instructions.md`**: secrets handling and incident response rules
+
+### Agents (`.github/agents/`)
+
+- **`portal-feature-implementer.agent.md`**: implement feature slices across web/API/docs with minimal risk
+- **`azure-appservice-troubleshooter.agent.md`**: diagnose startup/deployment/health issues on Azure App Service
+- **`release-planner-integration.agent.md`**: maintain robust release data parsing and safe link behavior
+
+### Skills (`.github/skills/`)
+
+- **`portal-roadmap`**: convert strategy into phased product roadmap and sprintable stories
+- **`deployment-validation`**: run post-deploy checks and produce pass/fail diagnostics
+- **`value-tracking`**: define feature KPIs, baselines, telemetry, and ROI reporting
+
+### Recommended Team Usage
+
+1. Use **`portal-roadmap`** when planning releases and epics.
+2. Use **`portal-feature-implementer`** when building scoped portal capabilities.
+3. Use **`deployment-validation`** after each Azure deployment.
+4. Use **`azure-appservice-troubleshooter`** for production incidents.
+5. Use **`value-tracking`** to ensure each feature maps to measurable customer outcomes.
+
+### Definition of Done (Portal Features)
+
+Use this checklist for every feature before merge/deploy:
+
+- [ ] **Plan complete**: Epic/story has objective, acceptance criteria, and rollout scope.
+- [ ] **KPI mapped**: Primary KPI, baseline assumption, and expected impact are documented.
+- [ ] **Implementation complete**: Web/API/docs changes are scoped, minimal, and aligned with standards.
+- [ ] **Fallbacks covered**: Error states and graceful fallback behavior are implemented.
+- [ ] **Build verified**: Affected workspace build(s) pass.
+- [ ] **Deployment validated**: `/api/health` and core page checks pass post-deploy.
+- [ ] **Operations ready**: Logs and runbook notes are sufficient for incident triage.
+- [ ] **Security reviewed**: No secrets in code/logs and credential handling follows guardrails.
+
 ## Features
 
 ✅ **Guided Decision Flow** - 21-question survey covering all Microsoft AI Decision Framework evaluation criteria  
@@ -21,6 +67,8 @@ A production-quality web application that guides users through a structured ques
 ✅ **Deterministic Scoring** - Transparent, test-covered recommendation engine with weighted platform scores  
 ✅ **Comprehensive Results** - Rationale, next steps, risks, compliance considerations, and verified Microsoft Learn sources  
 ✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms  
+✅ **Readiness Assessment 2.0** - Score identity, data, security, platform, and operating model readiness with blocker detection  
+✅ **Use Case Portfolio Prioritizer** - Rank candidate scenarios with weighted scoring and generate a 30/60/90 execution view  
 ✅ **Export Functionality** - Download results as JSON, Markdown, or PDF  
 ✅ **Agentic Decision Assistant** - AI-powered chat for licensing guidance and follow-up questions  
 ✅ **Admin Panel** - Local configuration and telemetry viewing  
@@ -123,12 +171,6 @@ Create a `.env` file in the **root** directory. All features are **optional** - 
 # Core AI Features (Optional)
 # ============================================
 
-# AI-enhanced explanations (Azure OpenAI or OpenAI)
-# Option 1: Azure OpenAI (Recommended for enterprise)
-AZURE_OPENAI_API_KEY=your_azure_openai_key
-AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-AZURE_OPENAI_DEPLOYMENT=your-deployment-name
-
 # Option 2: OpenAI-compatible (OpenAI, GitHub Models)
 OPENAI_API_KEY=your_openai_or_github_key
 OPENAI_ENDPOINT=https://models.github.ai
@@ -198,6 +240,12 @@ Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 The app includes a page that shows upcoming **Public Preview** and **GA** dates for **Copilot Studio** based on the Power Platform Release Planner API.
 
 - Page: [http://localhost:3000/copilot-studio-release-dates](http://localhost:3000/copilot-studio-release-dates)
+
+## Readiness Assessment 2.0
+
+The app now includes a readiness page to assess deployment blockers and action priorities before rollout.
+
+- Page: [http://localhost:3000/readiness](http://localhost:3000/readiness)
 
 ## Build for Production
 

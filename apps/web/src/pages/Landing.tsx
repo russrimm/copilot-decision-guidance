@@ -181,6 +181,42 @@ export default function Landing() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Readiness Assessment 2.0
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-100">
+              Score identity, data, security, platform, and operating model readiness before
+              rollout.
+            </p>
+          </div>
+          <Link to="/readiness" className="btn btn-primary w-full md:w-auto text-center">
+            Run readiness
+          </Link>
+        </div>
+      </div>
+
+      <div className="card mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Use Case Portfolio Prioritizer
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-100">
+              Rank candidate use cases with weighted scoring and generate a 30/60/90 delivery view.
+            </p>
+          </div>
+          <Link
+            to="/portfolio-prioritizer"
+            className="btn btn-primary w-full md:w-auto text-center"
+          >
+            Prioritize use cases
+          </Link>
+        </div>
+      </div>
+
+      <div className="card mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
               Copilot Studio release dates
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-100">

@@ -62,8 +62,8 @@ export async function getCopilotStudioReleasePlannerData(options) {
         if (!r || typeof r !== 'object')
             return false;
         const productName = getStringField(r, 'Product name');
-        return productName.toLowerCase().includes('microsoft copilot studio') ||
-            productName.toLowerCase().includes('copilot studio');
+        return (productName.toLowerCase().includes('microsoft copilot studio') ||
+            productName.toLowerCase().includes('copilot studio'));
     });
     const upcomingPublicPreview = [];
     const upcomingGA = [];

@@ -6,6 +6,8 @@ import Results from './pages/Results';
 import Roadmap from './pages/Roadmap';
 import UseCaseAssistant from './pages/UseCaseAssistant';
 import CopilotStudioReleaseDates from './pages/CopilotStudioReleaseDates';
+import ReadinessAssessment from './pages/ReadinessAssessment';
+import PortfolioPrioritizer from './pages/PortfolioPrioritizer';
 import Layout from './components/Layout';
 import { CopilotAgent } from './components/CopilotAgent';
 
@@ -21,6 +23,8 @@ function App() {
             <Route path="roadmap" element={<Roadmap />} />
             <Route path="use-cases" element={<UseCaseAssistant />} />
             <Route path="copilot-studio-release-dates" element={<CopilotStudioReleaseDates />} />
+            <Route path="readiness" element={<ReadinessAssessment />} />
+            <Route path="portfolio-prioritizer" element={<PortfolioPrioritizer />} />
             {/* Admin route excluded from production builds via __ENABLE_ADMIN__ flag */}
             {__ENABLE_ADMIN__ && (
               <Route

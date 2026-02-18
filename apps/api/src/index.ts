@@ -112,6 +112,295 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 console.log('[6/10] ✅ Express app created. Will listen on port:', PORT);
 
+type ReadinessDomain = 'identity' | 'data' | 'security' | 'platform' | 'operatingModel';
+
+type ReadinessAnswer = 'yes' | 'partial' | 'no';
+
+type ReadinessQuestion = {
+  id: string;
+  domain: ReadinessDomain;
+  title: string;
+  helperText: string;
+  isBlocker: boolean;
+};
+
+type PortfolioCriterion =
+  | 'businessValue'
+  | 'feasibility'
+  | 'timeToValue'
+  | 'risk'
+  | 'dataSensitivity';
+
+type PortfolioRatings = Record<PortfolioCriterion, number>;
+
+type PortfolioUseCase = {
+  id: string;
+  name: string;
+  description: string;
+  ratings: PortfolioRatings;
+};
+
+const readinessDomains: Array<{ id: ReadinessDomain; label: string; description: string }> = [
+  {
+    id: 'identity',
+    label: 'Identity',
+    description: 'Authentication, access control, and identity posture',
+  },
+  {
+    id: 'data',
+    label: 'Data',
+    description: 'Data quality, boundaries, and content readiness',
+  },
+  {
+    id: 'security',
+    label: 'Security',
+    description: 'Security controls, compliance readiness, and risk posture',
+  },
+  {
+    id: 'platform',
+    label: 'Platform',
+    description: 'Technical platform prerequisites and integration readiness',
+  },
+  {
+    id: 'operatingModel',
+    label: 'Operating Model',
+    description: 'Ownership, support model, and change management readiness',
+  },
+];
+
+const readinessQuestions: ReadinessQuestion[] = [
+  {
+    id: 'identity-1',
+    domain: 'identity',
+    title: 'Microsoft Entra ID conditional access is enforced for target user groups.',
+    helperText: 'Protects access to copilots and agents with baseline controls.',
+    isBlocker: true,
+  },
+  {
+    id: 'identity-2',
+    domain: 'identity',
+    title: 'Role-based access is defined for makers, admins, and reviewers.',
+    helperText: 'Ensures least-privilege access across delivery teams.',
+    isBlocker: false,
+  },
+  {
+    id: 'data-1',
+    domain: 'data',
+    title: 'Target data sources are classified and ownership is documented.',
+    helperText: 'Required to avoid unsafe grounding and data leakage.',
+    isBlocker: true,
+  },
+  {
+    id: 'data-2',
+    domain: 'data',
+    title: 'High-value use-case data is clean enough for pilot workflows.',
+    helperText: 'Improves first-pass answer quality and trust.',
+    isBlocker: false,
+  },
+  {
+    id: 'security-1',
+    domain: 'security',
+    title: 'DLP and data-sharing policies are in place for pilot scope.',
+    helperText: 'Minimum guardrail before production rollout.',
+    isBlocker: true,
+  },
+  {
+    id: 'security-2',
+    domain: 'security',
+    title: 'Human-in-the-loop controls are defined for high-impact actions.',
+    helperText: 'Prevents autonomous execution for sensitive decisions.',
+    isBlocker: true,
+  },
+  {
+    id: 'platform-1',
+    domain: 'platform',
+    title: 'Required connectors/integrations are validated in non-production.',
+    helperText: 'Reduces implementation risk in first release wave.',
+    isBlocker: false,
+  },
+  {
+    id: 'platform-2',
+    domain: 'platform',
+    title: 'Environment strategy exists for dev/test/prod promotion.',
+    helperText: 'Supports reliable releases and rollback posture.',
+    isBlocker: true,
+  },
+  {
+    id: 'operating-1',
+    domain: 'operatingModel',
+    title: 'An owner is assigned for each use case and KPI.',
+    helperText: 'Clarifies accountability for value realization.',
+    isBlocker: false,
+  },
+  {
+    id: 'operating-2',
+    domain: 'operatingModel',
+    title: 'Support runbook exists for incidents and escalation paths.',
+    helperText: 'Needed for stable operations post-launch.',
+    isBlocker: true,
+  },
+];
+
+function scoreReadinessAnswer(answer: ReadinessAnswer): number {
+  if (answer === 'yes') return 100;
+  if (answer === 'partial') return 50;
+  return 0;
+}
+
+const portfolioCriteria: Array<{
+  id: PortfolioCriterion;
+  label: string;
+  description: string;
+  higherIsBetter: boolean;
+}> = [
+  {
+    id: 'businessValue',
+    label: 'Business value',
+    description: 'Expected measurable business impact',
+    higherIsBetter: true,
+  },
+  {
+    id: 'feasibility',
+    label: 'Feasibility',
+    description: 'Delivery feasibility based on current capabilities',
+    higherIsBetter: true,
+  },
+  {
+    id: 'timeToValue',
+    label: 'Time to value',
+    description: 'Speed to meaningful value realization',
+    higherIsBetter: true,
+  },
+  {
+    id: 'risk',
+    label: 'Risk',
+    description: 'Delivery and operational risk level',
+    higherIsBetter: false,
+  },
+  {
+    id: 'dataSensitivity',
+    label: 'Data sensitivity',
+    description: 'Data sensitivity and governance complexity',
+    higherIsBetter: false,
+  },
+];
+
+const portfolioDefaultWeights: Record<PortfolioCriterion, number> = {
+  businessValue: 30,
+  feasibility: 25,
+  timeToValue: 20,
+  risk: 15,
+  dataSensitivity: 10,
+};
+
+const portfolioDefaultUseCases: PortfolioUseCase[] = [
+  {
+    id: 'uc-1',
+    name: 'Executive meeting summarization copilot',
+    description: 'Summarize Teams/Outlook/Docs context for leadership briefings.',
+    ratings: {
+      businessValue: 4,
+      feasibility: 5,
+      timeToValue: 5,
+      risk: 2,
+      dataSensitivity: 2,
+    },
+  },
+  {
+    id: 'uc-2',
+    name: 'Employee helpdesk agent',
+    description: 'Copilot Studio agent for HR/IT policy and ticket triage support.',
+    ratings: {
+      businessValue: 5,
+      feasibility: 4,
+      timeToValue: 4,
+      risk: 3,
+      dataSensitivity: 3,
+    },
+  },
+  {
+    id: 'uc-3',
+    name: 'Sales proposal assistant with CRM grounding',
+    description: 'RAG-powered drafting assistant with approved collateral and CRM context.',
+    ratings: {
+      businessValue: 5,
+      feasibility: 3,
+      timeToValue: 3,
+      risk: 4,
+      dataSensitivity: 4,
+    },
+  },
+  {
+    id: 'uc-4',
+    name: 'Foundry document intelligence workflow',
+    description: 'Custom Foundry workflow for complex extraction and decision support.',
+    ratings: {
+      businessValue: 4,
+      feasibility: 2,
+      timeToValue: 2,
+      risk: 4,
+      dataSensitivity: 4,
+    },
+  },
+];
+
+function clampRating(value: number): number {
+  if (!Number.isFinite(value)) return 1;
+  return Math.max(1, Math.min(5, Math.round(value)));
+}
+
+function normalizeWeights(
+  weights: Partial<Record<PortfolioCriterion, number>> | undefined
+): Record<PortfolioCriterion, number> {
+  const merged: Record<PortfolioCriterion, number> = {
+    businessValue: Math.max(
+      0,
+      Number(weights?.businessValue ?? portfolioDefaultWeights.businessValue)
+    ),
+    feasibility: Math.max(0, Number(weights?.feasibility ?? portfolioDefaultWeights.feasibility)),
+    timeToValue: Math.max(0, Number(weights?.timeToValue ?? portfolioDefaultWeights.timeToValue)),
+    risk: Math.max(0, Number(weights?.risk ?? portfolioDefaultWeights.risk)),
+    dataSensitivity: Math.max(
+      0,
+      Number(weights?.dataSensitivity ?? portfolioDefaultWeights.dataSensitivity)
+    ),
+  };
+
+  const total = Object.values(merged).reduce((sum, value) => sum + value, 0);
+  if (!total) return portfolioDefaultWeights;
+
+  return {
+    businessValue: Math.round((merged.businessValue / total) * 100),
+    feasibility: Math.round((merged.feasibility / total) * 100),
+    timeToValue: Math.round((merged.timeToValue / total) * 100),
+    risk: Math.round((merged.risk / total) * 100),
+    dataSensitivity: Math.round((merged.dataSensitivity / total) * 100),
+  };
+}
+
+function scorePortfolioUseCase(
+  useCase: PortfolioUseCase,
+  weights: Record<PortfolioCriterion, number>
+): { score: number; tier: 'now' | 'next' | 'later' } {
+  const positiveWeight = weights.businessValue + weights.feasibility + weights.timeToValue;
+  const negativeWeight = weights.risk + weights.dataSensitivity;
+
+  const positiveRaw =
+    useCase.ratings.businessValue * weights.businessValue +
+    useCase.ratings.feasibility * weights.feasibility +
+    useCase.ratings.timeToValue * weights.timeToValue;
+
+  const negativeRaw =
+    useCase.ratings.risk * weights.risk + useCase.ratings.dataSensitivity * weights.dataSensitivity;
+
+  const positiveScore = positiveWeight ? positiveRaw / (5 * positiveWeight) : 0;
+  const riskAdjustedScore = negativeWeight ? 1 - negativeRaw / (5 * negativeWeight) : 1;
+
+  const score = Math.round((positiveScore * 0.7 + riskAdjustedScore * 0.3) * 100);
+  const tier = score >= 75 ? 'now' : score >= 55 ? 'next' : 'later';
+  return { score, tier };
+}
+
 // Initialize services with error handling
 console.log('[7/10] Initializing services...');
 let metricsService: any;
@@ -177,6 +466,185 @@ app.get('/api/health', (_req: Request, res: Response) => {
     openaiConfigured: !!process.env.OPENAI_API_KEY,
     authMethod: process.env.AZURE_OPENAI_ENDPOINT ? 'entra' : 'none',
   });
+});
+
+// Readiness Assessment 2.0 model
+app.get('/api/readiness/model', (_req: Request, res: Response) => {
+  res.json({
+    version: '2.0.0',
+    domains: readinessDomains,
+    questions: readinessQuestions,
+    answerOptions: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'partial', label: 'Partially' },
+      { id: 'no', label: 'No' },
+    ],
+  });
+});
+
+// Readiness Assessment 2.0 scoring
+app.post('/api/readiness/assess', (req: Request, res: Response) => {
+  try {
+    const answers = req.body?.answers as Record<string, ReadinessAnswer> | undefined;
+    if (!answers || typeof answers !== 'object') {
+      return res.status(400).json({
+        error: 'Invalid request',
+        message: 'Missing answers. Expected: { answers: { [questionId]: yes|partial|no } }',
+      });
+    }
+
+    const missingQuestions = readinessQuestions.map((q) => q.id).filter((id) => !answers[id]);
+
+    if (missingQuestions.length > 0) {
+      return res.status(400).json({
+        error: 'Incomplete assessment',
+        message: 'All readiness questions must be answered.',
+        missingQuestions,
+      });
+    }
+
+    const domainScores = readinessDomains.map((domain) => {
+      const domainQuestions = readinessQuestions.filter((q) => q.domain === domain.id);
+      const total = domainQuestions.reduce(
+        (sum, q) => sum + scoreReadinessAnswer(answers[q.id]),
+        0
+      );
+      const score = Math.round(total / domainQuestions.length);
+      return {
+        domain: domain.id,
+        label: domain.label,
+        score,
+      };
+    });
+
+    const overallScore = Math.round(
+      domainScores.reduce((sum, item) => sum + item.score, 0) / domainScores.length
+    );
+
+    const blockers = readinessQuestions
+      .filter((q) => q.isBlocker && answers[q.id] === 'no')
+      .map((q) => ({
+        id: q.id,
+        domain: q.domain,
+        title: q.title,
+        helperText: q.helperText,
+      }));
+
+    const priorities = readinessQuestions
+      .filter((q) => answers[q.id] !== 'yes')
+      .map((q) => ({
+        id: q.id,
+        domain: q.domain,
+        title: q.title,
+        status: answers[q.id],
+        priority: answers[q.id] === 'no' ? 'high' : 'medium',
+      }));
+
+    const status =
+      blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
+
+    const actionPlan = [
+      'Address high-priority blockers before production deployment.',
+      'Define owners and deadlines for each medium/high readiness gap.',
+      'Re-run readiness assessment after control implementation.',
+    ];
+
+    return res.json({
+      status,
+      overallScore,
+      domainScores,
+      blockerCount: blockers.length,
+      blockers,
+      priorities,
+      actionPlan,
+      assessedAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Readiness assessment error:', error);
+    return res.status(500).json({
+      error: 'Readiness assessment failed',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+// Use Case Portfolio Prioritizer model
+app.get('/api/portfolio/model', (_req: Request, res: Response) => {
+  res.json({
+    version: '1.0.0',
+    criteria: portfolioCriteria,
+    defaultWeights: portfolioDefaultWeights,
+    defaultUseCases: portfolioDefaultUseCases,
+  });
+});
+
+// Use Case Portfolio Prioritizer scoring
+app.post('/api/portfolio/prioritize', (req: Request, res: Response) => {
+  try {
+    const rawUseCases = req.body?.useCases as PortfolioUseCase[] | undefined;
+    const rawWeights = req.body?.weights as Partial<Record<PortfolioCriterion, number>> | undefined;
+
+    if (!Array.isArray(rawUseCases) || rawUseCases.length === 0) {
+      return res.status(400).json({
+        error: 'Invalid request',
+        message: 'Expected non-empty useCases array.',
+      });
+    }
+
+    const normalizedWeights = normalizeWeights(rawWeights);
+
+    const normalizedUseCases = rawUseCases.map((item, index) => ({
+      id: item.id || `custom-${index + 1}`,
+      name: (item.name || '').trim() || `Use Case ${index + 1}`,
+      description: (item.description || '').trim(),
+      ratings: {
+        businessValue: clampRating(item.ratings?.businessValue ?? 3),
+        feasibility: clampRating(item.ratings?.feasibility ?? 3),
+        timeToValue: clampRating(item.ratings?.timeToValue ?? 3),
+        risk: clampRating(item.ratings?.risk ?? 3),
+        dataSensitivity: clampRating(item.ratings?.dataSensitivity ?? 3),
+      },
+    }));
+
+    const prioritized = normalizedUseCases
+      .map((useCase) => {
+        const scored = scorePortfolioUseCase(useCase, normalizedWeights);
+        return {
+          ...useCase,
+          score: scored.score,
+          tier: scored.tier,
+        };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    const roadmap = {
+      days30: prioritized
+        .filter((item) => item.tier === 'now')
+        .slice(0, 3)
+        .map((item) => item.name),
+      days60: prioritized
+        .filter((item) => item.tier === 'next')
+        .slice(0, 3)
+        .map((item) => item.name),
+      days90: prioritized
+        .filter((item) => item.tier === 'later')
+        .slice(0, 3)
+        .map((item) => item.name),
+    };
+
+    return res.json({
+      weights: normalizedWeights,
+      prioritized,
+      roadmap,
+      generatedAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Portfolio prioritization error:', error);
+    return res.status(500).json({
+      error: 'Portfolio prioritization failed',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
 });
 
 // Get decision model

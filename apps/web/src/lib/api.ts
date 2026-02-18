@@ -101,6 +101,83 @@ export type CopilotStudioReleasePlannerResponse = {
   upcomingGA: ReleasePlannerMilestoneItem[];
 };
 
+export type ReadinessDomain = {
+  id: 'identity' | 'data' | 'security' | 'platform' | 'operatingModel';
+  label: string;
+  description: string;
+};
+
+export type ReadinessQuestion = {
+  id: string;
+  domain: ReadinessDomain['id'];
+  title: string;
+  helperText: string;
+  isBlocker: boolean;
+};
+
+export type ReadinessModelResponse = {
+  version: string;
+  domains: ReadinessDomain[];
+  questions: ReadinessQuestion[];
+  answerOptions: Array<{ id: 'yes' | 'partial' | 'no'; label: string }>;
+};
+
+export type ReadinessAssessmentResponse = {
+  status: 'ready' | 'needs-attention' | 'blocked';
+  overallScore: number;
+  domainScores: Array<{ domain: ReadinessDomain['id']; label: string; score: number }>;
+  blockerCount: number;
+  blockers: Array<{ id: string; domain: ReadinessDomain['id']; title: string; helperText: string }>;
+  priorities: Array<{
+    id: string;
+    domain: ReadinessDomain['id'];
+    title: string;
+    status: 'partial' | 'no';
+    priority: 'high' | 'medium';
+  }>;
+  actionPlan: string[];
+  assessedAt: string;
+};
+
+export type PortfolioCriterionId =
+  | 'businessValue'
+  | 'feasibility'
+  | 'timeToValue'
+  | 'risk'
+  | 'dataSensitivity';
+
+export type PortfolioWeights = Record<PortfolioCriterionId, number>;
+
+export type PortfolioUseCase = {
+  id: string;
+  name: string;
+  description: string;
+  ratings: Record<PortfolioCriterionId, number>;
+};
+
+export type PortfolioModelResponse = {
+  version: string;
+  criteria: Array<{
+    id: PortfolioCriterionId;
+    label: string;
+    description: string;
+    higherIsBetter: boolean;
+  }>;
+  defaultWeights: PortfolioWeights;
+  defaultUseCases: PortfolioUseCase[];
+};
+
+export type PortfolioPrioritizationResponse = {
+  weights: PortfolioWeights;
+  prioritized: Array<PortfolioUseCase & { score: number; tier: 'now' | 'next' | 'later' }>;
+  roadmap: {
+    days30: string[];
+    days60: string[];
+    days90: string[];
+  };
+  generatedAt: string;
+};
+
 export async function getCopilotStudioReleasePlanner(): Promise<CopilotStudioReleasePlannerResponse> {
   const response = await fetchWithTimeout(
     `${API_BASE_URL}/release-planner/copilot-studio`,
@@ -110,5 +187,68 @@ export async function getCopilotStudioReleasePlanner(): Promise<CopilotStudioRel
   if (!response.ok) {
     throw new Error('Failed to fetch Copilot Studio release planner data');
   }
+  return response.json();
+}
+
+export async function getReadinessModel(): Promise<ReadinessModelResponse> {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/readiness/model`, {}, 15000);
+  if (!response.ok) {
+    throw new Error('Failed to fetch readiness model');
+  }
+  return response.json();
+}
+
+export async function assessReadiness(
+  answers: Record<string, 'yes' | 'partial' | 'no'>
+): Promise<ReadinessAssessmentResponse> {
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/readiness/assess`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ answers }),
+    },
+    20000
+  );
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => null);
+    throw new Error(payload?.message || 'Failed to assess readiness');
+  }
+
+  return response.json();
+}
+
+export async function getPortfolioModel(): Promise<PortfolioModelResponse> {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/portfolio/model`, {}, 15000);
+  if (!response.ok) {
+    throw new Error('Failed to fetch portfolio model');
+  }
+  return response.json();
+}
+
+export async function prioritizePortfolio(payload: {
+  useCases: PortfolioUseCase[];
+  weights: Partial<PortfolioWeights>;
+}): Promise<PortfolioPrioritizationResponse> {
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/portfolio/prioritize`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    },
+    20000
+  );
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.message || 'Failed to prioritize portfolio');
+  }
+
   return response.json();
 }

@@ -97,6 +97,112 @@ console.log('[6/10] Creating Express app...');
 const app = express();
 const PORT = process.env.PORT || 3001;
 console.log('[6/10] ✅ Express app created. Will listen on port:', PORT);
+const readinessDomains = [
+    {
+        id: 'identity',
+        label: 'Identity',
+        description: 'Authentication, access control, and identity posture',
+    },
+    {
+        id: 'data',
+        label: 'Data',
+        description: 'Data quality, boundaries, and content readiness',
+    },
+    {
+        id: 'security',
+        label: 'Security',
+        description: 'Security controls, compliance readiness, and risk posture',
+    },
+    {
+        id: 'platform',
+        label: 'Platform',
+        description: 'Technical platform prerequisites and integration readiness',
+    },
+    {
+        id: 'operatingModel',
+        label: 'Operating Model',
+        description: 'Ownership, support model, and change management readiness',
+    },
+];
+const readinessQuestions = [
+    {
+        id: 'identity-1',
+        domain: 'identity',
+        title: 'Microsoft Entra ID conditional access is enforced for target user groups.',
+        helperText: 'Protects access to copilots and agents with baseline controls.',
+        isBlocker: true,
+    },
+    {
+        id: 'identity-2',
+        domain: 'identity',
+        title: 'Role-based access is defined for makers, admins, and reviewers.',
+        helperText: 'Ensures least-privilege access across delivery teams.',
+        isBlocker: false,
+    },
+    {
+        id: 'data-1',
+        domain: 'data',
+        title: 'Target data sources are classified and ownership is documented.',
+        helperText: 'Required to avoid unsafe grounding and data leakage.',
+        isBlocker: true,
+    },
+    {
+        id: 'data-2',
+        domain: 'data',
+        title: 'High-value use-case data is clean enough for pilot workflows.',
+        helperText: 'Improves first-pass answer quality and trust.',
+        isBlocker: false,
+    },
+    {
+        id: 'security-1',
+        domain: 'security',
+        title: 'DLP and data-sharing policies are in place for pilot scope.',
+        helperText: 'Minimum guardrail before production rollout.',
+        isBlocker: true,
+    },
+    {
+        id: 'security-2',
+        domain: 'security',
+        title: 'Human-in-the-loop controls are defined for high-impact actions.',
+        helperText: 'Prevents autonomous execution for sensitive decisions.',
+        isBlocker: true,
+    },
+    {
+        id: 'platform-1',
+        domain: 'platform',
+        title: 'Required connectors/integrations are validated in non-production.',
+        helperText: 'Reduces implementation risk in first release wave.',
+        isBlocker: false,
+    },
+    {
+        id: 'platform-2',
+        domain: 'platform',
+        title: 'Environment strategy exists for dev/test/prod promotion.',
+        helperText: 'Supports reliable releases and rollback posture.',
+        isBlocker: true,
+    },
+    {
+        id: 'operating-1',
+        domain: 'operatingModel',
+        title: 'An owner is assigned for each use case and KPI.',
+        helperText: 'Clarifies accountability for value realization.',
+        isBlocker: false,
+    },
+    {
+        id: 'operating-2',
+        domain: 'operatingModel',
+        title: 'Support runbook exists for incidents and escalation paths.',
+        helperText: 'Needed for stable operations post-launch.',
+        isBlocker: true,
+    },
+];
+function scoreReadinessAnswer(answer) {
+    if (answer === 'yes')
+        return 100;
+    if (answer === 'partial')
+        return 50;
+    return 0;
+}
 // Initialize services with error handling
 console.log('[7/10] Initializing services...');
 let metricsService;
@@ -153,6 +259,92 @@ app.get('/api/health', (_req, res) => {
         openaiConfigured: !!process.env.OPENAI_API_KEY,
         authMethod: process.env.AZURE_OPENAI_ENDPOINT ? 'entra' : 'none',
     });
+});
+// Readiness Assessment 2.0 model
+app.get('/api/readiness/model', (_req, res) => {
+    res.json({
+        version: '2.0.0',
+        domains: readinessDomains,
+        questions: readinessQuestions,
+        answerOptions: [
+            { id: 'yes', label: 'Yes' },
+            { id: 'partial', label: 'Partially' },
+            { id: 'no', label: 'No' },
+        ],
+    });
+});
+// Readiness Assessment 2.0 scoring
+app.post('/api/readiness/assess', (req, res) => {
+    try {
+        const answers = req.body?.answers;
+        if (!answers || typeof answers !== 'object') {
+            return res.status(400).json({
+                error: 'Invalid request',
+                message: 'Missing answers. Expected: { answers: { [questionId]: yes|partial|no } }',
+            });
+        }
+        const missingQuestions = readinessQuestions
+            .map((q) => q.id)
+            .filter((id) => !answers[id]);
+        if (missingQuestions.length > 0) {
+            return res.status(400).json({
+                error: 'Incomplete assessment',
+                message: 'All readiness questions must be answered.',
+                missingQuestions,
+            });
+        }
+        const domainScores = readinessDomains.map((domain) => {
+            const domainQuestions = readinessQuestions.filter((q) => q.domain === domain.id);
+            const total = domainQuestions.reduce((sum, q) => sum + scoreReadinessAnswer(answers[q.id]), 0);
+            const score = Math.round(total / domainQuestions.length);
+            return {
+                domain: domain.id,
+                label: domain.label,
+                score,
+            };
+        });
+        const overallScore = Math.round(domainScores.reduce((sum, item) => sum + item.score, 0) / domainScores.length);
+        const blockers = readinessQuestions
+            .filter((q) => q.isBlocker && answers[q.id] === 'no')
+            .map((q) => ({
+            id: q.id,
+            domain: q.domain,
+            title: q.title,
+            helperText: q.helperText,
+        }));
+        const priorities = readinessQuestions
+            .filter((q) => answers[q.id] !== 'yes')
+            .map((q) => ({
+            id: q.id,
+            domain: q.domain,
+            title: q.title,
+            status: answers[q.id],
+            priority: answers[q.id] === 'no' ? 'high' : 'medium',
+        }));
+        const status = blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
+        const actionPlan = [
+            'Address high-priority blockers before production deployment.',
+            'Define owners and deadlines for each medium/high readiness gap.',
+            'Re-run readiness assessment after control implementation.',
+        ];
+        return res.json({
+            status,
+            overallScore,
+            domainScores,
+            blockerCount: blockers.length,
+            blockers,
+            priorities,
+            actionPlan,
+            assessedAt: new Date().toISOString(),
+        });
+    }
+    catch (error) {
+        console.error('Readiness assessment error:', error);
+        return res.status(500).json({
+            error: 'Readiness assessment failed',
+            message: error instanceof Error ? error.message : 'Unknown error',
+        });
+    }
 });
 // Get decision model
 app.get('/api/model', (_req, res) => {

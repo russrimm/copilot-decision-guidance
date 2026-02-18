@@ -49,6 +49,18 @@ export default function Layout() {
                   >
                     Use Cases
                   </Link>
+                  <Link
+                    to="/readiness"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    Readiness
+                  </Link>
+                  <Link
+                    to="/portfolio-prioritizer"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    Portfolio
+                  </Link>
                   <a
                     href="/infographic.html"
                     target="_blank"

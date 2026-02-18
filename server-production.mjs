@@ -28,15 +28,40 @@ app.use(express.json());
 let decisionModel, calculateRecommendation, generateRecommendation;
 
 async function loadDecisionEngine() {
+  const importCandidates = [
+    '@copilot-guidance/decision-engine',
+    './packages/decision-engine/dist/index.js',
+  ];
+
+  let engine = null;
+  let loadedFrom = null;
+  let lastError = null;
+
+  for (const candidate of importCandidates) {
+    try {
+      console.log(`[STARTUP] Loading decision engine from ${candidate}`);
+      engine = await import(candidate);
+      loadedFrom = candidate;
+      break;
+    } catch (error) {
+      lastError = error;
+      console.warn(
+        `[STARTUP] Unable to load decision engine from ${candidate}: ${error.code || error.message}`
+      );
+    }
+  }
+
   try {
-    console.log('[STARTUP] Loading decision engine from @copilot-guidance/decision-engine');
-    const engine = await import('@copilot-guidance/decision-engine');
+    if (!engine) {
+      throw lastError || new Error('No decision engine import candidate succeeded');
+    }
 
     decisionModel = engine.decisionModel;
     calculateRecommendation = engine.calculateRecommendation;
     generateRecommendation = engine.generateRecommendation;
 
     console.log('[STARTUP] ✅ Decision engine loaded successfully');
+    console.log(`[STARTUP] ✅ Loaded from: ${loadedFrom}`);
     console.log(`[STARTUP] 📊 Decision model v${decisionModel.metadata?.version || 'unknown'}`);
     console.log(
       `[STARTUP] Decision model has ${decisionModel.questionGroups?.length || 0} question groups`
