@@ -28,9 +28,7 @@ function MilestoneTable({ items }: { items: ReleasePlannerMilestoneItem[] }) {
               className="border-t border-gray-200 dark:border-gray-700"
             >
               <td className="py-2 pr-4 whitespace-nowrap font-medium">{item.date}</td>
-              <td className="py-2 pr-4">
-                {item.featureName}
-              </td>
+              <td className="py-2 pr-4">{item.featureName}</td>
               <td className="py-2 pr-4 whitespace-nowrap">{item.releaseWave || '—'}</td>
             </tr>
           ))}
