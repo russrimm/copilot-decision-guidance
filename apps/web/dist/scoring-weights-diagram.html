@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scoring Weights Diagram</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        background: #f8fafc;
+        color: #0f172a;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+      }
+
+      p {
+        margin: 0 0 16px;
+        color: #334155;
+      }
+
+      .card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        overflow-x: auto;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #0f172a;
+          color: #e2e8f0;
+        }
+
+        p {
+          color: #cbd5e1;
+        }
+
+        .card {
+          background: #111827;
+          border-color: #334155;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Decision Scoring Weights</h1>
+      <p>
+        This diagram shows how each selected answer contributes platform weights and how the final
+        recommendation is chosen.
+      </p>
+      <div class="card">
+        <pre class="mermaid">
+flowchart TD
+    A["Start Questionnaire"] --> B["For each question: select answer"]
+    B --> C["Read answer weights\n(m365Copilot, copilotStudio, foundry, agentBuilder, hybrid)"]
+    C --> D["Accumulate totals into scores object"]
+    D --> E["All questions processed?"]
+    E -->|No| B
+    E -->|Yes| F["Sort platform scores descending"]
+
+    F --> G{"Hybrid close to top score?\n(scores.hybrid >= top - hybridThreshold)"}
+    G -->|Yes| H["Recommend HYBRID"]
+    G -->|No| I{"3+ platforms within\n(2 * winMargin)?"}
+    I -->|Yes| H
+    I -->|No| J{"Top-2 gap < winMargin?"}
+    J -->|Yes| H
+    J -->|No| K{"Foundry + Studio both strong\nwith small gap?"}
+    K -->|Yes| H
+    K -->|No| L["Recommend highest score platform"]
+
+    H --> M["Compute confidence\nfrom score distribution"]
+    L --> M
+    M --> N["Return recommendation +\nscore breakdown"]
+        </pre>
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, securityLevel: 'loose' });
+    </script>
+  </body>
+</html>

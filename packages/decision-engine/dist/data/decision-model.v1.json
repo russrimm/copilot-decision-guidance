@@ -2,7 +2,7 @@
   "version": "1.0",
   "metadata": {
     "description": "Decision model for Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder guidance",
-    "lastUpdated": "2026-01-04"
+    "lastUpdated": "2026-02-18"
   },
   "questionGroups": [
     {
@@ -679,6 +679,119 @@
               }
             }
           ]
+        },
+        {
+          "id": "integration_connectors",
+          "title": "How do you need to connect to data and systems outside Microsoft 365?",
+          "helperText": "Choose between Microsoft 365-only grounding, prebuilt Power Platform connectors, or custom API actions",
+          "answers": [
+            {
+              "id": "connectors_m365_only",
+              "label": "Microsoft 365 knowledge only (Graph, SharePoint, Teams, OneDrive) with minimal external integration",
+              "weights": {
+                "m365Copilot": 10,
+                "copilotStudio": 4,
+                "hybrid": 6,
+                "foundry": 2,
+                "agentBuilder": 9
+              }
+            },
+            {
+              "id": "connectors_power_platform",
+              "label": "Prebuilt Power Platform connectors for quick low-code integration",
+              "weights": {
+                "m365Copilot": 2,
+                "copilotStudio": 10,
+                "hybrid": 7,
+                "foundry": 4,
+                "agentBuilder": 4
+              }
+            },
+            {
+              "id": "connectors_custom_api",
+              "label": "Custom APIs/OpenAPI actions with developer control over integration behavior",
+              "weights": {
+                "m365Copilot": 1,
+                "copilotStudio": 7,
+                "hybrid": 6,
+                "foundry": 10,
+                "agentBuilder": 2
+              }
+            },
+            {
+              "id": "connectors_mixed",
+              "label": "Both: start with connectors and extend with custom APIs over time",
+              "weights": {
+                "m365Copilot": 3,
+                "copilotStudio": 8,
+                "hybrid": 10,
+                "foundry": 7,
+                "agentBuilder": 4
+              }
+            },
+            {
+              "id": "connectors_unsure",
+              "label": "I'm not sure",
+              "weights": {
+                "m365Copilot": 5,
+                "copilotStudio": 5,
+                "hybrid": 5,
+                "foundry": 5,
+                "agentBuilder": 5
+              }
+            }
+          ]
+        },
+        {
+          "id": "integration_response_experience",
+          "title": "How much control do you need over the user response experience?",
+          "helperText": "Consider whether simple text responses are enough or if you need custom cards/UI rendering",
+          "answers": [
+            {
+              "id": "response_simple",
+              "label": "Simple conversational responses are enough",
+              "weights": {
+                "m365Copilot": 9,
+                "copilotStudio": 8,
+                "hybrid": 6,
+                "foundry": 3,
+                "agentBuilder": 8
+              }
+            },
+            {
+              "id": "response_moderate",
+              "label": "Need moderate formatting and structured prompts, but not custom card frameworks",
+              "weights": {
+                "m365Copilot": 6,
+                "copilotStudio": 9,
+                "hybrid": 8,
+                "foundry": 5,
+                "agentBuilder": 6
+              }
+            },
+            {
+              "id": "response_advanced_cards",
+              "label": "Need advanced Adaptive Card-style or custom UI rendering control",
+              "weights": {
+                "m365Copilot": 1,
+                "copilotStudio": 5,
+                "hybrid": 7,
+                "foundry": 10,
+                "agentBuilder": 2
+              }
+            },
+            {
+              "id": "response_unsure",
+              "label": "I'm not sure",
+              "weights": {
+                "m365Copilot": 5,
+                "copilotStudio": 5,
+                "hybrid": 5,
+                "foundry": 5,
+                "agentBuilder": 5
+              }
+            }
+          ]
         }
       ]
     },
@@ -901,6 +1014,57 @@
               }
             }
           ]
+        },
+        {
+          "id": "governance_operating_model",
+          "title": "Which admin and governance model best matches your organization?",
+          "helperText": "Choose the control plane that matches your deployment and compliance approach",
+          "answers": [
+            {
+              "id": "ops_m365_admin",
+              "label": "Microsoft 365 admin center controls are sufficient (inventory, sharing, assignment, Purview controls)",
+              "weights": {
+                "m365Copilot": 10,
+                "copilotStudio": 4,
+                "hybrid": 7,
+                "foundry": 2,
+                "agentBuilder": 9
+              }
+            },
+            {
+              "id": "ops_power_platform_admin",
+              "label": "Need Power Platform environment governance (connector controls, DLP at environment level, publishing workflows)",
+              "weights": {
+                "m365Copilot": 2,
+                "copilotStudio": 10,
+                "hybrid": 7,
+                "foundry": 4,
+                "agentBuilder": 4
+              }
+            },
+            {
+              "id": "ops_mixed",
+              "label": "Need both M365 admin and Power Platform governance depending on agent scope",
+              "weights": {
+                "m365Copilot": 4,
+                "copilotStudio": 8,
+                "hybrid": 10,
+                "foundry": 6,
+                "agentBuilder": 5
+              }
+            },
+            {
+              "id": "ops_unsure",
+              "label": "I'm not sure",
+              "weights": {
+                "m365Copilot": 5,
+                "copilotStudio": 5,
+                "hybrid": 5,
+                "foundry": 5,
+                "agentBuilder": 5
+              }
+            }
+          ]
         }
       ]
     },
@@ -1092,6 +1256,57 @@
       "description": "What is your budget and scale expectation?",
       "questions": [
         {
+          "id": "cost_licensing_path",
+          "title": "What licensing and billing path do you plan to use?",
+          "helperText": "Consider Microsoft 365 Copilot licensing, pay-as-you-go/metering, or web-only no-license scenarios",
+          "answers": [
+            {
+              "id": "licensing_m365_copilot",
+              "label": "Microsoft 365 Copilot add-on licenses for authenticated users",
+              "weights": {
+                "m365Copilot": 10,
+                "copilotStudio": 8,
+                "foundry": 3,
+                "agentBuilder": 8,
+                "hybrid": 7
+              }
+            },
+            {
+              "id": "licensing_metered",
+              "label": "Metered/pay-as-you-go model (Copilot Credits or usage-based plans)",
+              "weights": {
+                "m365Copilot": 5,
+                "copilotStudio": 9,
+                "foundry": 8,
+                "agentBuilder": 4,
+                "hybrid": 7
+              }
+            },
+            {
+              "id": "licensing_web_only",
+              "label": "No Copilot license for users; start with web-grounded/no-license-friendly experiences",
+              "weights": {
+                "m365Copilot": 2,
+                "copilotStudio": 6,
+                "foundry": 4,
+                "agentBuilder": 10,
+                "hybrid": 5
+              }
+            },
+            {
+              "id": "licensing_unsure",
+              "label": "I'm not sure",
+              "weights": {
+                "m365Copilot": 5,
+                "copilotStudio": 5,
+                "foundry": 5,
+                "agentBuilder": 5,
+                "hybrid": 5
+              }
+            }
+          ]
+        },
+        {
           "id": "cost_memory",
           "title": "Do you need to store and access conversation history?",
           "helperText": "Important for audit trails, compliance, and regulated industries",
@@ -1251,6 +1466,17 @@
                 "foundry": 10,
                 "agentBuilder": 2,
                 "hybrid": 9
+              }
+            },
+            {
+              "id": "strategy_start_then_scale",
+              "label": "Start simple in Microsoft 365 Copilot, then copy/expand to Copilot Studio for enterprise scale",
+              "weights": {
+                "m365Copilot": 7,
+                "copilotStudio": 9,
+                "foundry": 4,
+                "agentBuilder": 8,
+                "hybrid": 10
               }
             },
             {

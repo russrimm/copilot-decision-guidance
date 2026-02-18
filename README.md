@@ -77,6 +77,36 @@ Use this checklist for every feature before merge/deploy:
 ✅ **AI-Powered Personalized Recommendations** - Context-aware recommendations based on survey responses and tenant metrics  
 ✅ **Self-Hostable** - Customer-cloneable solution with optional Azure integrations
 
+## Scoring Logic Diagram (Mermaid)
+
+The recommendation engine is deterministic. Each selected answer contributes platform weights, then recommendation rules evaluate score distribution and hybrid thresholds.
+
+```mermaid
+flowchart TD
+  A["Start Questionnaire"] --> B["For each question: select answer"]
+  B --> C["Read answer weights\n(m365Copilot, copilotStudio, foundry, agentBuilder, hybrid)"]
+  C --> D["Accumulate totals into scores object"]
+  D --> E["All questions processed?"]
+  E -->|No| B
+  E -->|Yes| F["Sort platform scores descending"]
+
+  F --> G{"Hybrid close to top score?\n(scores.hybrid >= top - hybridThreshold)"}
+  G -->|Yes| H["Recommend HYBRID"]
+  G -->|No| I{"3+ platforms within\n(2 * winMargin)?"}
+  I -->|Yes| H
+  I -->|No| J{"Top-2 gap < winMargin?"}
+  J -->|Yes| H
+  J -->|No| K{"Foundry + Studio both strong\nwith small gap?"}
+  K -->|Yes| H
+  K -->|No| L["Recommend highest score platform"]
+
+  H --> M["Compute confidence\nfrom score distribution"]
+  L --> M
+  M --> N["Return recommendation +\nscore breakdown"]
+```
+
+For an interactive web view of this diagram, open `/scoring-weights-diagram.html` in the app.
+
 ## Optional Enterprise Features
 
 ### 🎯 Holistic Tenant Dashboard

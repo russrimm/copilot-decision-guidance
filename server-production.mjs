@@ -26,6 +26,7 @@ app.use(express.json());
 
 // Dynamic import of decision engine (handles TypeScript via package exports)
 let decisionModel, calculateRecommendation, generateRecommendation;
+let getCopilotStudioReleasePlannerData;
 
 async function loadDecisionEngine() {
   const importCandidates = [
@@ -75,6 +76,35 @@ async function loadDecisionEngine() {
   }
 }
 
+async function loadReleasePlannerService() {
+  const importCandidates = ['./apps/api/dist/services/release-planner.js'];
+
+  let serviceModule = null;
+  let loadedFrom = null;
+  let lastError = null;
+
+  for (const candidate of importCandidates) {
+    try {
+      console.log(`[STARTUP] Loading release planner service from ${candidate}`);
+      serviceModule = await import(candidate);
+      loadedFrom = candidate;
+      break;
+    } catch (error) {
+      lastError = error;
+      console.warn(
+        `[STARTUP] Unable to load release planner service from ${candidate}: ${error.code || error.message}`
+      );
+    }
+  }
+
+  if (!serviceModule?.getCopilotStudioReleasePlannerData) {
+    throw lastError || new Error('No release planner service import candidate succeeded');
+  }
+
+  getCopilotStudioReleasePlannerData = serviceModule.getCopilotStudioReleasePlannerData;
+  console.log(`[STARTUP] ✅ Release planner service loaded from: ${loadedFrom}`);
+}
+
 // API Routes
 
 // Health check - Azure uses this to verify app is running
@@ -98,7 +128,13 @@ app.get('/api', (req, res) => {
   res.json({
     message: 'Copilot Decision Guidance API',
     version: '2.0.0',
-    endpoints: ['/api/health', '/api/model', '/api/score', '/api/sources'],
+    endpoints: [
+      '/api/health',
+      '/api/model',
+      '/api/score',
+      '/api/sources',
+      '/api/release-planner/copilot-studio',
+    ],
   });
 });
 
@@ -159,6 +195,27 @@ app.get('/api/sources', (req, res) => {
   } catch (error) {
     console.error('Error fetching sources:', error);
     res.status(500).json({ error: 'Failed to fetch sources' });
+  }
+});
+
+// Power Platform Release Planner (Copilot Studio only)
+app.get('/api/release-planner/copilot-studio', async (req, res) => {
+  try {
+    if (typeof getCopilotStudioReleasePlannerData !== 'function') {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Release planner service is not loaded on this deployment instance',
+      });
+    }
+
+    const data = await getCopilotStudioReleasePlannerData();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching Copilot Studio release planner data:', error);
+    res.status(502).json({
+      error: 'Bad Gateway',
+      message: error instanceof Error ? error.message : 'Failed to fetch release planner data',
+    });
   }
 });
 
@@ -284,6 +341,14 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
   }
 });
 
+// Ensure unknown API routes return JSON (never SPA HTML)
+app.use('/api/*', (req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `API route not found: ${req.originalUrl}`,
+  });
+});
+
 // Serve static frontend files
 const frontendPath = join(__dirname, 'apps', 'web', 'dist');
 app.use(express.static(frontendPath));
@@ -307,7 +372,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Start server after loading decision engine
-loadDecisionEngine()
+Promise.all([loadDecisionEngine(), loadReleasePlannerService()])
   .then(() => {
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);

@@ -596,6 +596,26 @@ export default function Results() {
         </div>
       </div>
 
+      <div className="card border border-primary-200 dark:border-primary-700">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">How scoring is weighted</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-200">
+              Open the Mermaid diagram to see how answer weights are aggregated and how the final
+              recommendation decision is made.
+            </p>
+          </div>
+          <a
+            href="/scoring-weights-diagram.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-secondary"
+          >
+            Open scoring diagram
+          </a>
+        </div>
+      </div>
+
       {/* Loading State - Show spinner while AI enhancement is loading */}
       {loadingEnhancement && (
         <div className="card text-center py-12">

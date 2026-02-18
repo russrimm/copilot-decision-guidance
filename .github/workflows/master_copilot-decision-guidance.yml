@@ -73,3 +73,24 @@ jobs:
           done
           echo "Health check failed after 5 minutes"
           exit 1
+
+      - name: Post-deploy release planner API contract check
+        run: |
+          URL="https://copilot-decision-guidance.azurewebsites.net/api/release-planner/copilot-studio"
+          for i in {1..12}; do
+            STATUS=$(curl -sS -o /tmp/release_planner_body.json -w "%{http_code}" "$URL")
+            CONTENT_TYPE=$(curl -sSI "$URL" | awk -F': ' 'tolower($1)=="content-type" {print tolower($2)}' | tr -d '\r')
+
+            if [ "$STATUS" = "200" ] && echo "$CONTENT_TYPE" | grep -q "application/json"; then
+              echo "Release planner endpoint returned JSON as expected"
+              exit 0
+            fi
+
+            echo "Release planner check attempt $i/12 failed (status=$STATUS, content-type=${CONTENT_TYPE:-unknown})"
+            sleep 10
+          done
+
+          echo "Release planner endpoint did not return JSON after deployment"
+          echo "Last response preview:"
+          head -c 300 /tmp/release_planner_body.json || true
+          exit 1

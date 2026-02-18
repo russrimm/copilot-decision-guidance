@@ -184,9 +184,20 @@ export async function getCopilotStudioReleasePlanner(): Promise<CopilotStudioRel
     {},
     20000
   );
+
   if (!response.ok) {
-    throw new Error('Failed to fetch Copilot Studio release planner data');
+    throw new Error(
+      `Failed to fetch Copilot Studio release planner data (HTTP ${response.status})`
+    );
   }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error(
+      `Release planner endpoint returned non-JSON response (HTTP ${response.status}, content-type: ${contentType || 'unknown'}). The backend deployment may be out of date; redeploy the API/server package.`
+    );
+  }
+
   return response.json();
 }
 
