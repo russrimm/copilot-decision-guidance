@@ -234,11 +234,17 @@ function clampRating(value) {
 
 function normalizeWeights(weights) {
   const merged = {
-    businessValue: Math.max(0, Number(weights?.businessValue ?? portfolioDefaultWeights.businessValue)),
+    businessValue: Math.max(
+      0,
+      Number(weights?.businessValue ?? portfolioDefaultWeights.businessValue)
+    ),
     feasibility: Math.max(0, Number(weights?.feasibility ?? portfolioDefaultWeights.feasibility)),
     timeToValue: Math.max(0, Number(weights?.timeToValue ?? portfolioDefaultWeights.timeToValue)),
     risk: Math.max(0, Number(weights?.risk ?? portfolioDefaultWeights.risk)),
-    dataSensitivity: Math.max(0, Number(weights?.dataSensitivity ?? portfolioDefaultWeights.dataSensitivity)),
+    dataSensitivity: Math.max(
+      0,
+      Number(weights?.dataSensitivity ?? portfolioDefaultWeights.dataSensitivity)
+    ),
   };
 
   const total = Object.values(merged).reduce((sum, value) => sum + value, 0);
@@ -484,7 +490,10 @@ app.post('/api/readiness/assess', (req, res) => {
 
     const domainScores = readinessDomains.map((domain) => {
       const domainQuestions = readinessQuestions.filter((q) => q.domain === domain.id);
-      const total = domainQuestions.reduce((sum, q) => sum + scoreReadinessAnswer(answers[q.id]), 0);
+      const total = domainQuestions.reduce(
+        (sum, q) => sum + scoreReadinessAnswer(answers[q.id]),
+        0
+      );
       const score = Math.round(total / domainQuestions.length);
       return {
         domain: domain.id,
@@ -516,7 +525,8 @@ app.post('/api/readiness/assess', (req, res) => {
         priority: answers[q.id] === 'no' ? 'high' : 'medium',
       }));
 
-    const status = blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
+    const status =
+      blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
 
     const actionPlan = [
       'Address high-priority blockers before production deployment.',

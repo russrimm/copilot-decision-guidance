@@ -5,7 +5,10 @@ const ports = [3000, 3001];
 function killWindowsPortListeners(targetPorts) {
   let output = '';
   try {
-    output = execSync('netstat -ano -p tcp', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    output = execSync('netstat -ano -p tcp', {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
   } catch {
     return;
   }
