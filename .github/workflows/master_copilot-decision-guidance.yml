@@ -31,6 +31,7 @@ jobs:
           npm run build:api
           npm run build:web
           npm run test --if-present
+          npm prune --omit=dev
 
       - name: Prepare deployment package
         run: |
@@ -38,6 +39,7 @@ jobs:
           mkdir -p deploy
           cp -r apps deploy/
           cp -r packages deploy/
+          cp -r node_modules deploy/
           cp package.json package-lock.json server-production.mjs deploy/
           # Copy startup script
           cp startup.sh deploy/ || true
@@ -56,4 +58,18 @@ jobs:
           app-name: 'copilot-decision-guidance'
           slot-name: 'Production'
           package: deploy
-          startup-command: 'npm ci --omit=dev && node server-production.mjs'
+          startup-command: 'node server-production.mjs'
+
+      - name: Post-deploy health check
+        run: |
+          URL="https://copilot-decision-guidance.azurewebsites.net/api/health"
+          for i in {1..30}; do
+            if curl -fsS "$URL" > /dev/null; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Waiting for app to become healthy (attempt $i/30)..."
+            sleep 10
+          done
+          echo "Health check failed after 5 minutes"
+          exit 1
