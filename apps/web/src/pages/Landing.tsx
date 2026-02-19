@@ -11,7 +11,9 @@ export default function Landing() {
 
   const hasResults = recommendation !== null;
   const ctaButtonClass =
-    'inline-flex h-12 min-w-[20rem] items-center justify-center rounded-xl px-5 text-base font-semibold transition-all duration-200';
+    'inline-flex h-12 w-full max-w-full items-center justify-center rounded-xl px-5 text-base font-semibold transition-all duration-200 sm:w-auto sm:min-w-[12rem]';
+  const sectionCtaButtonClass =
+    'inline-flex h-12 w-full items-center justify-center rounded-xl px-5 text-base font-semibold transition-all duration-200 sm:w-[22rem]';
   const ctaButtonToneClass =
     'border border-primary-300 bg-primary-50 text-primary-700 hover:bg-primary-100 dark:border-primary-700 dark:bg-primary-900/20 dark:text-primary-300 dark:hover:bg-primary-900/30';
 
@@ -195,7 +197,7 @@ export default function Landing() {
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30">
+          <div className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30">
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
               Readiness Assessment
             </h2>
@@ -206,7 +208,7 @@ export default function Landing() {
           </div>
           <Link
             to="/readiness"
-            className={`${ctaButtonClass} ${ctaButtonToneClass} w-full md:w-auto`}
+            className={`${sectionCtaButtonClass} ${ctaButtonToneClass}`}
           >
             Run Readiness Assessment
           </Link>
@@ -214,38 +216,36 @@ export default function Landing() {
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-        <div className="space-y-3">
-          <div className="grid gap-3 md:grid-cols-[1fr_1fr] md:items-stretch">
-            <div className="h-full rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30">
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
                 Microsoft Agentic Product Updates
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-100">
                 Latest Copilot Studio release milestones and Microsoft Foundry product news.
               </p>
-            </div>
+          </div>
 
-            <div className="flex h-full flex-col gap-3">
-              <Link
-                to="/copilot-studio-release-dates"
-                className={`${ctaButtonClass} ${ctaButtonToneClass} w-full md:w-auto md:self-end`}
-              >
-                Copilot Studio Release Dates
-              </Link>
-              <Link
-                to="/foundry-news"
-                className={`${ctaButtonClass} ${ctaButtonToneClass} w-full md:w-auto md:self-end`}
-              >
-                Microsoft Foundry News
-              </Link>
-            </div>
+          <div className="flex h-full flex-col gap-3 md:w-auto md:items-end">
+            <Link
+              to="/copilot-studio-release-dates"
+              className={`${sectionCtaButtonClass} ${ctaButtonToneClass} md:self-end`}
+            >
+              Copilot Studio Release Dates
+            </Link>
+            <Link
+              to="/foundry-news"
+              className={`${sectionCtaButtonClass} ${ctaButtonToneClass} md:self-end`}
+            >
+              Microsoft Foundry News
+            </Link>
           </div>
         </div>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30">
+          <div className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30">
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
               Scoring Weights Diagram
             </h2>
@@ -258,7 +258,7 @@ export default function Landing() {
             href="/scoring-weights-diagram.html"
             target="_blank"
             rel="noopener noreferrer"
-            className={`${ctaButtonClass} ${ctaButtonToneClass} w-full md:w-auto`}
+            className={`${sectionCtaButtonClass} ${ctaButtonToneClass}`}
           >
             View diagram
           </a>
