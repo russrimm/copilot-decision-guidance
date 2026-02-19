@@ -48,6 +48,15 @@
         overflow-x: auto;
       }
 
+      .mermaid,
+      .mermaid svg,
+      .mermaid svg text,
+      .mermaid .label,
+      .mermaid .edgeLabel {
+        color: #0f172a !important;
+        fill: #0f172a !important;
+      }
+
       @media (prefers-color-scheme: dark) {
         body {
           background: #0f172a;
@@ -101,7 +110,26 @@ flowchart TD
 
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({ startOnLoad: true, securityLevel: 'loose' });
+      mermaid.initialize({
+        startOnLoad: true,
+        securityLevel: 'loose',
+        theme: 'base',
+        themeVariables: {
+          background: '#ffffff',
+          fontFamily:
+            'Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+          primaryColor: '#f8fafc',
+          primaryTextColor: '#0f172a',
+          secondaryColor: '#f1f5f9',
+          secondaryTextColor: '#0f172a',
+          tertiaryColor: '#e2e8f0',
+          tertiaryTextColor: '#0f172a',
+          lineColor: '#334155',
+          textColor: '#0f172a',
+          nodeTextColor: '#0f172a',
+          edgeLabelBackground: '#ffffff',
+        },
+      });
     </script>
   </body>
 </html>
