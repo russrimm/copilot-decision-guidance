@@ -30,6 +30,12 @@ import type { DecisionModel } from '@copilot-guidance/decision-engine';
 import { generateExecutiveOverviewPPTX } from './services/executive-overview-pptx.js';
 import { getCopilotStudioReleasePlannerData } from './services/release-planner.js';
 import { getFoundryNews } from './services/foundry-news.js';
+import {
+  checkImplementationGuideUpdate,
+  getImplementationGuideMetadata,
+  acknowledgeImplementationGuideUpdate,
+  getImplementationGuideUpdateHistory,
+} from './services/implementation-guide-monitor.js';
 
 console.log('[2/10] Core imports loaded successfully');
 
@@ -975,6 +981,65 @@ app.get('/api/foundry/news', async (_req: Request, res: Response) => {
     res.status(502).json({
       error: 'Bad Gateway',
       message: error instanceof Error ? error.message : 'Failed to fetch Foundry news feed',
+    });
+  }
+});
+
+// Implementation Guide Update Monitoring
+app.get('/api/implementation-guide/update-check', async (_req: Request, res: Response) => {
+  try {
+    const updateInfo = await checkImplementationGuideUpdate();
+    res.json(updateInfo);
+  } catch (error) {
+    console.error('Error checking for Implementation Guide updates:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to check for updates',
+    });
+  }
+});
+
+app.get('/api/implementation-guide/metadata', async (_req: Request, res: Response) => {
+  try {
+    const metadata = await getImplementationGuideMetadata();
+    if (!metadata) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Implementation Guide metadata not available',
+      });
+    }
+    res.json(metadata);
+  } catch (error) {
+    console.error('Error retrieving Implementation Guide metadata:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to retrieve metadata',
+    });
+  }
+});
+
+app.post('/api/implementation-guide/acknowledge-update', async (_req: Request, res: Response) => {
+  try {
+    const success = await acknowledgeImplementationGuideUpdate();
+    res.json({ success, message: success ? 'Update acknowledged' : 'Failed to acknowledge update' });
+  } catch (error) {
+    console.error('Error acknowledging Implementation Guide update:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to acknowledge update',
+    });
+  }
+});
+
+app.get('/api/implementation-guide/update-history', async (_req: Request, res: Response) => {
+  try {
+    const history = await getImplementationGuideUpdateHistory();
+    res.json(history);
+  } catch (error) {
+    console.error('Error retrieving Implementation Guide update history:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to retrieve update history',
     });
   }
 });

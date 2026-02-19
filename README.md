@@ -9,6 +9,8 @@ A production-quality web application that guides users through a structured ques
 - **[Customer Deployment Guide](./docs/CUSTOMER_DEPLOYMENT_GUIDE.md)** - Complete setup guide for customers cloning this repo
 - **[Configuration Guide](./docs/CONFIGURATION_GUIDE.md)** - Detailed Azure integration and environment variable documentation
 - **[Recurring Maintenance Tasks](./docs/RECURRING-MAINTENANCE.md)** - Monthly licensing validation, weekly updates, and other scheduled tasks
+- **[Implementation Guide Monitoring](./docs/IMPLEMENTATION_GUIDE_MONITORING.md)** - Automated monthly monitoring of Microsoft Copilot Studio Implementation Guide updates
+- **[Implementation Guide Alignment](./docs/IMPLEMENTATION_GUIDE_ALIGNMENT.md)** - Enhancement plan aligned with official Microsoft Copilot Studio guidance
 - **[Monthly Licensing Validation](./docs/MONTHLY-LICENSING-VALIDATION.md)** - Automated validation of Copilot Studio licensing information
 - **[Weekly Validation Process](./docs/weekly-validation-process.md)** - Automated monitoring of official Microsoft release notes
 - **[Quick Start](#quick-start)** - Get running in 5 minutes (no configuration required)
@@ -86,6 +88,7 @@ Use this checklist for every feature before merge/deploy:
 
 ✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation and AI Decision Framework  
 ✅ **Automated Content Validation** - Monthly licensing validation and weekly product update tracking  
+✅ **Implementation Guide Monitoring** - Automated monthly checks for updates to the Microsoft Copilot Studio Implementation Guide with in-app notifications  
 ✅ **Self-Hostable** - Customer-cloneable solution with optional Azure integrations
 
 ## Scoring Logic Diagram
@@ -844,7 +847,65 @@ npm run validate:licensing && npm run validate:survey
 
 ---
 
-### 📅 Weekly: Product Updates Validation
+### � Implementation Guide Monitoring
+
+Every **1st of the month at 3 AM UTC**, an Azure Function automatically monitors the [Microsoft Copilot Studio Implementation Guide](https://aka.ms/CopilotStudioImplementationGuide) for updates:
+
+✅ **Automated Update Detection:**
+
+- Checks GitHub repository for file changes
+- Compares SHA hash with previously stored version
+- Downloads and extracts PPTX content when updated
+- Identifies chapters, topics, and slide count
+- Stores version metadata in Azure Blob Storage
+- Creates in-app notification banner for users
+
+🔍 **Content Extraction:**
+
+- Parses PowerPoint slides as XML
+- Extracts chapter headings (12 chapters in v2.2)
+- Identifies key topics and terminology
+- Tracks version history and change frequency
+
+📱 **User Notifications:**
+
+- Displays prominent banner when updates detected
+- Shows version number and detection date
+- Lists extracted chapters and topics
+- Links to official guide and alignment documentation
+- "Mark as Reviewed" acknowledgment workflow
+
+🎯 **Enhancement Integration:**
+
+- Informs questionnaire updates
+- Guides readiness assessment improvements
+- Aligns with Success by Design framework
+- Maps to 12 implementation areas:
+  - Overview
+  - Architecture
+  - Language & orchestration
+  - AI capabilities
+  - Integrations
+  - Channels, clients, and handoff
+  - Security, monitoring & governance
+  - Application lifecycle management (ALM)
+  - Analytics & KPIs
+  - Licensing and capacity
+  - Testing agents
+  - Dynamics 365 Omnichannel
+
+**Documentation:** 
+- [Implementation Guide Monitoring System](docs/IMPLEMENTATION_GUIDE_MONITORING.md)
+- [Implementation Guide Alignment Plan](docs/IMPLEMENTATION_GUIDE_ALIGNMENT.md)
+
+**Implementation Guide Source:**
+- GitHub: [microsoft/CopilotStudioSamples](https://github.com/microsoft/CopilotStudioSamples/tree/main/ImplementationGuide)
+- Direct Download: [aka.ms/CopilotStudioImplementationGuide](https://aka.ms/CopilotStudioImplementationGuide)
+- Current Version: **v2.2** (February 2, 2026)
+
+---
+
+### �📅 Weekly: Product Updates Validation
 
 Every **Monday at 9 AM UTC**, a GitHub Action automatically:
 

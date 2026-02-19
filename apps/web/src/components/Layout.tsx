@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
+import { ImplementationGuideUpdateBanner } from './ImplementationGuideUpdateBanner';
 
 export default function Layout() {
   const location = useLocation();
@@ -122,6 +123,7 @@ export default function Layout() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ImplementationGuideUpdateBanner />
         <Outlet />
       </main>
 

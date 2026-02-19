@@ -15,10 +15,14 @@
     "@azure/ai-form-recognizer": "^5.0.0",
     "@azure/search-documents": "^12.0.0",
     "@azure/openai": "^1.0.0-beta.12",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "adm-zip": "^0.5.10",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
+    "@types/adm-zip": "^0.5.5",
+    "@types/xml2js": "^0.4.14",
     "azure-functions-core-tools": "^4.0.5455",
     "typescript": "^5.3.3"
   }
