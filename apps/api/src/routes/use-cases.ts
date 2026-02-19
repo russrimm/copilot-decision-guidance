@@ -44,6 +44,33 @@ const DATA_SOURCES = [
 
 const SUPPORTED_VERTICALS = new Set(['oil', 'gas', 'energy']);
 
+const VERTICAL_ARCHETYPE_MAP: Record<string, 'oil' | 'gas' | 'energy'> = {
+  oil: 'oil',
+  'natural-gas': 'gas',
+  energy: 'energy',
+  'aerospace-defense': 'energy',
+  agriculture: 'energy',
+  automotive: 'energy',
+  construction: 'energy',
+  'consumer-goods': 'energy',
+  education: 'energy',
+  'financial-services': 'energy',
+  'government-public-sector': 'energy',
+  'healthcare-life-sciences': 'energy',
+  'hospitality-travel': 'energy',
+  'industrial-manufacturing': 'energy',
+  'legal-services': 'energy',
+  'media-entertainment': 'energy',
+  nonprofit: 'energy',
+  'pharmaceuticals-biotech': 'energy',
+  'professional-services': 'energy',
+  'real-estate': 'energy',
+  'retail-ecommerce': 'energy',
+  'technology-software': 'energy',
+  telecommunications: 'gas',
+  'transportation-logistics': 'gas',
+};
+
 const VERTICALS = [
   { id: 'aerospace-defense', label: 'Aerospace & Defense', icon: '🛫' },
   { id: 'agriculture', label: 'Agriculture', icon: '🌾' },
@@ -71,20 +98,16 @@ const VERTICALS = [
   { id: 'transportation-logistics', label: 'Transportation & Logistics', icon: '🚚' },
 ];
 
-function resolveVerticalForCatalog(vertical: unknown): 'oil' | 'gas' | 'energy' | 'all' {
+function resolveVerticalForCatalog(vertical: unknown): 'oil' | 'gas' | 'energy' {
   if (typeof vertical !== 'string' || vertical.length === 0) {
-    return 'all';
+    return 'energy';
   }
 
   if (SUPPORTED_VERTICALS.has(vertical)) {
     return vertical as 'oil' | 'gas' | 'energy';
   }
 
-  if (vertical === 'natural-gas') {
-    return 'gas';
-  }
-
-  return 'all';
+  return VERTICAL_ARCHETYPE_MAP[vertical] ?? 'energy';
 }
 
 function toLabelSelections(
@@ -177,6 +200,7 @@ router.post('/generate', (req: Request, res: Response) => {
     res.json({
       useCases,
       selectedCriteria,
+      resolvedVertical,
       effectiveCriteria,
       totalCount: useCases.length,
     });
