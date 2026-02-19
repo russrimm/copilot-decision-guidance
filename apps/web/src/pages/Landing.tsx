@@ -206,10 +206,7 @@ export default function Landing() {
               rollout.
             </p>
           </div>
-          <Link
-            to="/readiness"
-            className={`${sectionCtaButtonClass} ${ctaButtonToneClass}`}
-          >
+          <Link to="/readiness" className={`${sectionCtaButtonClass} ${ctaButtonToneClass}`}>
             Run Readiness Assessment
           </Link>
         </div>
@@ -218,12 +215,12 @@ export default function Landing() {
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                Microsoft Agentic Product Updates
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-100">
-                Latest Copilot Studio release milestones and Microsoft Foundry product news.
-              </p>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Microsoft Agentic Product Updates
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-100">
+              Latest Copilot Studio release milestones and Microsoft Foundry product news.
+            </p>
           </div>
 
           <div className="flex h-full flex-col gap-3 md:w-auto md:items-end">
