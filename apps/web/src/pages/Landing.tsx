@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useWizardStore } from '../store/wizardStore';
-import { CopilotAgent } from '../components/CopilotAgent';
 
 export default function Landing() {
   const { reset, recommendation } = useWizardStore();
@@ -547,10 +546,6 @@ export default function Landing() {
             </svg>
           </button>
         </div>
-      </div>
-
-      <div className="mt-12 mb-8">
-        <CopilotAgent variant="inline" />
       </div>
 
       <div className="mt-8 p-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">

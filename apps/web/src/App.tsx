@@ -9,7 +9,6 @@ import FoundryNews from './pages/FoundryNews';
 import ReadinessAssessment from './pages/ReadinessAssessment';
 import ProfileSummary from './pages/ProfileSummary';
 import Layout from './components/Layout';
-import { CopilotAgent } from './components/CopilotAgent';
 
 function App() {
   return (
@@ -38,8 +37,6 @@ function App() {
             )}
           </Route>
         </Routes>
-        {/* Floating Copilot Agent - Available on all pages */}
-        <CopilotAgent variant="floating" />
       </BrowserRouter>
     </ThemeProvider>
   );
