@@ -27,6 +27,7 @@ app.use(express.json());
 // Dynamic import of decision engine (handles TypeScript via package exports)
 let decisionModel, calculateRecommendation, generateRecommendation;
 let getCopilotStudioReleasePlannerData;
+let useCasesRouter;
 
 const readinessDomains = [
   {
@@ -370,6 +371,35 @@ async function loadReleasePlannerService() {
   console.log(`[STARTUP] ✅ Release planner service loaded from: ${loadedFrom}`);
 }
 
+async function loadUseCasesRouter() {
+  const importCandidates = ['./apps/api/dist/routes/use-cases.js'];
+
+  let routerModule = null;
+  let loadedFrom = null;
+  let lastError = null;
+
+  for (const candidate of importCandidates) {
+    try {
+      console.log(`[STARTUP] Loading use-cases router from ${candidate}`);
+      routerModule = await import(candidate);
+      loadedFrom = candidate;
+      break;
+    } catch (error) {
+      lastError = error;
+      console.warn(
+        `[STARTUP] Unable to load use-cases router from ${candidate}: ${error.code || error.message}`
+      );
+    }
+  }
+
+  if (!routerModule?.default) {
+    throw lastError || new Error('No use-cases router import candidate succeeded');
+  }
+
+  useCasesRouter = routerModule.default;
+  console.log(`[STARTUP] ✅ Use-cases router loaded from: ${loadedFrom}`);
+}
+
 // API Routes
 
 // Health check - Azure uses this to verify app is running
@@ -398,6 +428,9 @@ app.get('/api', (req, res) => {
       '/api/model',
       '/api/score',
       '/api/sources',
+      '/api/use-cases/verticals',
+      '/api/use-cases/departments',
+      '/api/use-cases/data-sources',
       '/api/readiness/model',
       '/api/readiness/assess',
       '/api/release-planner/copilot-studio',
@@ -463,6 +496,18 @@ app.get('/api/sources', (req, res) => {
     console.error('Error fetching sources:', error);
     res.status(500).json({ error: 'Failed to fetch sources' });
   }
+});
+
+// Use Cases Assistant routes
+app.use('/api/use-cases', (req, res, next) => {
+  if (!useCasesRouter) {
+    return res.status(503).json({
+      error: 'Service Unavailable',
+      message: 'Use Cases routes are not loaded on this deployment instance',
+    });
+  }
+
+  return useCasesRouter(req, res, next);
 });
 
 // Readiness Assessment model
@@ -740,7 +785,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Start server after loading decision engine
-Promise.all([loadDecisionEngine(), loadReleasePlannerService()])
+Promise.all([loadDecisionEngine(), loadReleasePlannerService(), loadUseCasesRouter()])
   .then(() => {
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
