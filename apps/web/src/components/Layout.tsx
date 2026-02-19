@@ -1,9 +1,28 @@
+import { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 
 export default function Layout() {
   const location = useLocation();
   const isAdmin = location.pathname === '/admin';
+  const [isInfographicOpen, setIsInfographicOpen] = useState(false);
+
+  useEffect(() => {
+    const onOpen = () => setIsInfographicOpen(true);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsInfographicOpen(false);
+      }
+    };
+
+    window.addEventListener('open-infographic-modal', onOpen);
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.removeEventListener('open-infographic-modal', onOpen);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
@@ -55,14 +74,13 @@ export default function Layout() {
                   >
                     Readiness
                   </Link>
-                  <a
-                    href="/infographic.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => setIsInfographicOpen(true)}
                     className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
                   >
                     Infographic
-                  </a>
+                  </button>
                 </nav>
               )}
               <a
@@ -106,6 +124,30 @@ export default function Layout() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Outlet />
       </main>
+
+      {isInfographicOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-6xl overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-700">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                Strategic Comparison Infographic
+              </h2>
+              <button
+                type="button"
+                onClick={() => setIsInfographicOpen(false)}
+                className="btn btn-secondary !h-9 px-3"
+              >
+                Close
+              </button>
+            </div>
+            <iframe
+              src="/infographic.html"
+              title="Strategic Comparison Infographic"
+              className="h-[80vh] w-full bg-white"
+            />
+          </div>
+        </div>
+      )}
 
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

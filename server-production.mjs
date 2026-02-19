@@ -29,6 +29,24 @@ let decisionModel, calculateRecommendation, generateRecommendation;
 let getCopilotStudioReleasePlannerData;
 let useCasesRouter;
 
+function getOpenAIChatCompletionsUrl() {
+  const rawEndpoint = (process.env.OPENAI_ENDPOINT || '').trim();
+  if (!rawEndpoint) {
+    return 'https://api.openai.com/v1/chat/completions';
+  }
+
+  const normalized = rawEndpoint.replace(/\/+$/, '');
+  if (normalized.includes('/chat/completions')) {
+    return normalized;
+  }
+
+  if (normalized.includes('api.openai.com') && !normalized.includes('/v1')) {
+    return `${normalized}/v1/chat/completions`;
+  }
+
+  return `${normalized}/chat/completions`;
+}
+
 const readinessDomains = [
   {
     id: 'identity',
@@ -645,12 +663,16 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
     const azureKey = process.env.AZURE_OPENAI_API_KEY;
     const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
     const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
+    const openaiKey = process.env.OPENAI_API_KEY;
+    const openaiModel = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+    const hasAzureConfig = !!(azureKey && azureEndpoint && azureDeployment);
+    const hasOpenAIConfig = !!openaiKey;
 
-    if (!azureKey || !azureEndpoint || !azureDeployment) {
+    if (!hasAzureConfig && !hasOpenAIConfig) {
       return res.status(501).json({
         error: 'AI not configured',
         message:
-          'Azure OpenAI environment variables (AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT) must be set to enable the Copilot Agent',
+          'Set either Azure OpenAI settings (AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT) or OPENAI_API_KEY (+ optional OPENAI_ENDPOINT/OPENAI_MODEL) to enable the Copilot Agent',
       });
     }
 
@@ -717,28 +739,59 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
 
 **Important:** Only provide information based on the knowledge above.`;
 
-    // Call Azure OpenAI
-    const apiUrl = `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`;
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': azureKey,
-      },
-      body: JSON.stringify({
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...conversationHistory,
-          { role: 'user', content: message },
-        ],
-        max_completion_tokens: 1000,
-      }),
-    });
+    let response;
+    let provider = 'openai';
+
+    if (hasAzureConfig) {
+      provider = 'azure-openai';
+      const apiUrl = `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`;
+      response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': azureKey,
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...conversationHistory,
+            { role: 'user', content: message },
+          ],
+          max_completion_tokens: 1000,
+        }),
+      });
+    } else {
+      provider = 'openai-compatible';
+      const apiUrl = getOpenAIChatCompletionsUrl();
+      response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${openaiKey}`,
+        },
+        body: JSON.stringify({
+          model: openaiModel,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...conversationHistory,
+            { role: 'user', content: message },
+          ],
+          max_tokens: 1000,
+          temperature: 0.7,
+        }),
+      });
+    }
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error('[COPILOT] Azure OpenAI API error:', response.status);
-      throw new Error('Failed to get response from AI service');
+      console.error(`[COPILOT] ${provider} API error:`, response.status, errorBody);
+      return res.status(response.status === 401 || response.status === 403 ? 502 : 500).json({
+        error: 'Failed to get response from AI service',
+        message:
+          response.status === 401 || response.status === 403
+            ? `Authentication/authorization failed for ${provider}. Verify App Service settings for the selected provider.`
+            : `Provider request failed (${provider}, HTTP ${response.status}).`,
+      });
     }
 
     const data = await response.json();
@@ -747,7 +800,7 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
 
     res.json({ response: responseText });
   } catch (error) {
-    console.error('[COPILOT] Error:', error.message);
+    console.error('[COPILOT] Error:', error.message || error);
     res.status(500).json({
       error: 'Failed to process chat message',
     });
