@@ -51,7 +51,9 @@ function getOpenAIChatCompletionsUrl() {
 async function getAzureOpenAIAccessToken() {
   if (!azureCredential) {
     const identity = await import('@azure/identity');
-    azureCredential = new identity.DefaultAzureCredential();
+    azureCredential = new identity.DefaultAzureCredential({
+      managedIdentityClientId: process.env.AZURE_CLIENT_ID,
+    });
   }
 
   const token = await azureCredential.getToken('https://cognitiveservices.azure.com/.default');
@@ -329,8 +331,8 @@ function scorePortfolioUseCase(useCase, weights) {
 
 async function loadDecisionEngine() {
   const importCandidates = [
-    '@copilot-guidance/decision-engine',
     './packages/decision-engine/dist/index.js',
+    '@copilot-guidance/decision-engine',
   ];
 
   let engine = null;
