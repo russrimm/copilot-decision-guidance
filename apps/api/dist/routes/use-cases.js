@@ -110,6 +110,110 @@ function toLabelSelections(selections, byId, aliasesById) {
         return alias ?? byId.get(idOrLabel) ?? idOrLabel;
     });
 }
+function normalizeToken(input) {
+    return input
+        .trim()
+        .toLowerCase()
+        .replace(/[–—]/g, '-')
+        .replace(/&/g, 'and')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+function normalizeDepartmentId(input) {
+    const token = normalizeToken(input);
+    const map = {
+        operations: 'operations',
+        engineering: 'engineering',
+        finance: 'finance',
+        'finance-accounting': 'finance',
+        'finance-and-accounting': 'finance',
+        hr: 'hr',
+        'human-resources': 'hr',
+        it: 'it',
+        'information-technology': 'it',
+        legal: 'legal',
+        compliance: 'compliance',
+        'supply-chain': 'supply-chain',
+        supplychain: 'supply-chain',
+        procurement: 'procurement',
+        hsse: 'hsse',
+        'health-safety-environment': 'hsse',
+        'health-safety-and-environment': 'hsse',
+        maintenance: 'maintenance',
+        production: 'production',
+        geosciences: 'geosciences',
+        'geosciences-exploration': 'geosciences',
+        environmental: 'environmental',
+        marketing: 'marketing',
+        'marketing-communications': 'marketing',
+        sales: 'sales',
+    };
+    return map[token] ?? token;
+}
+function normalizeDataSourceId(input) {
+    const token = normalizeToken(input);
+    const map = {
+        fabric: 'fabric',
+        'microsoft-fabric': 'fabric',
+        onedrive: 'onedrive',
+        sharepoint: 'sharepoint',
+        sql: 'sql',
+        'sql-database': 'sql',
+        salesforce: 'salesforce',
+        sap: 'sap',
+        snowflake: 'snowflake',
+        'azure-data-lake': 'azure-datalake',
+        dataverse: 'dataverse',
+        excel: 'excel',
+        'excel-csv': 'excel',
+        scada: 'scada',
+        'scada-systems': 'scada',
+        historian: 'historian',
+        'historian-database': 'historian',
+        'azure-blob-storage': 'blob-storage',
+        'blob-storage': 'blob-storage',
+        documents: 'documents',
+        'document-repository': 'documents',
+        email: 'email',
+        'email-archives': 'email',
+    };
+    return map[token] ?? token;
+}
+function scoreUseCaseMatch(useCase, selectedDepartmentIds, selectedDataSourceIds) {
+    const deptIds = useCase.departments.map(normalizeDepartmentId);
+    const sourceIds = useCase.dataSources.map(normalizeDataSourceId);
+    const deptOverlap = deptIds.filter((dept) => selectedDepartmentIds.has(dept)).length;
+    const sourceOverlap = sourceIds.filter((source) => selectedDataSourceIds.has(source)).length;
+    return deptOverlap * 10 + sourceOverlap * 3;
+}
+function ensureDepartmentCoverage(verticalUseCases, selectedDepartmentsRaw, selectedDataSourcesRaw) {
+    if (!Array.isArray(selectedDepartmentsRaw) || selectedDepartmentsRaw.length === 0) {
+        return [];
+    }
+    const selectedDepartmentIds = new Set(selectedDepartmentsRaw
+        .filter((value) => typeof value === 'string')
+        .map((dept) => normalizeDepartmentId(dept)));
+    const selectedDataSourceIds = new Set((Array.isArray(selectedDataSourcesRaw) ? selectedDataSourcesRaw : [])
+        .filter((value) => typeof value === 'string')
+        .map((source) => normalizeDataSourceId(source)));
+    if (verticalUseCases.length === 0 || selectedDepartmentIds.size === 0) {
+        return [];
+    }
+    const rankedVerticalDefaults = [...verticalUseCases].sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
+        scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
+    const guaranteedMatches = [];
+    for (const departmentId of selectedDepartmentIds) {
+        const exactDepartmentMatches = verticalUseCases
+            .filter((useCase) => useCase.departments.map(normalizeDepartmentId).includes(departmentId))
+            .sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
+            scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
+        const chosen = exactDepartmentMatches[0] ?? rankedVerticalDefaults[0];
+        if (chosen && !guaranteedMatches.some((existing) => existing.id === chosen.id)) {
+            guaranteedMatches.push(chosen);
+        }
+    }
+    return guaranteedMatches;
+}
 // Get all verticals available
 router.get('/verticals', (req, res) => {
     res.json(VERTICALS);
@@ -139,6 +243,8 @@ router.post('/generate', (req, res) => {
             dataSources: normalizedDataSources,
         };
         const resolvedVertical = resolveVerticalForCatalog(vertical);
+        const verticalUseCases = useCaseDatabase.filter((entry) => entry.vertical === resolvedVertical);
+        const guaranteedDepartmentMatches = ensureDepartmentCoverage(verticalUseCases, departments, dataSources);
         let effectiveCriteria = { ...selectedCriteria };
         let useCases = getRelevantUseCases(resolvedVertical, effectiveCriteria.departments, effectiveCriteria.dataSources);
         // If filters are too restrictive (or mismatched), progressively relax them.
@@ -154,12 +260,23 @@ router.post('/generate', (req, res) => {
             effectiveCriteria = { ...effectiveCriteria, departments: [], dataSources: [] };
             useCases = getRelevantUseCases(resolvedVertical, effectiveCriteria.departments, effectiveCriteria.dataSources);
         }
+        const selectedDepartmentIds = new Set((Array.isArray(departments) ? departments : [])
+            .filter((value) => typeof value === 'string')
+            .map((dept) => normalizeDepartmentId(dept)));
+        const selectedDataSourceIds = new Set((Array.isArray(dataSources) ? dataSources : [])
+            .filter((value) => typeof value === 'string')
+            .map((source) => normalizeDataSourceId(source)));
+        const mergedUseCases = [...useCases, ...guaranteedDepartmentMatches]
+            .filter((useCase, index, all) => all.findIndex((entry) => entry.id === useCase.id) === index)
+            .sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
+            scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
         res.json({
-            useCases,
+            useCases: mergedUseCases,
             selectedCriteria,
             resolvedVertical,
             effectiveCriteria,
-            totalCount: useCases.length,
+            totalCount: mergedUseCases.length,
+            guaranteedDepartmentCoverage: guaranteedDepartmentMatches.map((entry) => entry.id),
         });
     }
     catch (error) {
