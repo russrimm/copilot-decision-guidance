@@ -28,6 +28,7 @@ app.use(express.json());
 let decisionModel, calculateRecommendation, generateRecommendation;
 let getCopilotStudioReleasePlannerData;
 let useCasesRouter;
+let azureCredential = null;
 
 function getOpenAIChatCompletionsUrl() {
   const rawEndpoint = (process.env.OPENAI_ENDPOINT || '').trim();
@@ -45,6 +46,20 @@ function getOpenAIChatCompletionsUrl() {
   }
 
   return `${normalized}/chat/completions`;
+}
+
+async function getAzureOpenAIAccessToken() {
+  if (!azureCredential) {
+    const identity = await import('@azure/identity');
+    azureCredential = new identity.DefaultAzureCredential();
+  }
+
+  const token = await azureCredential.getToken('https://cognitiveservices.azure.com/.default');
+  if (!token?.token) {
+    throw new Error('Unable to acquire Microsoft Entra access token for Azure OpenAI');
+  }
+
+  return token.token;
 }
 
 const readinessDomains = [
@@ -665,14 +680,16 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
     const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
     const openaiKey = process.env.OPENAI_API_KEY;
     const openaiModel = process.env.OPENAI_MODEL || 'gpt-4o-mini';
-    const hasAzureConfig = !!(azureKey && azureEndpoint && azureDeployment);
+    const hasAzureConfig = !!(azureEndpoint && azureDeployment);
+    const hasAzureKeyConfig = !!(azureKey && azureEndpoint && azureDeployment);
     const hasOpenAIConfig = !!openaiKey;
+    const allowAzureKeyFallback = process.env.ALLOW_AZURE_OPENAI_API_KEY_AUTH === 'true';
 
     if (!hasAzureConfig && !hasOpenAIConfig) {
       return res.status(501).json({
         error: 'AI not configured',
         message:
-          'Set either Azure OpenAI settings (AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT) or OPENAI_API_KEY (+ optional OPENAI_ENDPOINT/OPENAI_MODEL) to enable the Copilot Agent',
+          'Set either Azure OpenAI settings (AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT, and Entra identity access) or OPENAI_API_KEY (+ optional OPENAI_ENDPOINT/OPENAI_MODEL) to enable the Copilot Agent',
       });
     }
 
@@ -745,11 +762,13 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
     if (hasAzureConfig) {
       provider = 'azure-openai';
       const apiUrl = `${azureEndpoint}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-08-01-preview`;
+      const entraToken = await getAzureOpenAIAccessToken();
+
       response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'api-key': azureKey,
+          Authorization: `Bearer ${entraToken}`,
         },
         body: JSON.stringify({
           messages: [
@@ -760,6 +779,30 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
           max_completion_tokens: 1000,
         }),
       });
+
+      if (!response.ok && allowAzureKeyFallback && hasAzureKeyConfig) {
+        const initialErrorBody = await response.text();
+        console.warn(
+          `[COPILOT] azure-openai token auth failed (${response.status}), attempting key fallback because ALLOW_AZURE_OPENAI_API_KEY_AUTH=true.`,
+          initialErrorBody
+        );
+
+        response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'api-key': azureKey,
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...conversationHistory,
+              { role: 'user', content: message },
+            ],
+            max_completion_tokens: 1000,
+          }),
+        });
+      }
     } else {
       provider = 'openai-compatible';
       const apiUrl = getOpenAIChatCompletionsUrl();
