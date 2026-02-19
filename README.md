@@ -61,19 +61,32 @@ Use this checklist for every feature before merge/deploy:
 
 ## Features
 
+### Core Decision Engine
 ✅ **Guided Decision Flow** - 21-question survey covering all Microsoft AI Decision Framework evaluation criteria  
 ✅ **3-Platform Focus** - Per-scenario guidance for Microsoft 365 Copilot, Copilot Studio, and Microsoft Foundry  
 ✅ **Framework-Aligned** - Questions map to Technical Complexity, Skills, Budget, Time, Governance, Action Safety, Memory, and Scale  
 ✅ **Deterministic Scoring** - Transparent, test-covered recommendation engine with weighted platform scores  
 ✅ **Comprehensive Results** - Rationale, next steps, risks, compliance considerations, and verified Microsoft Learn sources  
-✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms  
-✅ **Readiness Assessment** - Score identity, data, security, platform, and operating model readiness with blocker detection  
-✅ **Export Functionality** - Download results as JSON, Markdown, or PDF  
-✅ **Agentic Decision Assistant** - AI-powered chat for licensing guidance and follow-up questions  
-✅ **Admin Panel** - Local configuration and telemetry viewing  
-✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation and AI Decision Framework  
-✅ **Optional Enterprise Dashboard** - Holistic view of Azure costs, Power Platform inventory, licenses, and Secure Score  
 ✅ **AI-Powered Personalized Recommendations** - Context-aware recommendations based on survey responses and tenant metrics  
+✅ **Export Functionality** - Download results as JSON, Markdown, or PDF
+
+### Planning & Assessment Tools
+✅ **Use Case Assistant** - Interactive discovery and exploration of common Microsoft Copilot use cases with detailed implementation guidance  
+✅ **Readiness Assessment** - Score identity, data, security, platform, and operating model readiness with blocker detection  
+✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms (integrated in Use Case Assistant)
+
+### Release Tracking & News
+✅ **Copilot Studio Release Dates** - Track upcoming Public Preview and GA dates from Power Platform Release Planner API  
+✅ **Microsoft Foundry News** - Curated feed of Azure AI Foundry updates, announcements, and documentation changes
+
+### Optional Enterprise Features
+✅ **Enterprise Dashboard** - Holistic view of Azure costs, Power Platform inventory, licenses, and Secure Score (when Azure credentials configured)  
+✅ **Agentic Decision Assistant** - AI-powered chat for licensing guidance and follow-up questions  
+✅ **Admin Panel** - Local configuration and telemetry viewing (development mode only)
+
+### Quality & Maintenance
+✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation and AI Decision Framework  
+✅ **Automated Content Validation** - Monthly licensing validation and weekly product update tracking  
 ✅ **Self-Hostable** - Customer-cloneable solution with optional Azure integrations
 
 ## Scoring Logic Diagram (Mermaid)
@@ -83,25 +96,25 @@ The recommendation engine is deterministic. Each selected answer contributes pla
 ```mermaid
 flowchart TD
   A["Start Questionnaire"] --> B["For each question: select answer"]
-  B --> C["Read answer weights\n(m365Copilot, copilotStudio, foundry, agentBuilder, hybrid)"]
+  B --> C["Read answer weights<br/>(m365Copilot, copilotStudio, foundry, agentBuilder, hybrid)"]
   C --> D["Accumulate totals into scores object"]
   D --> E["All questions processed?"]
   E -->|No| B
   E -->|Yes| F["Sort platform scores descending"]
 
-  F --> G{"Hybrid close to top score?\n(scores.hybrid >= top - hybridThreshold)"}
+  F --> G{"Hybrid close to top score?<br/>(scores.hybrid >= top - hybridThreshold)"}
   G -->|Yes| H["Recommend HYBRID"]
-  G -->|No| I{"3+ platforms within\n(2 * winMargin)?"}
+  G -->|No| I{"3+ platforms within<br/>(2 * winMargin)?"}
   I -->|Yes| H
   I -->|No| J{"Top-2 gap < winMargin?"}
   J -->|Yes| H
-  J -->|No| K{"Foundry + Studio both strong\nwith small gap?"}
+  J -->|No| K{"Foundry + Studio both strong<br/>with small gap?"}
   K -->|Yes| H
   K -->|No| L["Recommend highest score platform"]
 
-  H --> M["Compute confidence\nfrom score distribution"]
+  H --> M["Compute confidence<br/>from score distribution"]
   L --> M
-  M --> N["Return recommendation +\nscore breakdown"]
+  M --> N["Return recommendation +<br/>score breakdown"]
 ```
 
 For an interactive web view of this diagram, open `/scoring-weights-diagram.html` in the app.
@@ -264,17 +277,25 @@ npm run dev:gated
 
 Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Copilot Studio release dates
+## Application Pages
 
-The app includes a page that shows upcoming **Public Preview** and **GA** dates for **Copilot Studio** based on the Power Platform Release Planner API.
+The application includes the following pages:
 
-- Page: [http://localhost:3000/copilot-studio-release-dates](http://localhost:3000/copilot-studio-release-dates)
+### Main User Journey
+- **Home** - [http://localhost:3000](http://localhost:3000) - Landing page with overview
+- **Wizard** - [http://localhost:3000/wizard](http://localhost:3000/wizard) - Interactive questionnaire
+- **Results** - [http://localhost:3000/results](http://localhost:3000/results) - Platform recommendations with AI insights
 
-## Readiness Assessment
+### Planning & Discovery
+- **Use Case Assistant** - [http://localhost:3000/use-cases](http://localhost:3000/use-cases) - Explore common Copilot use cases with implementation guidance
+- **Readiness Assessment** - [http://localhost:3000/readiness](http://localhost:3000/readiness) - Assess deployment blockers and readiness scores
 
-The app now includes a readiness page to assess deployment blockers and action priorities before rollout.
+### Release Intelligence
+- **Copilot Studio Release Dates** - [http://localhost:3000/copilot-studio-release-dates](http://localhost:3000/copilot-studio-release-dates) - Track upcoming Public Preview and GA dates
+- **Microsoft Foundry News** - [http://localhost:3000/foundry-news](http://localhost:3000/foundry-news) - Latest Azure AI Foundry updates and announcements
 
-- Page: [http://localhost:3000/readiness](http://localhost:3000/readiness)
+### Admin & Configuration
+- **Admin Panel** - [http://localhost:3000/admin](http://localhost:3000/admin) - Local configuration (development mode only, requires `__ENABLE_ADMIN__` flag)
 
 ## Build for Production
 
@@ -690,7 +711,118 @@ If deployment fails with "Cannot find module" error:
 
 This repository includes **automated validation systems** that monitor official Microsoft sources to ensure the repository, survey questions, and documentation remain accurate and up-to-date.
 
-### 🗓️ Monthly: Licensing & Survey Question Validation
+### � Workflow Architecture
+
+```mermaid
+graph TB
+    subgraph "Monthly Validation (1st of Month @ 9 AM UTC)"
+        M1[Schedule Trigger<br/>cron: 0 9 1 * *] --> M2[Run Licensing<br/>Validation]
+        M2 --> M3[Download Licensing<br/>Guide Metadata]
+        M3 --> M4[Check Appendix<br/>Changes]
+        M4 --> M5[Validate Pricing<br/>& Entitlements]
+        
+        M1 --> M6[Run Survey<br/>Validation]
+        M6 --> M7[Fetch 5 Microsoft<br/>Sources]
+        M7 --> M8[Parse Enablement<br/>Resources]
+        M8 --> M9[Validate Questions<br/>& Answers]
+        
+        M5 --> M10{Changes<br/>Detected?}
+        M9 --> M10
+        
+        M10 -->|Yes| M11[Create GitHub Issue<br/>Combined Report]
+        M10 -->|Yes| M12[Upload Artifacts<br/>365-day retention]
+        M10 -->|Yes| M13[Commit Check Data<br/>.github/data/]
+        M10 -->|Yes| M14[Send Slack<br/>Notification]
+        M10 -->|No| M15[Post Summary<br/>All Current]
+        
+        M11 --> M16[Manual Review<br/>Required]
+        M16 --> M17[Update Repository<br/>Files]
+        M17 --> M18[Close Issue]
+    end
+    
+    subgraph "Weekly Validation (Mondays @ 9 AM UTC)"
+        W1[Schedule Trigger<br/>cron: 0 9 * * 1] --> W2[Run Updates<br/>Validation]
+        W2 --> W3[Check M365 Copilot<br/>Documentation Hub]
+        W2 --> W4[Check Enablement<br/>Resources]
+        W2 --> W5[Check Release<br/>Notes]
+        W2 --> W6[Check Copilot Studio<br/>What's New]
+        W2 --> W7[Check Azure AI<br/>Foundry]
+        W2 --> W8[Check Roadmap &<br/>Pricing]
+        
+        W3 --> W9[Parse for Changes]
+        W4 --> W9
+        W5 --> W9
+        W6 --> W9
+        W7 --> W9
+        W8 --> W9
+        
+        W9 --> W10{Changes<br/>Detected?}
+        
+        W10 -->|Yes| W11[Create GitHub Issue<br/>With Report]
+        W10 -->|Yes| W12[Upload Artifacts<br/>90-day retention]
+        W10 -->|Yes| W13[Send Email via<br/>Power Automate]
+        W10 -->|No| W14[Post Summary<br/>No Changes]
+        
+        W11 --> W15[Manual Review<br/>& Updates]
+        W15 --> W16[Close Issue]
+    end
+    
+    subgraph "Primary Sources"
+        S1["📄 Power Platform<br/>Licensing Guide (PDF)"]
+        S2["📚 M365 Copilot<br/>Documentation Hub"]
+        S3["🎓 M365 Copilot<br/>Enablement Resources"]
+        S4["📋 Release Notes &<br/>What's New"]
+        S5["☁️ Azure AI Foundry<br/>& Pricing"]
+    end
+    
+    subgraph "Outputs & Artifacts"
+        O1["📋 GitHub Issues<br/>(Combined Reports)"]
+        O2["📦 Workflow Artifacts<br/>(JSON + Markdown)"]
+        O3["💾 Check Data<br/>(.github/data/)"]
+        O4["💬 Notifications<br/>(Slack/Email)"]
+    end
+    
+    M11 -.-> O1
+    W11 -.-> O1
+    M12 -.-> O2
+    W12 -.-> O2
+    M13 -.-> O3
+    M14 -.-> O4
+    W13 -.-> O4
+    
+    S1 -.-> M3
+    S2 -.-> M7
+    S2 -.-> W3
+    S3 -.-> M7
+    S3 -.-> W4
+    S4 -.-> M7
+    S4 -.-> W5
+    S4 -.-> W6
+    S5 -.-> W7
+    
+    classDef monthly fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef weekly fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef sources fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef outputs fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef decision fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+    
+    class M1,M2,M3,M4,M5,M6,M7,M8,M9,M11,M12,M13,M14,M15,M16,M17,M18 monthly
+    class W1,W2,W3,W4,W5,W6,W7,W8,W9,W11,W12,W13,W14,W15,W16 weekly
+    class S1,S2,S3,S4,S5 sources
+    class O1,O2,O3,O4 outputs
+    class M10,W10 decision
+```
+
+**Key Points:**
+- 🗓️ **Monthly**: Focuses on licensing accuracy and survey question validation
+- 📅 **Weekly**: Tracks feature updates and product changes
+- 📦 **Artifacts**: Monthly reports kept 1 year, weekly kept 90 days
+- 🔔 **Notifications**: Automatic issue creation + optional Slack/email
+- 👤 **Manual Steps**: PDF verification and repository updates require human review
+
+---
+
+### �🗓️ Monthly: Licensing & Survey Question Validation
 
 Every **1st of the month at 9 AM UTC**, a GitHub Action automatically runs **two comprehensive validations**:
 
