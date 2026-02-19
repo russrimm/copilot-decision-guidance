@@ -7,10 +7,10 @@ export default function ProfileSummary() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-              About Russ Rimmerman
+              About This Tool
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-200">
-              Summary based on publicly visible LinkedIn profile highlights.
+              Microsoft Agentic Solution Advisor - Platform Decision & Planning
             </p>
           </div>
           <Link to="/" className="btn btn-secondary">
@@ -19,7 +19,99 @@ export default function ProfileSummary() {
         </div>
       </div>
 
+      <div className="card">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
+          What This Tool Does
+        </h2>
+        <ul className="space-y-3 text-gray-700 dark:text-gray-100">
+          <li className="flex items-start">
+            <svg
+              className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-2 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>
+              <strong>Guided Questionnaire:</strong> Answer questions about your specific scenario,
+              including use case, audience, data, integrations, and governance needs.
+            </span>
+          </li>
+          <li className="flex items-start">
+            <svg
+              className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-2 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>
+              <strong>Clear Recommendation:</strong> Get a data-driven recommendation for this
+              specific scenario—whether to use Microsoft 365 Copilot, Copilot Studio, Microsoft
+              Foundry, Agent Builder, or a hybrid combination of platforms.
+            </span>
+          </li>
+          <li className="flex items-start">
+            <svg
+              className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-2 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>
+              <strong>Rationale & Next Steps:</strong> Understand why the recommendation fits and
+              what to do next.
+            </span>
+          </li>
+          <li className="flex items-start">
+            <svg
+              className="w-6 h-6 text-primary-600 dark:text-primary-400 mr-2 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>
+              <strong>Verified Sources:</strong> All guidance is based on official Microsoft Learn
+              documentation.
+            </span>
+          </li>
+        </ul>
+      </div>
+
       <div className="card space-y-4">
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+          About Russ Rimmerman
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-200 mb-4">
+          Summary based on publicly visible LinkedIn profile highlights.
+        </p>
+
         <section>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Short Bio</h3>
           <p className="text-sm text-gray-700 dark:text-gray-100 leading-6">
