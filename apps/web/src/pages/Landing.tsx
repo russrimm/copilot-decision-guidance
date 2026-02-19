@@ -208,7 +208,7 @@ export default function Landing() {
             to="/readiness"
             className={`${ctaButtonClass} ${ctaButtonToneClass} w-full md:w-auto`}
           >
-            Run readiness
+            Run Readiness Assessment
           </Link>
         </div>
       </div>
