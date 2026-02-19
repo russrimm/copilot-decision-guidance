@@ -117,6 +117,13 @@ export type ReadinessQuestion = {
   title: string;
   helperText: string;
   isBlocker: boolean;
+  examples: {
+    good: string;
+    watch: string;
+    highRisk: string;
+  };
+  recommendedControls: string[];
+  references: string[];
 };
 
 export type ReadinessModelResponse = {
@@ -138,6 +145,17 @@ export type ReadinessAssessmentResponse = {
     title: string;
     status: 'partial' | 'no';
     priority: 'high' | 'medium';
+  }>;
+  actionItems: Array<{
+    id: string;
+    domain: ReadinessDomain['id'];
+    title: string;
+    priority: 'high' | 'medium';
+    whyItMatters: string;
+    currentState: 'partial' | 'no';
+    highRiskExample: string;
+    recommendedControls: string[];
+    references: string[];
   }>;
   actionPlan: string[];
   assessedAt: string;

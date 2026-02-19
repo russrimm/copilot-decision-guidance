@@ -122,6 +122,13 @@ type ReadinessQuestion = {
   title: string;
   helperText: string;
   isBlocker: boolean;
+  examples: {
+    good: string;
+    watch: string;
+    highRisk: string;
+  };
+  recommendedControls: string[];
+  references: string[];
 };
 
 type PortfolioCriterion =
@@ -175,6 +182,22 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'Microsoft Entra ID conditional access is enforced for target user groups.',
     helperText: 'Protects access to copilots and agents with baseline controls.',
     isBlocker: true,
+    examples: {
+      good: 'Conditional Access requires MFA and compliant devices for pilot users and blocks legacy authentication.',
+      watch:
+        'Conditional Access exists but excludes service accounts or pilot groups that can still sign in without MFA.',
+      highRisk:
+        'No Conditional Access policy protects pilot users, or broad exclusions allow unmanaged device sign-in.',
+    },
+    recommendedControls: [
+      'Require MFA for all pilot identities and administrators.',
+      'Require compliant or hybrid-joined devices for production access paths.',
+      'Block legacy authentication protocols and remove broad policy exclusions.',
+    ],
+    references: [
+      'https://learn.microsoft.com/entra/identity/conditional-access/overview',
+      'https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policies',
+    ],
   },
   {
     id: 'identity-2',
@@ -182,6 +205,22 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'Role-based access is defined for makers, admins, and reviewers.',
     helperText: 'Ensures least-privilege access across delivery teams.',
     isBlocker: false,
+    examples: {
+      good: 'Makers, environment admins, and security reviewers are separated with least-privilege role assignments.',
+      watch:
+        'Roles are defined, but periodic access reviews and privileged role controls are not consistently enforced.',
+      highRisk:
+        'Makers or project users hold tenant-wide admin roles in production without separation of duties.',
+    },
+    recommendedControls: [
+      'Define role boundaries for maker, approver, and admin duties.',
+      'Use role assignment reviews for privileged access at a regular cadence.',
+      'Restrict production environment admin access to a small operational group.',
+    ],
+    references: [
+      'https://learn.microsoft.com/power-platform/admin/database-security',
+      'https://learn.microsoft.com/entra/id-governance/access-reviews-overview',
+    ],
   },
   {
     id: 'data-1',
@@ -189,6 +228,22 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'Target data sources are classified and ownership is documented.',
     helperText: 'Required to avoid unsafe grounding and data leakage.',
     isBlocker: true,
+    examples: {
+      good: 'Each connected source has a named data owner and sensitivity/classification documented before go-live.',
+      watch:
+        'Most sources are documented, but some pilot connectors are missing clear ownership or classification labels.',
+      highRisk:
+        'Production data is connected without ownership records or sensitivity classification decisions.',
+    },
+    recommendedControls: [
+      'Document data owner, steward, and permitted use for every connected source.',
+      'Apply and enforce sensitivity labels where supported.',
+      'Exclude sources with unresolved ownership or classification from pilot scope.',
+    ],
+    references: [
+      'https://learn.microsoft.com/purview/sensitivity-labels',
+      'https://learn.microsoft.com/power-platform/admin/wp-data-loss-prevention',
+    ],
   },
   {
     id: 'data-2',
@@ -196,6 +251,22 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'High-value use-case data is clean enough for pilot workflows.',
     helperText: 'Improves first-pass answer quality and trust.',
     isBlocker: false,
+    examples: {
+      good: 'Pilot content is current, deduplicated, and aligned to approved business terms and source-of-truth records.',
+      watch:
+        'Data is usable but includes stale pages, inconsistent metadata, or duplicate records that degrade response quality.',
+      highRisk:
+        'Grounding includes outdated or unreviewed content that can produce inaccurate answers in critical workflows.',
+    },
+    recommendedControls: [
+      'Define freshness SLAs for pilot data sources.',
+      'Remove duplicate or obsolete content from grounding sources.',
+      'Create a quality gate checklist before adding new data to pilot scope.',
+    ],
+    references: [
+      'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview',
+      'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+    ],
   },
   {
     id: 'security-1',
@@ -203,6 +274,23 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'DLP and data-sharing policies are in place for pilot scope.',
     helperText: 'Minimum guardrail before production rollout.',
     isBlocker: true,
+    examples: {
+      good:
+        'Power Platform DLP policies separate business and non-business connectors and block prohibited data movements in pilot environments.',
+      watch:
+        'DLP policies exist, but exceptions allow broad connector combinations or unmanaged sharing in pilot environments.',
+      highRisk:
+        'High-risk configuration: pilot environment allows anonymous/public access while DLP policies permit unrestricted connector data sharing.',
+    },
+    recommendedControls: [
+      'Apply environment-scoped DLP with explicit blocked connector groups.',
+      'Disable anonymous/public access paths unless explicitly required and approved.',
+      'Review and approve DLP exceptions through a security governance process.',
+    ],
+    references: [
+      'https://learn.microsoft.com/power-platform/admin/wp-data-loss-prevention',
+      'https://learn.microsoft.com/microsoft-copilot-studio/publication-connect-bot-to-web-channels',
+    ],
   },
   {
     id: 'security-2',
@@ -210,6 +298,23 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'Human-in-the-loop controls are defined for high-impact actions.',
     helperText: 'Prevents autonomous execution for sensitive decisions.',
     isBlocker: true,
+    examples: {
+      good:
+        'High-impact actions require explicit approval workflows before updates, submissions, or external communications are executed.',
+      watch:
+        'Approval controls are defined for some actions, but destructive or compliance-sensitive flows still execute automatically.',
+      highRisk:
+        'Agents can trigger high-impact actions (such as account, financial, or records changes) without human approval gates.',
+    },
+    recommendedControls: [
+      'Classify high-impact actions and require explicit approval for each class.',
+      'Add approval checkpoints in Power Automate or equivalent orchestration paths.',
+      'Log all high-impact action requests and approvals for auditability.',
+    ],
+    references: [
+      'https://learn.microsoft.com/power-automate/guidance/coding-guidelines/error-handling',
+      'https://learn.microsoft.com/microsoft-copilot-studio/authoring-generative-answers',
+    ],
   },
   {
     id: 'platform-1',
@@ -217,6 +322,23 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'Required connectors/integrations are validated in non-production.',
     helperText: 'Reduces implementation risk in first release wave.',
     isBlocker: false,
+    examples: {
+      good:
+        'All required connectors are tested in non-production with least-privilege service identities and representative data.',
+      watch:
+        'Core connectors are tested, but edge-case integrations or throttling limits are not validated before rollout.',
+      highRisk:
+        'New connectors are first exercised in production using broad credentials and untested data paths.',
+    },
+    recommendedControls: [
+      'Validate each connector in non-production with production-like test cases.',
+      'Use dedicated service principals/accounts with least privilege.',
+      'Document error handling and retry behavior for dependency outages.',
+    ],
+    references: [
+      'https://learn.microsoft.com/microsoft-copilot-studio/advanced-connectors',
+      'https://learn.microsoft.com/power-automate/limits-and-config',
+    ],
   },
   {
     id: 'platform-2',
@@ -224,6 +346,23 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'Environment strategy exists for dev/test/prod promotion.',
     helperText: 'Supports reliable releases and rollback posture.',
     isBlocker: true,
+    examples: {
+      good:
+        'Separate dev, test, and production environments are used with controlled promotion and rollback procedures.',
+      watch:
+        'Environment separation exists, but release promotion criteria and rollback runbooks are incomplete.',
+      highRisk:
+        'A single shared/default environment is used for build, test, and production workloads without promotion controls.',
+    },
+    recommendedControls: [
+      'Maintain separate environments for development, testing, and production.',
+      'Define release gates and rollback criteria before production promotion.',
+      'Track deployment artifacts and configuration changes for each promotion step.',
+    ],
+    references: [
+      'https://learn.microsoft.com/power-platform/alm/overview-alm',
+      'https://learn.microsoft.com/power-platform/admin/environments-overview',
+    ],
   },
   {
     id: 'operating-1',
@@ -231,6 +370,23 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'An owner is assigned for each use case and KPI.',
     helperText: 'Clarifies accountability for value realization.',
     isBlocker: false,
+    examples: {
+      good:
+        'Each use case has an accountable owner, target KPI baseline, and review cadence for value tracking.',
+      watch:
+        'Owners are named, but KPI baselines or review cadence are inconsistent across use cases.',
+      highRisk:
+        'No accountable owner is assigned, so KPI drift and unresolved issues accumulate after launch.',
+    },
+    recommendedControls: [
+      'Assign a single accountable owner per use case and KPI set.',
+      'Capture baseline KPI values before pilot launch.',
+      'Establish a recurring value review meeting with action tracking.',
+    ],
+    references: [
+      'https://learn.microsoft.com/power-platform/guidance/adoption/measure-success',
+      'https://learn.microsoft.com/microsoft-365-copilot/microsoft-365-copilot-adoption',
+    ],
   },
   {
     id: 'operating-2',
@@ -238,6 +394,23 @@ const readinessQuestions: ReadinessQuestion[] = [
     title: 'Support runbook exists for incidents and escalation paths.',
     helperText: 'Needed for stable operations post-launch.',
     isBlocker: true,
+    examples: {
+      good:
+        'Runbook defines severity, triage owner, escalation path, and communication templates for service incidents.',
+      watch:
+        'Runbook exists, but escalation ownership or response time expectations are not consistently defined.',
+      highRisk:
+        'No incident runbook or escalation path exists, causing delayed containment and recovery during outages.',
+    },
+    recommendedControls: [
+      'Define severity levels and response targets for pilot and production incidents.',
+      'Publish on-call and escalation contacts for operations and security teams.',
+      'Run incident simulation drills and update the runbook based on findings.',
+    ],
+    references: [
+      'https://learn.microsoft.com/azure/well-architected/operational-excellence/monitoring-analysis',
+      'https://learn.microsoft.com/power-platform/admin/powerplatform-api-call-limits-allocations',
+    ],
   },
 ];
 
@@ -543,11 +716,30 @@ app.post('/api/readiness/assess', (req: Request, res: Response) => {
     const status =
       blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
 
-    const actionPlan = [
-      'Address high-priority blockers before production deployment.',
-      'Define owners and deadlines for each medium/high readiness gap.',
-      'Re-run readiness assessment after control implementation.',
-    ];
+    const actionItems = readinessQuestions
+      .filter((q) => answers[q.id] !== 'yes')
+      .map((q) => ({
+        id: q.id,
+        domain: q.domain,
+        title: q.title,
+        priority: answers[q.id] === 'no' ? 'high' : 'medium',
+        whyItMatters: q.helperText,
+        currentState: answers[q.id],
+        highRiskExample: q.examples.highRisk,
+        recommendedControls: q.recommendedControls,
+        references: q.references,
+      }));
+
+    const actionPlan = actionItems.length
+      ? actionItems.slice(0, 5).map((item, index) => {
+          const controlsPreview = item.recommendedControls.slice(0, 2).join(' | ');
+          return `${index + 1}. [${item.priority.toUpperCase()}] ${item.title} — ${controlsPreview}`;
+        })
+      : [
+          'No immediate remediation actions required.',
+          'Maintain current controls and monitor readiness indicators.',
+          'Re-run readiness assessment periodically or after major changes.',
+        ];
 
     return res.json({
       status,
@@ -556,6 +748,7 @@ app.post('/api/readiness/assess', (req: Request, res: Response) => {
       blockerCount: blockers.length,
       blockers,
       priorities,
+      actionItems,
       actionPlan,
       assessedAt: new Date().toISOString(),
     });
