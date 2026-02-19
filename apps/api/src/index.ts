@@ -112,12 +112,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 console.log('[6/10] ✅ Express app created. Will listen on port:', PORT);
 
-type ReadinessDomain =
-  | 'identity'
-  | 'data'
-  | 'security'
-  | 'platform'
-  | 'operatingModel';
+type ReadinessDomain = 'identity' | 'data' | 'security' | 'platform' | 'operatingModel';
 
 type ReadinessAnswer = 'yes' | 'partial' | 'no';
 
@@ -498,9 +493,7 @@ app.post('/api/readiness/assess', (req: Request, res: Response) => {
       });
     }
 
-    const missingQuestions = readinessQuestions
-      .map((q) => q.id)
-      .filter((id) => !answers[id]);
+    const missingQuestions = readinessQuestions.map((q) => q.id).filter((id) => !answers[id]);
 
     if (missingQuestions.length > 0) {
       return res.status(400).json({
@@ -512,7 +505,10 @@ app.post('/api/readiness/assess', (req: Request, res: Response) => {
 
     const domainScores = readinessDomains.map((domain) => {
       const domainQuestions = readinessQuestions.filter((q) => q.domain === domain.id);
-      const total = domainQuestions.reduce((sum, q) => sum + scoreReadinessAnswer(answers[q.id]), 0);
+      const total = domainQuestions.reduce(
+        (sum, q) => sum + scoreReadinessAnswer(answers[q.id]),
+        0
+      );
       const score = Math.round(total / domainQuestions.length);
       return {
         domain: domain.id,
@@ -544,7 +540,8 @@ app.post('/api/readiness/assess', (req: Request, res: Response) => {
         priority: answers[q.id] === 'no' ? 'high' : 'medium',
       }));
 
-    const status = blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
+    const status =
+      blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
 
     const actionPlan = [
       'Address high-priority blockers before production deployment.',
