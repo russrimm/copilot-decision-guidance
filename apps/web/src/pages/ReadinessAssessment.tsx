@@ -256,8 +256,7 @@ export default function ReadinessAssessment() {
                       <span className="font-medium">Why this matters:</span> {item.whyItMatters}
                     </p>
                     <p className="text-xs mt-1 text-red-700 dark:text-red-300">
-                      <span className="font-medium">High-risk example:</span>{' '}
-                      {item.highRiskExample}
+                      <span className="font-medium">High-risk example:</span> {item.highRiskExample}
                     </p>
                     <p className="text-xs mt-1 text-gray-600 dark:text-gray-200">
                       <span className="font-medium">Priority:</span> {item.priority} ·{' '}
@@ -316,7 +315,9 @@ export default function ReadinessAssessment() {
             </div>
 
             <div className="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">
-              <p className="text-sm text-gray-600 dark:text-gray-200">{detailsQuestion.helperText}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-200">
+                {detailsQuestion.helperText}
+              </p>
 
               <div className="grid gap-3">
                 <div className="rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 p-3">
@@ -362,7 +363,9 @@ export default function ReadinessAssessment() {
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white mb-2">References</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                  References
+                </p>
                 <ul className="space-y-1 text-sm">
                   {(detailsQuestion.references || []).map((reference, index) => (
                     <li key={reference}>

@@ -275,8 +275,7 @@ const readinessQuestions: ReadinessQuestion[] = [
     helperText: 'Minimum guardrail before production rollout.',
     isBlocker: true,
     examples: {
-      good:
-        'Power Platform DLP policies separate business and non-business connectors and block prohibited data movements in pilot environments.',
+      good: 'Power Platform DLP policies separate business and non-business connectors and block prohibited data movements in pilot environments.',
       watch:
         'DLP policies exist, but exceptions allow broad connector combinations or unmanaged sharing in pilot environments.',
       highRisk:
@@ -299,8 +298,7 @@ const readinessQuestions: ReadinessQuestion[] = [
     helperText: 'Prevents autonomous execution for sensitive decisions.',
     isBlocker: true,
     examples: {
-      good:
-        'High-impact actions require explicit approval workflows before updates, submissions, or external communications are executed.',
+      good: 'High-impact actions require explicit approval workflows before updates, submissions, or external communications are executed.',
       watch:
         'Approval controls are defined for some actions, but destructive or compliance-sensitive flows still execute automatically.',
       highRisk:
@@ -323,8 +321,7 @@ const readinessQuestions: ReadinessQuestion[] = [
     helperText: 'Reduces implementation risk in first release wave.',
     isBlocker: false,
     examples: {
-      good:
-        'All required connectors are tested in non-production with least-privilege service identities and representative data.',
+      good: 'All required connectors are tested in non-production with least-privilege service identities and representative data.',
       watch:
         'Core connectors are tested, but edge-case integrations or throttling limits are not validated before rollout.',
       highRisk:
@@ -347,8 +344,7 @@ const readinessQuestions: ReadinessQuestion[] = [
     helperText: 'Supports reliable releases and rollback posture.',
     isBlocker: true,
     examples: {
-      good:
-        'Separate dev, test, and production environments are used with controlled promotion and rollback procedures.',
+      good: 'Separate dev, test, and production environments are used with controlled promotion and rollback procedures.',
       watch:
         'Environment separation exists, but release promotion criteria and rollback runbooks are incomplete.',
       highRisk:
@@ -371,8 +367,7 @@ const readinessQuestions: ReadinessQuestion[] = [
     helperText: 'Clarifies accountability for value realization.',
     isBlocker: false,
     examples: {
-      good:
-        'Each use case has an accountable owner, target KPI baseline, and review cadence for value tracking.',
+      good: 'Each use case has an accountable owner, target KPI baseline, and review cadence for value tracking.',
       watch:
         'Owners are named, but KPI baselines or review cadence are inconsistent across use cases.',
       highRisk:
@@ -395,8 +390,7 @@ const readinessQuestions: ReadinessQuestion[] = [
     helperText: 'Needed for stable operations post-launch.',
     isBlocker: true,
     examples: {
-      good:
-        'Runbook defines severity, triage owner, escalation path, and communication templates for service incidents.',
+      good: 'Runbook defines severity, triage owner, escalation path, and communication templates for service incidents.',
       watch:
         'Runbook exists, but escalation ownership or response time expectations are not consistently defined.',
       highRisk:
