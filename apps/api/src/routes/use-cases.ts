@@ -245,9 +245,7 @@ function ensureDepartmentCoverage(
 
   for (const departmentId of selectedDepartmentIds) {
     const exactDepartmentMatches = verticalUseCases
-      .filter((useCase) =>
-        useCase.departments.map(normalizeDepartmentId).includes(departmentId)
-      )
+      .filter((useCase) => useCase.departments.map(normalizeDepartmentId).includes(departmentId))
       .sort(
         (a, b) =>
           scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
