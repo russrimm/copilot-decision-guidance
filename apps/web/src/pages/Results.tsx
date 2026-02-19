@@ -591,7 +591,16 @@ export default function Results() {
               })()}
               %
             </div>
-            <div className="text-xs text-green-600 dark:text-green-400">Match Score</div>
+            <div className="flex items-center justify-end gap-1 text-xs text-green-600 dark:text-green-400">
+              <span>Match Score</span>
+              <span
+                className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-green-500/60 text-[10px] font-semibold leading-none"
+                title="Match Score = recommended platform score ÷ total score across platforms, expressed as a percentage."
+                aria-label="Match Score explanation: recommended platform score divided by total platform score, as a percentage"
+              >
+                ?
+              </span>
+            </div>
           </div>
         </div>
       </div>
