@@ -1307,68 +1307,6 @@
           ]
         },
         {
-          "id": "cost_memory",
-          "title": "Do you need to store and access conversation history?",
-          "helperText": "Important for audit trails, compliance, and regulated industries",
-          "answers": [
-            {
-              "id": "memory_no",
-              "label": "No, conversations don't need to be retained",
-              "weights": {
-                "m365Copilot": 8,
-                "copilotStudio": 5,
-                "foundry": 4,
-                "agentBuilder": 7,
-                "hybrid": 5
-              }
-            },
-            {
-              "id": "memory_user",
-              "label": "Yes, but only for the user (personal history)",
-              "weights": {
-                "m365Copilot": 9,
-                "copilotStudio": 6,
-                "foundry": 3,
-                "agentBuilder": 5,
-                "hybrid": 6
-              }
-            },
-            {
-              "id": "memory_admin",
-              "label": "Yes, admins need full transcript access for compliance/audit",
-              "weights": {
-                "m365Copilot": 2,
-                "copilotStudio": 10,
-                "foundry": 7,
-                "agentBuilder": 4,
-                "hybrid": 7
-              }
-            },
-            {
-              "id": "memory_custom",
-              "label": "Yes, need custom retention policies and PII scrubbing",
-              "weights": {
-                "m365Copilot": 1,
-                "copilotStudio": 5,
-                "foundry": 10,
-                "agentBuilder": 2,
-                "hybrid": 6
-              }
-            },
-            {
-              "id": "memory_unsure",
-              "label": "I'm not sure",
-              "weights": {
-                "m365Copilot": 5,
-                "copilotStudio": 5,
-                "foundry": 5,
-                "agentBuilder": 5,
-                "hybrid": 5
-              }
-            }
-          ]
-        },
-        {
           "id": "cost_performance",
           "title": "What are your scale and performance requirements?",
           "helperText": "Consider dataset size, response time, and whether you might outgrow platform limits",

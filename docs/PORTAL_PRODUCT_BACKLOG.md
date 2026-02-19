@@ -73,7 +73,7 @@ Use this template when creating a new epic:
 
 Focus: readiness + prioritization + governance baseline
 
-### Epic 1: Readiness Assessment 2.0
+### Epic 1: Readiness Assessment
 
 **Outcome:** Customers know exactly what blocks production rollout.
 
@@ -88,21 +88,6 @@ Focus: readiness + prioritization + governance baseline
    - Acceptance:
      - Platform-specific readiness heatmap
      - Lists prerequisite controls per platform
-
-### Epic 2: Use Case Portfolio Prioritizer
-
-**Outcome:** Teams pick the highest-value, lowest-risk use cases first.
-
-**User Stories**
-
-1. As a product owner, I can score use cases by value, feasibility, risk, and data sensitivity so I can rank what to do first.
-   - Acceptance:
-     - Weighted scoring model with editable weights
-     - Priority tiers (Now/Next/Later)
-2. As an executive sponsor, I can generate a 30/60/90 roadmap so I can align teams and budget.
-   - Acceptance:
-     - Auto-generated phased roadmap
-     - Dependencies and owners included
 
 ### Epic 3: Governance Guardrails Center (Baseline)
 
@@ -215,7 +200,7 @@ Focus: measurable ROI + cost governance + executive transparency
 
 ## Initial Story Point Guidance (for Sprint Planning)
 
-- Readiness Assessment 2.0: 21-34 points
+- Readiness Assessment: 21-34 points
 - Use Case Prioritizer: 13-21 points
 - Governance Guardrails Baseline: 13-21 points
 - Reference Implementation Wizard: 21-34 points
@@ -228,7 +213,7 @@ Focus: measurable ROI + cost governance + executive transparency
 
 ## Recommended Next 3 Sprints
 
-1. Sprint 1: Readiness Assessment 2.0 + data model for scoring and blockers
+1. Sprint 1: Readiness Assessment + data model for scoring and blockers
 2. Sprint 2: Use Case Prioritizer + 30/60/90 roadmap generator
 3. Sprint 3: Governance Guardrails baseline + exportable action plan
 

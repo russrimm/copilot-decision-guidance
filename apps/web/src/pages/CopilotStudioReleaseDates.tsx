@@ -28,12 +28,37 @@ function MilestoneTable({ items }: { items: ReleasePlannerMilestoneItem[] }) {
               className="border-t border-gray-200 dark:border-gray-700"
             >
               <td className="py-2 pr-4 whitespace-nowrap font-medium">{item.date}</td>
-              <td className="py-2 pr-4">{item.featureName}</td>
+              <td className="py-2 pr-4">
+                {item.featureUrl ? (
+                  <a
+                    href={item.featureUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary-700 dark:text-primary-300 hover:underline"
+                  >
+                    {item.featureName}
+                  </a>
+                ) : (
+                  item.featureName
+                )}
+              </td>
               <td className="py-2 pr-4 whitespace-nowrap">{item.releaseWave || '—'}</td>
             </tr>
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function LoadingSpinner({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-10">
+      <div
+        className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary-600 dark:border-gray-600 dark:border-t-primary-400"
+        aria-hidden="true"
+      />
+      <p className="mt-3 text-sm text-gray-600 dark:text-gray-200">{label}</p>
     </div>
   );
 }
@@ -94,11 +119,7 @@ export default function CopilotStudioReleaseDates() {
       </div>
 
       <div className="card mb-6">
-        {loading && (
-          <div className="text-sm text-gray-600 dark:text-gray-200">
-            Loading release planner data…
-          </div>
-        )}
+        {loading && <LoadingSpinner label="Loading release planner data…" />}
 
         {!loading && error && <div className="text-sm text-red-700 dark:text-red-300">{error}</div>}
 
@@ -129,19 +150,29 @@ export default function CopilotStudioReleaseDates() {
         )}
       </div>
 
-      <div className="grid gap-6">
+      {loading && (
         <div className="card">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Upcoming Public Preview
-          </h2>
-          <MilestoneTable items={data?.upcomingPublicPreview ?? []} />
+          <LoadingSpinner label="Loading release dates…" />
         </div>
+      )}
 
-        <div className="card">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Upcoming GA</h2>
-          <MilestoneTable items={data?.upcomingGA ?? []} />
+      {!loading && !error && (
+        <div className="grid gap-6">
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Upcoming Public Preview
+            </h2>
+            <MilestoneTable items={data?.upcomingPublicPreview ?? []} />
+          </div>
+
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Upcoming GA
+            </h2>
+            <MilestoneTable items={data?.upcomingGA ?? []} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

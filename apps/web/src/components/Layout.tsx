@@ -55,12 +55,6 @@ export default function Layout() {
                   >
                     Readiness
                   </Link>
-                  <Link
-                    to="/portfolio-prioritizer"
-                    className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
-                  >
-                    Portfolio
-                  </Link>
                   <a
                     href="/infographic.html"
                     target="_blank"
@@ -80,6 +74,38 @@ export default function Layout() {
                   )}
                 </nav>
               )}
+              <a
+                href="https://www.linkedin.com/in/russrimm/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center w-9 h-9 rounded-md border border-gray-300 dark:border-gray-600 text-[#0A66C2] hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title="LinkedIn"
+                aria-label="LinkedIn"
+              >
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden="true">
+                  <path d="M20.45 20.45h-3.56v-5.58c0-1.33-.02-3.03-1.84-3.03-1.84 0-2.12 1.44-2.12 2.93v5.68H9.37V9h3.42v1.56h.05c.48-.9 1.63-1.84 3.35-1.84 3.59 0 4.26 2.36 4.26 5.43v6.3ZM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM7.12 20.45H3.56V9h3.56v11.45Z" />
+                </svg>
+              </a>
+
+              <Link
+                to="/profile-summary"
+                className="inline-flex items-center justify-center w-9 h-9 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title="About"
+                aria-label="About"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 10v6" />
+                  <circle cx="12" cy="7" r="1" fill="currentColor" stroke="none" />
+                </svg>
+              </Link>
               <ThemeToggle />
             </div>
           </div>

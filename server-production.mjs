@@ -74,14 +74,23 @@ const readinessQuestions = [
   {
     id: 'data-1',
     domain: 'data',
-    title: 'Target data sources are classified and ownership is documented.',
-    helperText: 'Required to avoid unsafe grounding and data leakage.',
+    title: "Knowledge data source permissions align with agent's targeted users.",
+    helperText:
+      'Prevents overexposure and access gaps by ensuring the agent grounds only on sources that intended users are both authorized and able to access.',
     isBlocker: true,
   },
   {
     id: 'data-2',
     domain: 'data',
-    title: 'High-value use-case data is clean enough for pilot workflows.',
+    title: 'Knowledge sources meet required data residency and security requirements.',
+    helperText:
+      'Reduces compliance and exposure risk by ensuring grounding sources stay in approved regions and security boundaries.',
+    isBlocker: true,
+  },
+  {
+    id: 'data-3',
+    domain: 'data',
+    title: 'Knowledge data is fresh enough for pilot workflows.',
     helperText: 'Improves first-pass answer quality and trust.',
     isBlocker: false,
   },
@@ -129,7 +138,12 @@ const readinessQuestions = [
   },
 ];
 
-function scoreReadinessAnswer(answer) {
+function isReadinessEquivalentToYes(questionId, answer) {
+  return answer === 'yes' || (questionId === 'identity-1' && answer === 'na-anonymous-agent');
+}
+
+function scoreReadinessAnswer(questionId, answer) {
+  if (questionId === 'identity-1' && answer === 'na-anonymous-agent') return 100;
   if (answer === 'yes') return 100;
   if (answer === 'partial') return 50;
   return 0;
@@ -386,8 +400,6 @@ app.get('/api', (req, res) => {
       '/api/sources',
       '/api/readiness/model',
       '/api/readiness/assess',
-      '/api/portfolio/model',
-      '/api/portfolio/prioritize',
       '/api/release-planner/copilot-studio',
     ],
   });
@@ -453,7 +465,7 @@ app.get('/api/sources', (req, res) => {
   }
 });
 
-// Readiness Assessment 2.0 model
+// Readiness Assessment model
 app.get('/api/readiness/model', (req, res) => {
   res.json({
     version: '2.0.0',
@@ -467,14 +479,15 @@ app.get('/api/readiness/model', (req, res) => {
   });
 });
 
-// Readiness Assessment 2.0 scoring
+// Readiness Assessment scoring
 app.post('/api/readiness/assess', (req, res) => {
   try {
     const answers = req.body?.answers;
     if (!answers || typeof answers !== 'object') {
       return res.status(400).json({
         error: 'Invalid request',
-        message: 'Missing answers. Expected: { answers: { [questionId]: yes|partial|no } }',
+        message:
+          'Missing answers. Expected: { answers: { [questionId]: yes|partial|no } } (identity-1 also supports na-anonymous-agent).',
       });
     }
 
@@ -491,7 +504,7 @@ app.post('/api/readiness/assess', (req, res) => {
     const domainScores = readinessDomains.map((domain) => {
       const domainQuestions = readinessQuestions.filter((q) => q.domain === domain.id);
       const total = domainQuestions.reduce(
-        (sum, q) => sum + scoreReadinessAnswer(answers[q.id]),
+        (sum, q) => sum + scoreReadinessAnswer(q.id, answers[q.id]),
         0
       );
       const score = Math.round(total / domainQuestions.length);
@@ -516,7 +529,7 @@ app.post('/api/readiness/assess', (req, res) => {
       }));
 
     const priorities = readinessQuestions
-      .filter((q) => answers[q.id] !== 'yes')
+      .filter((q) => !isReadinessEquivalentToYes(q.id, answers[q.id]))
       .map((q) => ({
         id: q.id,
         domain: q.domain,
@@ -548,76 +561,6 @@ app.post('/api/readiness/assess', (req, res) => {
     console.error('Readiness assessment error:', error);
     return res.status(500).json({
       error: 'Readiness assessment failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    });
-  }
-});
-
-// Use Case Portfolio Prioritizer model
-app.get('/api/portfolio/model', (req, res) => {
-  res.json({
-    version: '1.0.0',
-    criteria: portfolioCriteria,
-    defaultWeights: portfolioDefaultWeights,
-    defaultUseCases: portfolioDefaultUseCases,
-  });
-});
-
-// Use Case Portfolio Prioritizer scoring
-app.post('/api/portfolio/prioritize', (req, res) => {
-  try {
-    const rawUseCases = req.body?.useCases;
-    const rawWeights = req.body?.weights;
-
-    if (!Array.isArray(rawUseCases) || rawUseCases.length === 0) {
-      return res.status(400).json({
-        error: 'Invalid request',
-        message: 'Expected non-empty useCases array.',
-      });
-    }
-
-    const normalizedWeights = normalizeWeights(rawWeights);
-
-    const normalizedUseCases = rawUseCases.map((item, index) => ({
-      id: item.id || `custom-${index + 1}`,
-      name: (item.name || '').trim() || `Use Case ${index + 1}`,
-      description: (item.description || '').trim(),
-      ratings: {
-        businessValue: clampRating(item.ratings?.businessValue ?? 3),
-        feasibility: clampRating(item.ratings?.feasibility ?? 3),
-        timeToValue: clampRating(item.ratings?.timeToValue ?? 3),
-        risk: clampRating(item.ratings?.risk ?? 3),
-        dataSensitivity: clampRating(item.ratings?.dataSensitivity ?? 3),
-      },
-    }));
-
-    const prioritized = normalizedUseCases
-      .map((useCase) => {
-        const scored = scorePortfolioUseCase(useCase, normalizedWeights);
-        return {
-          ...useCase,
-          score: scored.score,
-          tier: scored.tier,
-        };
-      })
-      .sort((a, b) => b.score - a.score);
-
-    const roadmap = {
-      days30: prioritized.filter((item) => item.tier === 'now').map((item) => item.name),
-      days60: prioritized.filter((item) => item.tier === 'next').map((item) => item.name),
-      days90: prioritized.filter((item) => item.tier === 'later').map((item) => item.name),
-    };
-
-    return res.json({
-      weights: normalizedWeights,
-      prioritized,
-      roadmap,
-      generatedAt: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error('Portfolio prioritization error:', error);
-    return res.status(500).json({
-      error: 'Portfolio prioritization failed',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
   }

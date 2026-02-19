@@ -7,12 +7,13 @@ import {
   type ReadinessModelResponse,
 } from '../lib/api';
 
-type AnswerValue = 'yes' | 'partial' | 'no';
+type AnswerValue = 'yes' | 'partial' | 'no' | 'na-anonymous-agent';
 
 const answerStyles: Record<AnswerValue, string> = {
   yes: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
   partial: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
   no: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+  'na-anonymous-agent': 'bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300',
 };
 
 const statusStyles: Record<ReadinessAssessmentResponse['status'], string> = {
@@ -20,6 +21,74 @@ const statusStyles: Record<ReadinessAssessmentResponse['status'], string> = {
   'needs-attention': 'text-yellow-700 dark:text-yellow-300',
   blocked: 'text-red-700 dark:text-red-300',
 };
+
+const referenceTitleByUrl: Record<string, string> = {
+  'https://learn.microsoft.com/entra/identity/conditional-access/overview':
+    'Conditional Access overview',
+  'https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policies':
+    'Conditional Access policy design',
+  'https://learn.microsoft.com/power-platform/admin/database-security':
+    'Dataverse security and access control',
+  'https://learn.microsoft.com/entra/id-governance/access-reviews-overview':
+    'Access reviews overview',
+  'https://learn.microsoft.com/purview/sensitivity-labels': 'Sensitivity labels overview',
+  'https://learn.microsoft.com/power-platform/admin/wp-data-loss-prevention':
+    'Power Platform data loss prevention policies',
+  'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview':
+    'Microsoft 365 Copilot extensibility overview',
+  'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio':
+    'Copilot Studio knowledge sources',
+  'https://learn.microsoft.com/microsoft-copilot-studio/publication-connect-bot-to-web-channels':
+    'Publish Copilot Studio agents to web channels',
+  'https://learn.microsoft.com/power-automate/guidance/coding-guidelines/error-handling':
+    'Power Automate error handling guidance',
+  'https://learn.microsoft.com/microsoft-copilot-studio/authoring-generative-answers':
+    'Copilot Studio generative answers authoring',
+  'https://learn.microsoft.com/microsoft-copilot-studio/advanced-connectors':
+    'Copilot Studio advanced connectors',
+  'https://learn.microsoft.com/power-automate/limits-and-config':
+    'Power Automate limits and configuration',
+  'https://learn.microsoft.com/power-platform/alm/overview-alm': 'Power Platform ALM overview',
+  'https://learn.microsoft.com/power-platform/admin/environments-overview':
+    'Power Platform environments overview',
+  'https://learn.microsoft.com/power-platform/guidance/adoption/measure-success':
+    'Measure Power Platform adoption success',
+  'https://learn.microsoft.com/microsoft-365-copilot/microsoft-365-copilot-adoption':
+    'Microsoft 365 Copilot adoption guidance',
+  'https://learn.microsoft.com/azure/well-architected/operational-excellence/monitoring-analysis':
+    'Well-Architected operational monitoring and analysis',
+  'https://learn.microsoft.com/power-platform/admin/powerplatform-api-call-limits-allocations':
+    'Power Platform API call limits and allocations',
+};
+
+function normalizeReferenceUrl(url: string): string {
+  return url.trim().replace(/\/+$/, '');
+}
+
+function toTitleCase(input: string): string {
+  return input
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+function getReferenceTitle(url: string): string {
+  const normalized = normalizeReferenceUrl(url);
+  const mappedTitle = referenceTitleByUrl[normalized];
+  if (mappedTitle) {
+    return mappedTitle;
+  }
+
+  try {
+    const parsed = new URL(normalized);
+    const segments = parsed.pathname.split('/').filter(Boolean);
+    const last = segments[segments.length - 1] || parsed.hostname;
+    return toTitleCase(last.replace(/-/g, ' '));
+  } catch {
+    return normalized;
+  }
+}
 
 export default function ReadinessAssessment() {
   const [model, setModel] = useState<ReadinessModelResponse | null>(null);
@@ -109,7 +178,7 @@ export default function ReadinessAssessment() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-              Readiness Assessment 2.0
+              Readiness Assessment
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-200">
               Assess identity, data, security, platform, and operating model readiness before
@@ -157,14 +226,24 @@ export default function ReadinessAssessment() {
                   <button
                     type="button"
                     onClick={() => setDetailsQuestionId(question.id)}
-                    className="inline-flex items-center px-3 py-1.5 rounded-md border border-primary-300 dark:border-primary-700 text-primary-700 dark:text-primary-300 text-xs font-medium hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+                    className="btn-secondary !h-8 px-3 text-xs"
                   >
                     More Details
                   </button>
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {(model?.answerOptions || []).map((option) => {
+                  {[
+                    ...(model?.answerOptions || []),
+                    ...(question.id === 'identity-1'
+                      ? ([
+                          {
+                            id: 'na-anonymous-agent',
+                            label: 'N/A - Anonymous Agent',
+                          },
+                        ] as const)
+                      : []),
+                  ].map((option) => {
                     const selected = answers[question.id] === option.id;
                     return (
                       <button
@@ -279,7 +358,7 @@ export default function ReadinessAssessment() {
                             rel="noreferrer"
                             className="text-primary-600 dark:text-primary-300 hover:underline"
                           >
-                            {`Source ${index + 1}`}
+                            {getReferenceTitle(reference)}
                           </a>
                           {index < item.references.length - 1 ? ', ' : ''}
                         </span>
@@ -308,7 +387,7 @@ export default function ReadinessAssessment() {
               <button
                 type="button"
                 onClick={() => setDetailsQuestionId(null)}
-                className="px-2 py-1 rounded-md text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="btn-secondary"
               >
                 Close
               </button>
@@ -367,7 +446,7 @@ export default function ReadinessAssessment() {
                   References
                 </p>
                 <ul className="space-y-1 text-sm">
-                  {(detailsQuestion.references || []).map((reference, index) => (
+                  {(detailsQuestion.references || []).map((reference) => (
                     <li key={reference}>
                       <a
                         href={reference}
@@ -375,7 +454,7 @@ export default function ReadinessAssessment() {
                         rel="noreferrer"
                         className="text-primary-600 dark:text-primary-300 hover:underline"
                       >
-                        {`Source ${index + 1}`}
+                        {getReferenceTitle(reference)}
                       </a>
                     </li>
                   ))}

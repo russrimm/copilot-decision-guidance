@@ -110,10 +110,7 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
         <div className="max-w-4xl mx-auto">
-          <button
-            onClick={() => navigate('/')}
-            className="mb-6 flex items-center text-blue-600 hover:text-blue-700 dark:text-blue-400"
-          >
+          <button onClick={() => navigate('/')} className="btn-secondary mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </button>
@@ -142,10 +139,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header */}
         <div className="mb-8">
-          <button
-            onClick={() => navigate('/')}
-            className="mb-4 flex items-center text-blue-600 hover:text-blue-700 dark:text-blue-400"
-          >
+          <button onClick={() => navigate('/')} className="btn-secondary mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </button>
@@ -459,10 +453,7 @@ export default function Dashboard() {
             Take our interactive questionnaire to discover which Microsoft AI solution best fits
             your organization
           </p>
-          <button
-            onClick={() => navigate('/wizard')}
-            className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
-          >
+          <button onClick={() => navigate('/wizard')} className="btn-secondary">
             Start Questionnaire
           </button>
         </div>

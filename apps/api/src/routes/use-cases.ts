@@ -25,10 +25,13 @@ const DEPARTMENTS = [
 ];
 
 const DATA_SOURCES = [
+  { id: 'fabric', label: 'Microsoft Fabric', icon: '🧵' },
+  { id: 'onedrive', label: 'OneDrive', icon: '☁️' },
   { id: 'sharepoint', label: 'SharePoint', icon: '📄' },
   { id: 'sql', label: 'SQL Database', icon: '🗄️' },
   { id: 'salesforce', label: 'Salesforce', icon: '☁️' },
   { id: 'sap', label: 'SAP', icon: '📊' },
+  { id: 'snowflake', label: 'Snowflake', icon: '❄️' },
   { id: 'azure-datalake', label: 'Azure Data Lake', icon: '📦' },
   { id: 'dataverse', label: 'Dataverse', icon: '🔄' },
   { id: 'excel', label: 'Excel / CSV', icon: '📑' },
@@ -38,6 +41,51 @@ const DATA_SOURCES = [
   { id: 'documents', label: 'Document Repository', icon: '📁' },
   { id: 'email', label: 'Email Archives', icon: '📧' },
 ];
+
+const SUPPORTED_VERTICALS = new Set(['oil', 'gas', 'energy']);
+
+const VERTICALS = [
+  { id: 'aerospace-defense', label: 'Aerospace & Defense', icon: '🛫' },
+  { id: 'agriculture', label: 'Agriculture', icon: '🌾' },
+  { id: 'automotive', label: 'Automotive', icon: '🚗' },
+  { id: 'construction', label: 'Construction', icon: '🏗️' },
+  { id: 'consumer-goods', label: 'Consumer Goods', icon: '🛍️' },
+  { id: 'education', label: 'Education', icon: '🎓' },
+  { id: 'energy', label: 'Energy & Utilities', icon: '⚡' },
+  { id: 'financial-services', label: 'Financial Services', icon: '🏦' },
+  { id: 'government-public-sector', label: 'Government & Public Sector', icon: '🏛️' },
+  { id: 'healthcare-life-sciences', label: 'Healthcare & Life Sciences', icon: '🏥' },
+  { id: 'hospitality-travel', label: 'Hospitality & Travel', icon: '🏨' },
+  { id: 'industrial-manufacturing', label: 'Industrial Manufacturing', icon: '🏭' },
+  { id: 'legal-services', label: 'Legal Services', icon: '⚖️' },
+  { id: 'media-entertainment', label: 'Media & Entertainment', icon: '🎬' },
+  { id: 'natural-gas', label: 'Natural Gas', icon: '⛽' },
+  { id: 'nonprofit', label: 'Nonprofit', icon: '🤝' },
+  { id: 'oil', label: 'Oil & Gas Extraction', icon: '🛢️' },
+  { id: 'pharmaceuticals-biotech', label: 'Pharmaceuticals & Biotech', icon: '💊' },
+  { id: 'professional-services', label: 'Professional Services', icon: '💼' },
+  { id: 'real-estate', label: 'Real Estate', icon: '🏢' },
+  { id: 'retail-ecommerce', label: 'Retail & eCommerce', icon: '🛒' },
+  { id: 'technology-software', label: 'Technology & Software', icon: '💻' },
+  { id: 'telecommunications', label: 'Telecommunications', icon: '📡' },
+  { id: 'transportation-logistics', label: 'Transportation & Logistics', icon: '🚚' },
+];
+
+function resolveVerticalForCatalog(vertical: unknown): 'oil' | 'gas' | 'energy' | 'all' {
+  if (typeof vertical !== 'string' || vertical.length === 0) {
+    return 'all';
+  }
+
+  if (SUPPORTED_VERTICALS.has(vertical)) {
+    return vertical as 'oil' | 'gas' | 'energy';
+  }
+
+  if (vertical === 'natural-gas') {
+    return 'gas';
+  }
+
+  return 'all';
+}
 
 function toLabelSelections(
   selections: unknown,
@@ -55,12 +103,7 @@ function toLabelSelections(
 
 // Get all verticals available
 router.get('/verticals', (req: Request, res: Response) => {
-  const verticals = [
-    { id: 'oil', label: 'Oil & Gas Extraction', icon: '🛢️' },
-    { id: 'gas', label: 'Natural Gas', icon: '⛽' },
-    { id: 'energy', label: 'Energy & Utilities', icon: '⚡' },
-  ];
-  res.json(verticals);
+  res.json(VERTICALS);
 });
 
 // Get all departments (for all verticals)
@@ -94,9 +137,11 @@ router.post('/generate', (req: Request, res: Response) => {
       dataSources: normalizedDataSources,
     };
 
+    const resolvedVertical = resolveVerticalForCatalog(vertical);
+
     let effectiveCriteria = { ...selectedCriteria };
     let useCases = getRelevantUseCases(
-      vertical,
+      resolvedVertical,
       effectiveCriteria.departments,
       effectiveCriteria.dataSources
     );
@@ -105,7 +150,7 @@ router.post('/generate', (req: Request, res: Response) => {
     if (useCases.length === 0 && effectiveCriteria.departments.length > 0) {
       effectiveCriteria = { ...effectiveCriteria, departments: [] };
       useCases = getRelevantUseCases(
-        vertical,
+        resolvedVertical,
         effectiveCriteria.departments,
         effectiveCriteria.dataSources
       );
@@ -114,7 +159,7 @@ router.post('/generate', (req: Request, res: Response) => {
     if (useCases.length === 0 && effectiveCriteria.dataSources.length > 0) {
       effectiveCriteria = { ...effectiveCriteria, dataSources: [] };
       useCases = getRelevantUseCases(
-        vertical,
+        resolvedVertical,
         effectiveCriteria.departments,
         effectiveCriteria.dataSources
       );
@@ -123,7 +168,7 @@ router.post('/generate', (req: Request, res: Response) => {
     if (useCases.length === 0) {
       effectiveCriteria = { ...effectiveCriteria, departments: [], dataSources: [] };
       useCases = getRelevantUseCases(
-        vertical,
+        resolvedVertical,
         effectiveCriteria.departments,
         effectiveCriteria.dataSources
       );

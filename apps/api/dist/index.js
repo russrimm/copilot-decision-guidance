@@ -24,6 +24,7 @@ import { DefaultAzureCredential } from '@azure/identity';
 import useCasesRouter from './routes/use-cases.js';
 import { generateExecutiveOverviewPPTX } from './services/executive-overview-pptx.js';
 import { getCopilotStudioReleasePlannerData } from './services/release-planner.js';
+import { getFoundryNews } from './services/foundry-news.js';
 console.log('[2/10] Core imports loaded successfully');
 let decisionModel;
 let calculateRecommendation;
@@ -170,18 +171,18 @@ const readinessQuestions = [
     {
         id: 'data-1',
         domain: 'data',
-        title: 'Target data sources are classified and ownership is documented.',
-        helperText: 'Required to avoid unsafe grounding and data leakage.',
+        title: "Knowledge data source permissions align with agent's targeted users.",
+        helperText: 'Prevents overexposure and access gaps by ensuring the agent grounds only on sources that intended users are both authorized and able to access.',
         isBlocker: true,
         examples: {
-            good: 'Each connected source has a named data owner and sensitivity/classification documented before go-live.',
-            watch: 'Most sources are documented, but some pilot connectors are missing clear ownership or classification labels.',
-            highRisk: 'Production data is connected without ownership records or sensitivity classification decisions.',
+            good: 'Connected knowledge sources enforce user/group permissions that match the intended agent audience before go-live.',
+            watch: 'Most sources are permission-aligned, but some pilot connectors still expose broader access than intended.',
+            highRisk: 'The agent can retrieve content from sources that target users should not be able to access directly.',
         },
         recommendedControls: [
-            'Document data owner, steward, and permitted use for every connected source.',
-            'Apply and enforce sensitivity labels where supported.',
-            'Exclude sources with unresolved ownership or classification from pilot scope.',
+            'Validate source ACLs/security groups against target user personas before enabling grounding.',
+            'Use least-privilege access for connectors and service identities while ensuring target users retain required read access.',
+            'Block or remove sources with permission mismatches from pilot and production scope.',
         ],
         references: [
             'https://learn.microsoft.com/purview/sensitivity-labels',
@@ -191,7 +192,28 @@ const readinessQuestions = [
     {
         id: 'data-2',
         domain: 'data',
-        title: 'High-value use-case data is clean enough for pilot workflows.',
+        title: 'Knowledge sources meet required data residency and security requirements.',
+        helperText: 'Reduces compliance and exposure risk by ensuring grounding sources stay in approved regions and security boundaries.',
+        isBlocker: true,
+        examples: {
+            good: 'All connected knowledge sources are hosted in approved regions, encryption is enabled, and access is governed by policy.',
+            watch: 'Most sources meet residency and security requirements, but one or more pilot sources still require policy exceptions or remediation.',
+            highRisk: 'Knowledge sources used for grounding violate required residency constraints or lack baseline security protections.',
+        },
+        recommendedControls: [
+            'Document approved data residency regions and verify each source location before go-live.',
+            'Apply required encryption, access controls, and security baselines to all connected knowledge sources.',
+            'Block or remove sources that do not satisfy residency and security requirements.',
+        ],
+        references: [
+            'https://learn.microsoft.com/azure/compliance/offerings/offering-data-residency',
+            'https://learn.microsoft.com/azure/security/fundamentals/data-encryption-best-practices',
+        ],
+    },
+    {
+        id: 'data-3',
+        domain: 'data',
+        title: 'Knowledge data is fresh enough for pilot workflows.',
         helperText: 'Improves first-pass answer quality and trust.',
         isBlocker: false,
         examples: {
@@ -336,7 +358,12 @@ const readinessQuestions = [
         ],
     },
 ];
-function scoreReadinessAnswer(answer) {
+function isReadinessEquivalentToYes(questionId, answer) {
+    return answer === 'yes' || (questionId === 'identity-1' && answer === 'na-anonymous-agent');
+}
+function scoreReadinessAnswer(questionId, answer) {
+    if (questionId === 'identity-1' && answer === 'na-anonymous-agent')
+        return 100;
     if (answer === 'yes')
         return 100;
     if (answer === 'partial')
@@ -504,6 +531,16 @@ console.log('[8/10] Configuring middleware...');
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use((error, _req, res, next) => {
+    if (error?.type === 'entity.parse.failed' || error instanceof SyntaxError) {
+        return res.status(400).json({
+            error: 'Invalid JSON payload',
+            message: 'Request body contains malformed JSON. Check for invalid escape sequences (for example bad Unicode escapes like \\u).',
+            details: error?.message || 'Malformed JSON request body.',
+        });
+    }
+    return next(error);
+});
 console.log('[8/10] ✅ Middleware configured');
 // Serve static files from web dist folder in production
 console.log('[9/10] Configuring static file serving...');
@@ -526,7 +563,7 @@ app.get('/api/health', (_req, res) => {
         authMethod: process.env.AZURE_OPENAI_ENDPOINT ? 'entra' : 'none',
     });
 });
-// Readiness Assessment 2.0 model
+// Readiness Assessment model
 app.get('/api/readiness/model', (_req, res) => {
     res.json({
         version: '2.0.0',
@@ -539,14 +576,14 @@ app.get('/api/readiness/model', (_req, res) => {
         ],
     });
 });
-// Readiness Assessment 2.0 scoring
+// Readiness Assessment scoring
 app.post('/api/readiness/assess', (req, res) => {
     try {
         const answers = req.body?.answers;
         if (!answers || typeof answers !== 'object') {
             return res.status(400).json({
                 error: 'Invalid request',
-                message: 'Missing answers. Expected: { answers: { [questionId]: yes|partial|no } }',
+                message: 'Missing answers. Expected: { answers: { [questionId]: yes|partial|no } } (identity-1 also supports na-anonymous-agent).',
             });
         }
         const missingQuestions = readinessQuestions.map((q) => q.id).filter((id) => !answers[id]);
@@ -559,7 +596,7 @@ app.post('/api/readiness/assess', (req, res) => {
         }
         const domainScores = readinessDomains.map((domain) => {
             const domainQuestions = readinessQuestions.filter((q) => q.domain === domain.id);
-            const total = domainQuestions.reduce((sum, q) => sum + scoreReadinessAnswer(answers[q.id]), 0);
+            const total = domainQuestions.reduce((sum, q) => sum + scoreReadinessAnswer(q.id, answers[q.id]), 0);
             const score = Math.round(total / domainQuestions.length);
             return {
                 domain: domain.id,
@@ -577,7 +614,7 @@ app.post('/api/readiness/assess', (req, res) => {
             helperText: q.helperText,
         }));
         const priorities = readinessQuestions
-            .filter((q) => answers[q.id] !== 'yes')
+            .filter((q) => !isReadinessEquivalentToYes(q.id, answers[q.id]))
             .map((q) => ({
             id: q.id,
             domain: q.domain,
@@ -587,7 +624,7 @@ app.post('/api/readiness/assess', (req, res) => {
         }));
         const status = blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
         const actionItems = readinessQuestions
-            .filter((q) => answers[q.id] !== 'yes')
+            .filter((q) => !isReadinessEquivalentToYes(q.id, answers[q.id]))
             .map((q) => ({
             id: q.id,
             domain: q.domain,
@@ -625,78 +662,6 @@ app.post('/api/readiness/assess', (req, res) => {
         console.error('Readiness assessment error:', error);
         return res.status(500).json({
             error: 'Readiness assessment failed',
-            message: error instanceof Error ? error.message : 'Unknown error',
-        });
-    }
-});
-// Use Case Portfolio Prioritizer model
-app.get('/api/portfolio/model', (_req, res) => {
-    res.json({
-        version: '1.0.0',
-        criteria: portfolioCriteria,
-        defaultWeights: portfolioDefaultWeights,
-        defaultUseCases: portfolioDefaultUseCases,
-    });
-});
-// Use Case Portfolio Prioritizer scoring
-app.post('/api/portfolio/prioritize', (req, res) => {
-    try {
-        const rawUseCases = req.body?.useCases;
-        const rawWeights = req.body?.weights;
-        if (!Array.isArray(rawUseCases) || rawUseCases.length === 0) {
-            return res.status(400).json({
-                error: 'Invalid request',
-                message: 'Expected non-empty useCases array.',
-            });
-        }
-        const normalizedWeights = normalizeWeights(rawWeights);
-        const normalizedUseCases = rawUseCases.map((item, index) => ({
-            id: item.id || `custom-${index + 1}`,
-            name: (item.name || '').trim() || `Use Case ${index + 1}`,
-            description: (item.description || '').trim(),
-            ratings: {
-                businessValue: clampRating(item.ratings?.businessValue ?? 3),
-                feasibility: clampRating(item.ratings?.feasibility ?? 3),
-                timeToValue: clampRating(item.ratings?.timeToValue ?? 3),
-                risk: clampRating(item.ratings?.risk ?? 3),
-                dataSensitivity: clampRating(item.ratings?.dataSensitivity ?? 3),
-            },
-        }));
-        const prioritized = normalizedUseCases
-            .map((useCase) => {
-            const scored = scorePortfolioUseCase(useCase, normalizedWeights);
-            return {
-                ...useCase,
-                score: scored.score,
-                tier: scored.tier,
-            };
-        })
-            .sort((a, b) => b.score - a.score);
-        const roadmap = {
-            days30: prioritized
-                .filter((item) => item.tier === 'now')
-                .slice(0, 3)
-                .map((item) => item.name),
-            days60: prioritized
-                .filter((item) => item.tier === 'next')
-                .slice(0, 3)
-                .map((item) => item.name),
-            days90: prioritized
-                .filter((item) => item.tier === 'later')
-                .slice(0, 3)
-                .map((item) => item.name),
-        };
-        return res.json({
-            weights: normalizedWeights,
-            prioritized,
-            roadmap,
-            generatedAt: new Date().toISOString(),
-        });
-    }
-    catch (error) {
-        console.error('Portfolio prioritization error:', error);
-        return res.status(500).json({
-            error: 'Portfolio prioritization failed',
             message: error instanceof Error ? error.message : 'Unknown error',
         });
     }
@@ -847,6 +812,19 @@ app.get('/api/release-planner/copilot-studio', async (_req, res) => {
         res.status(502).json({
             error: 'Bad Gateway',
             message: error instanceof Error ? error.message : 'Failed to fetch release planner data',
+        });
+    }
+});
+app.get('/api/foundry/news', async (_req, res) => {
+    try {
+        const data = await getFoundryNews();
+        res.json(data);
+    }
+    catch (error) {
+        console.error('Error fetching Microsoft Foundry news feed:', error);
+        res.status(502).json({
+            error: 'Bad Gateway',
+            message: error instanceof Error ? error.message : 'Failed to fetch Foundry news feed',
         });
     }
 });

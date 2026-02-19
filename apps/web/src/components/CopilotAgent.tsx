@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { getFriendlyApiErrorMessage } from '../lib/errorMessages';
 
 interface Message {
   id: string;
@@ -62,7 +63,11 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        const friendlyError = await getFriendlyApiErrorMessage(
+          response,
+          'Failed to get response from the assistant.'
+        );
+        throw new Error(friendlyError);
       }
 
       const data = await response.json();
@@ -80,8 +85,7 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content:
-          '❌ Sorry, I encountered an error. Please check that Azure OpenAI is configured in your environment variables.',
+        content: `❌ ${error instanceof Error ? error.message : 'I encountered an unexpected error.'}`,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -136,11 +140,7 @@ export function CopilotAgent({ variant = 'inline' }: CopilotAgentProps) {
                   Agentic Decision Assistant
                 </h3>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                title="Close chat"
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
+              <button onClick={() => setIsOpen(false)} title="Close chat" className="btn-secondary">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -268,8 +268,7 @@ function ChatContent({
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg 
-                       transition-colors disabled:opacity-50 disabled:cursor-not-allowed h-fit"
+            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed h-fit"
           >
             {loading ? '⏳' : '➤'}
           </button>

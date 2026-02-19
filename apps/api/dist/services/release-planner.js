@@ -1,4 +1,6 @@
-const SOURCE_URL = 'https://aka.ms/ReleasePlans/Planner/API/AllPlans';
+const SOURCE_URL = 'https://releaseplans.microsoft.com/en-US/releaseplanner-json/?productId=e72f17ac-715d-e911-a968-000d3a4e32b5&langCode=en-US';
+const RELEASE_PLANS_BASE_URL = 'https://releaseplans.microsoft.com/en-US/';
+const LEARN_BASE_URL = 'https://learn.microsoft.com';
 let cached;
 function toStartOfTodayUtc() {
     const now = new Date();
@@ -27,6 +29,34 @@ function parseUsDateToUtc(dateStr) {
 function getStringField(item, key) {
     const value = item[key];
     return typeof value === 'string' ? value : '';
+}
+function getFirstStringField(item, keys) {
+    for (const key of keys) {
+        const value = getStringField(item, key).trim();
+        if (value)
+            return value;
+    }
+    return '';
+}
+function toAbsoluteLearnUrl(urlOrPath) {
+    const value = (urlOrPath || '').trim();
+    if (!value)
+        return undefined;
+    if (/^https?:\/\//i.test(value)) {
+        return value;
+    }
+    const normalizedPath = value.startsWith('/') ? value : `/${value}`;
+    return `${LEARN_BASE_URL}${normalizedPath}`;
+}
+function toAbsoluteReleasePlansUrl(path) {
+    const value = (path || '').trim();
+    if (!value)
+        return undefined;
+    if (/^https?:\/\//i.test(value)) {
+        return value;
+    }
+    const normalizedPath = value.startsWith('/') ? value.slice(1) : value;
+    return `${RELEASE_PLANS_BASE_URL}${normalizedPath}`;
 }
 async function fetchJsonWithTimeout(url, timeoutMs) {
     const controller = new AbortController();
@@ -58,27 +88,46 @@ export async function getCopilotStudioReleasePlannerData(options) {
     const raw = (await fetchJsonWithTimeout(SOURCE_URL, 20000));
     const results = Array.isArray(raw?.results) ? raw.results : [];
     const todayUtcMs = toStartOfTodayUtc();
+    const isCopilotSignal = (value) => {
+        const normalized = value.toLowerCase();
+        return (normalized.includes('copilot studio') ||
+            normalized.includes('microsoft copilot studio') ||
+            normalized.includes('copilot for power apps') ||
+            normalized.includes('agent builder') ||
+            normalized.includes('agent feed'));
+    };
     const matches = results.filter((r) => {
         if (!r || typeof r !== 'object')
             return false;
-        const productName = getStringField(r, 'Product name');
-        return (productName.toLowerCase().includes('microsoft copilot studio') ||
-            productName.toLowerCase().includes('copilot studio'));
+        const item = r;
+        const productName = getFirstStringField(item, ['Product', 'Product name']);
+        const productArea = getFirstStringField(item, ['ProductArea', 'Product area']);
+        const featureName = getFirstStringField(item, ['FeatureName', 'Feature name']);
+        const featureDetails = getFirstStringField(item, ['FeatureDetails', 'Feature details']);
+        return (isCopilotSignal(productName) ||
+            isCopilotSignal(productArea) ||
+            isCopilotSignal(featureName) ||
+            isCopilotSignal(featureDetails));
     });
+    const effectiveMatches = matches.length > 0 ? matches : results;
     const upcomingPublicPreview = [];
     const upcomingGA = [];
-    for (const item of matches) {
-        const featureName = getStringField(item, 'Feature name').trim();
-        const releasePlanId = getStringField(item, 'Release Plan ID').trim() || undefined;
-        const ppDateStr = getStringField(item, 'Public preview date');
-        const gaDateStr = getStringField(item, 'GA date');
-        const ppWave = getStringField(item, 'Public Preview Release Wave').trim() || undefined;
-        const gaWave = getStringField(item, 'GA Release Wave').trim() || undefined;
+    for (const item of effectiveMatches) {
+        const featureName = getFirstStringField(item, ['FeatureName', 'Feature name']);
+        const releasePlanId = getFirstStringField(item, ['ReleasePlanID', 'Release Plan ID']) || undefined;
+        const ppDateStr = getFirstStringField(item, ['PublicPreviewDate', 'Public preview date']);
+        const gaDateStr = getFirstStringField(item, ['GADate', 'GA date']);
+        const ppWave = getFirstStringField(item, ['ReleaseWaveName', 'Public Preview Release Wave']) || undefined;
+        const gaWave = getFirstStringField(item, ['GAReleaseWaveName', 'GA Release Wave']) || undefined;
+        const docsUrlRaw = getFirstStringField(item, ['DocsUrl', 'docUrl']);
+        const articlePathRaw = getFirstStringField(item, ['ArticlePath']);
+        const featureUrl = toAbsoluteLearnUrl(docsUrlRaw) || toAbsoluteReleasePlansUrl(articlePathRaw);
         const ppDate = parseUsDateToUtc(ppDateStr);
         if (ppDate && ppDate.getTime() >= todayUtcMs) {
             upcomingPublicPreview.push({
                 date: formatDateUtc(ppDate),
                 featureName: featureName || '(Unnamed feature)',
+                featureUrl,
                 releaseWave: ppWave,
                 releasePlanId,
             });
@@ -88,6 +137,7 @@ export async function getCopilotStudioReleasePlannerData(options) {
             upcomingGA.push({
                 date: formatDateUtc(gaDate),
                 featureName: featureName || '(Unnamed feature)',
+                featureUrl,
                 releaseWave: gaWave,
                 releasePlanId,
             });
@@ -99,7 +149,7 @@ export async function getCopilotStudioReleasePlannerData(options) {
         sourceUrl: SOURCE_URL,
         fetchedAt: new Date().toISOString(),
         product: 'Copilot Studio',
-        totalMatchingItems: matches.length,
+        totalMatchingItems: effectiveMatches.length,
         upcomingPublicPreview: upcomingPublicPreview.slice(0, maxItemsPerSection),
         upcomingGA: upcomingGA.slice(0, maxItemsPerSection),
     };

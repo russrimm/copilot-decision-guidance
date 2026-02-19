@@ -675,10 +675,7 @@ export default function Results() {
                 </div>
               </div>
               {!aiRecommendation && !loadingAiRec && (
-                <button
-                  onClick={fetchAiRecommendation}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-semibold transition-colors"
-                >
+                <button onClick={fetchAiRecommendation} className="btn-primary">
                   Generate AI Insights
                 </button>
               )}
@@ -1267,7 +1264,7 @@ export default function Results() {
                 href="/infographic.html"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 text-sm font-semibold text-primary-700 dark:text-primary-300 bg-white dark:bg-gray-800 border border-primary-300 dark:border-primary-600 rounded-lg hover:bg-primary-50 dark:hover:bg-gray-700 transition-colors flex-shrink-0 ml-4"
+                className="btn-secondary flex-shrink-0 ml-4"
               >
                 View Infographic
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

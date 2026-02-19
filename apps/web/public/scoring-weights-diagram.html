@@ -4,107 +4,105 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scoring Weights Diagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      :root {
-        color-scheme: light dark;
-      }
-
-      body {
-        margin: 0;
-        padding: 24px;
-        font-family:
-          Inter,
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Helvetica,
-          Arial,
-          sans-serif;
-        background: #f8fafc;
-        color: #0f172a;
-      }
-
-      .container {
-        max-width: 1100px;
-        margin: 0 auto;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-        margin-bottom: 8px;
-      }
-
-      p {
-        margin: 0 0 16px;
-        color: #334155;
-      }
-
-      .card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 16px;
-        overflow-x: auto;
-      }
-
       .mermaid,
       .mermaid svg,
       .mermaid svg text,
       .mermaid .label,
-      .mermaid .edgeLabel {
+      .mermaid .edgeLabel,
+      .mermaid .nodeLabel,
+      .mermaid .cluster-label {
         color: #0f172a !important;
         fill: #0f172a !important;
       }
 
-      @media (prefers-color-scheme: dark) {
-        body {
-          background: #0f172a;
-          color: #e2e8f0;
-        }
+      .mermaid .label foreignObject,
+      .mermaid .edgeLabel foreignObject {
+        overflow: visible !important;
+      }
 
-        p {
-          color: #cbd5e1;
-        }
+      .mermaid .labelBkg,
+      .mermaid .edgeLabel rect,
+      .mermaid .edgeLabel span,
+      .mermaid .label span {
+        fill: #ffffff !important;
+        background: #ffffff !important;
+      }
 
-        .card {
-          background: #111827;
-          border-color: #334155;
-        }
+      .mermaid .node rect,
+      .mermaid .node polygon,
+      .mermaid .node path,
+      .mermaid .node circle {
+        stroke: #334155 !important;
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <h1>Decision Scoring Weights</h1>
-      <p>
+  <body
+    class="m-0 min-h-screen bg-slate-50 px-6 py-6 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
+  >
+    <div class="mx-auto max-w-[120rem]">
+      <h1 class="mb-2 text-2xl font-semibold">Decision Scoring Weights</h1>
+      <p class="mb-4 text-sm text-slate-600 dark:text-slate-300">
         This diagram shows how each selected answer contributes platform weights and how the final
         recommendation is chosen.
       </p>
-      <div class="card">
-        <pre class="mermaid">
+      <div class="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)]">
+        <div
+          class="overflow-x-auto rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+        >
+          <pre class="mermaid">
 flowchart TD
     A["Start Questionnaire"] --> B["For each question: select answer"]
-    B --> C["Read answer weights\n(m365Copilot, copilotStudio, foundry, agentBuilder, hybrid)"]
+    B --> C["Read answer weights<br/>(m365Copilot, copilotStudio, foundry, agentBuilder, hybrid)"]
     C --> D["Accumulate totals into scores object"]
     D --> E["All questions processed?"]
     E -->|No| B
     E -->|Yes| F["Sort platform scores descending"]
 
-    F --> G{"Hybrid close to top score?\n(scores.hybrid >= top - hybridThreshold)"}
+    F --> G{"Hybrid close to top score?<br/>(scores.hybrid >= top - hybridThreshold)"}
     G -->|Yes| H["Recommend HYBRID"]
-    G -->|No| I{"3+ platforms within\n(2 * winMargin)?"}
+    G -->|No| I{"3+ platforms within<br/>(2 * winMargin)?"}
     I -->|Yes| H
     I -->|No| J{"Top-2 gap < winMargin?"}
     J -->|Yes| H
-    J -->|No| K{"Foundry + Studio both strong\nwith small gap?"}
+    J -->|No| K{"Foundry + Studio both strong<br/>with small gap?"}
     K -->|Yes| H
     K -->|No| L["Recommend highest score platform"]
 
-    H --> M["Compute confidence\nfrom score distribution"]
+    H --> M["Compute confidence<br/>from score distribution"]
     L --> M
-    M --> N["Return recommendation +\nscore breakdown"]
-        </pre>
+    M --> N["Return recommendation +<br/>score breakdown"]
+          </pre>
+        </div>
+
+        <aside
+          class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+        >
+          <h2 class="text-lg font-semibold">Questions & Weights</h2>
+          <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
+            All questionnaire items and each answer&apos;s platform score weights.
+          </p>
+
+          <div
+            class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs dark:border-slate-600 dark:bg-slate-900/40"
+          >
+            <h3 class="mb-2 text-sm font-semibold">Legend</h3>
+            <ul class="space-y-1 text-slate-700 dark:text-slate-200">
+              <li><span class="font-medium">M365</span> = Microsoft 365 Copilot</li>
+              <li><span class="font-medium">Studio</span> = Copilot Studio</li>
+              <li><span class="font-medium">Foundry</span> = Microsoft Foundry</li>
+              <li><span class="font-medium">Agent</span> = Agent Builder</li>
+              <li><span class="font-medium">Hybrid</span> = Combined recommendation signal</li>
+              <li><span class="font-medium">Score scale</span> = 0 (no fit) to 10 (strong fit)</li>
+            </ul>
+          </div>
+
+          <div id="weights-loading" class="mt-4 text-sm text-slate-600 dark:text-slate-300">
+            Loading question weights...
+          </div>
+          <div id="weights-panel" class="mt-3 max-h-[70vh] space-y-3 overflow-y-auto pr-1"></div>
+        </aside>
       </div>
     </div>
 
@@ -127,9 +125,90 @@ flowchart TD
           lineColor: '#334155',
           textColor: '#0f172a',
           nodeTextColor: '#0f172a',
+          mainBkg: '#f8fafc',
+          nodeBorder: '#334155',
+          clusterBkg: '#f8fafc',
+          clusterBorder: '#94a3b8',
           edgeLabelBackground: '#ffffff',
         },
       });
+
+      const loadingElement = document.getElementById('weights-loading');
+      const panelElement = document.getElementById('weights-panel');
+
+      const platformOrder = [
+        ['m365Copilot', 'M365'],
+        ['copilotStudio', 'Studio'],
+        ['foundry', 'Foundry'],
+        ['agentBuilder', 'Agent'],
+        ['hybrid', 'Hybrid'],
+      ];
+
+      const escapeHtml = (value) =>
+        String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+
+      const renderWeights = (model) => {
+        const questions = (model?.questionGroups ?? []).flatMap((group) => group.questions ?? []);
+
+        if (!questions.length) {
+          loadingElement.textContent = 'No questions found in the decision model.';
+          return;
+        }
+
+        loadingElement.remove();
+
+        const cards = questions
+          .map((question, index) => {
+            const answers = (question.answers ?? [])
+              .map((answer) => {
+                const weightText = platformOrder
+                  .map(([key, shortLabel]) => {
+                    const value = answer.weights?.[key] ?? 0;
+                    return `<span class="rounded border border-slate-300 bg-white px-1.5 py-0.5 text-[11px] dark:border-slate-600 dark:bg-slate-900">${shortLabel}: ${value}</span>`;
+                  })
+                  .join(' ');
+
+                return `
+                  <li class="rounded-md border border-slate-200 bg-slate-50 p-2 dark:border-slate-600 dark:bg-slate-900/40">
+                    <div class="text-xs text-slate-900 dark:text-slate-100">${escapeHtml(answer.label)}</div>
+                    <div class="mt-1 flex flex-wrap gap-1">${weightText}</div>
+                  </li>
+                `;
+              })
+              .join('');
+
+            return `
+              <section class="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100">${index + 1}. ${escapeHtml(question.title)}</h4>
+                <ul class="mt-2 space-y-2">${answers}</ul>
+              </section>
+            `;
+          })
+          .join('');
+
+        panelElement.innerHTML = cards;
+      };
+
+      fetch('/api/model')
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((model) => {
+          renderWeights(model);
+        })
+        .catch((error) => {
+          console.error('Failed to load decision model for weight panel:', error);
+          loadingElement.textContent =
+            'Could not load weights from /api/model. Start the API and refresh this page.';
+        });
     </script>
   </body>
 </html>

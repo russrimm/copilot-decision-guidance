@@ -92,6 +92,7 @@ export async function getSources() {
 export type ReleasePlannerMilestoneItem = {
   date: string; // YYYY-MM-DD
   featureName: string;
+  featureUrl?: string;
   releaseWave?: string;
   releasePlanId?: string;
 };
@@ -103,6 +104,21 @@ export type CopilotStudioReleasePlannerResponse = {
   totalMatchingItems: number;
   upcomingPublicPreview: ReleasePlannerMilestoneItem[];
   upcomingGA: ReleasePlannerMilestoneItem[];
+};
+
+export type FoundryNewsItem = {
+  title: string;
+  link: string;
+  pubDate: string;
+  isoDate: string;
+  summary: string;
+};
+
+export type FoundryNewsResponse = {
+  sourceUrl: string;
+  fetchedAt: string;
+  totalItems: number;
+  items: FoundryNewsItem[];
 };
 
 export type ReadinessDomain = {
@@ -130,7 +146,7 @@ export type ReadinessModelResponse = {
   version: string;
   domains: ReadinessDomain[];
   questions: ReadinessQuestion[];
-  answerOptions: Array<{ id: 'yes' | 'partial' | 'no'; label: string }>;
+  answerOptions: Array<{ id: 'yes' | 'partial' | 'no' | 'na-anonymous-agent'; label: string }>;
 };
 
 export type ReadinessAssessmentResponse = {
@@ -161,45 +177,6 @@ export type ReadinessAssessmentResponse = {
   assessedAt: string;
 };
 
-export type PortfolioCriterionId =
-  | 'businessValue'
-  | 'feasibility'
-  | 'timeToValue'
-  | 'risk'
-  | 'dataSensitivity';
-
-export type PortfolioWeights = Record<PortfolioCriterionId, number>;
-
-export type PortfolioUseCase = {
-  id: string;
-  name: string;
-  description: string;
-  ratings: Record<PortfolioCriterionId, number>;
-};
-
-export type PortfolioModelResponse = {
-  version: string;
-  criteria: Array<{
-    id: PortfolioCriterionId;
-    label: string;
-    description: string;
-    higherIsBetter: boolean;
-  }>;
-  defaultWeights: PortfolioWeights;
-  defaultUseCases: PortfolioUseCase[];
-};
-
-export type PortfolioPrioritizationResponse = {
-  weights: PortfolioWeights;
-  prioritized: Array<PortfolioUseCase & { score: number; tier: 'now' | 'next' | 'later' }>;
-  roadmap: {
-    days30: string[];
-    days60: string[];
-    days90: string[];
-  };
-  generatedAt: string;
-};
-
 export async function getCopilotStudioReleasePlanner(): Promise<CopilotStudioReleasePlannerResponse> {
   const response = await fetchWithTimeout(
     `${API_BASE_URL}/release-planner/copilot-studio`,
@@ -217,6 +194,23 @@ export async function getCopilotStudioReleasePlanner(): Promise<CopilotStudioRel
   if (!contentType.includes('application/json')) {
     throw new Error(
       `Release planner endpoint returned non-JSON response (HTTP ${response.status}, content-type: ${contentType || 'unknown'}). The backend deployment may be out of date; redeploy the API/server package.`
+    );
+  }
+
+  return response.json();
+}
+
+export async function getFoundryNews(): Promise<FoundryNewsResponse> {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/foundry/news`, {}, 20000);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Microsoft Foundry news (HTTP ${response.status})`);
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error(
+      `Foundry news endpoint returned non-JSON response (HTTP ${response.status}, content-type: ${contentType || 'unknown'})`
     );
   }
 
@@ -245,7 +239,7 @@ export async function getReadinessModel(): Promise<ReadinessModelResponse> {
 }
 
 export async function assessReadiness(
-  answers: Record<string, 'yes' | 'partial' | 'no'>
+  answers: Record<string, 'yes' | 'partial' | 'no' | 'na-anonymous-agent'>
 ): Promise<ReadinessAssessmentResponse> {
   const response = await fetchWithTimeout(
     `${API_BASE_URL}/readiness/assess`,
@@ -262,38 +256,6 @@ export async function assessReadiness(
   if (!response.ok) {
     const payload = await response.json().catch(() => null);
     throw new Error(payload?.message || 'Failed to assess readiness');
-  }
-
-  return response.json();
-}
-
-export async function getPortfolioModel(): Promise<PortfolioModelResponse> {
-  const response = await fetchWithTimeout(`${API_BASE_URL}/portfolio/model`, {}, 15000);
-  if (!response.ok) {
-    throw new Error('Failed to fetch portfolio model');
-  }
-  return response.json();
-}
-
-export async function prioritizePortfolio(payload: {
-  useCases: PortfolioUseCase[];
-  weights: Partial<PortfolioWeights>;
-}): Promise<PortfolioPrioritizationResponse> {
-  const response = await fetchWithTimeout(
-    `${API_BASE_URL}/portfolio/prioritize`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    },
-    20000
-  );
-
-  if (!response.ok) {
-    const data = await response.json().catch(() => null);
-    throw new Error(data?.message || 'Failed to prioritize portfolio');
   }
 
   return response.json();

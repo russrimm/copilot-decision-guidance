@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getFriendlyApiErrorMessage } from '../lib/errorMessages';
 
 interface SearchResult {
   title: string;
@@ -27,7 +28,6 @@ export function LicensingSearch() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
         if (response.status === 501) {
           setError(
             'Azure AI Search is not configured. Using structured licensing data instead. ' +
@@ -35,7 +35,8 @@ export function LicensingSearch() {
           );
           return;
         }
-        throw new Error(errorData.message || 'Search failed');
+        const friendlyError = await getFriendlyApiErrorMessage(response, 'Search failed');
+        throw new Error(friendlyError);
       }
 
       const data = await response.json();
@@ -80,8 +81,7 @@ export function LicensingSearch() {
         <button
           onClick={handleSearch}
           disabled={loading || !query.trim()}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg 
-                     transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? '⏳' : '🔍'}
         </button>
@@ -185,9 +185,7 @@ export function LicensingSearch() {
                   setQuery(example);
                   setTimeout(handleSearch, 100);
                 }}
-                className="text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 
-                           hover:bg-white dark:hover:bg-gray-800 rounded border border-transparent 
-                           hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
+                className="btn-secondary justify-start text-left"
               >
                 "{example}"
               </button>

@@ -412,11 +412,17 @@ function normalizeDepartment(input) {
 function normalizeDataSource(input) {
     const t = normalizeToken(input);
     const map = {
+        fabric: 'fabric',
+        'microsoft-fabric': 'fabric',
+        msfabric: 'fabric',
+        onedrive: 'onedrive',
+        'one-drive': 'onedrive',
         sharepoint: 'sharepoint',
         sql: 'sql',
         'sql-database': 'sql',
         salesforce: 'salesforce',
         sap: 'sap',
+        snowflake: 'snowflake',
         'azure-data-lake': 'azure-datalake',
         azuredatalake: 'azure-datalake',
         dataverse: 'dataverse',
@@ -444,7 +450,7 @@ export function getRelevantUseCases(vertical, departments, dataSources) {
     const requestedDeptIds = new Set(departments.map(normalizeDepartment));
     const requestedSourceIds = new Set(dataSources.map(normalizeDataSource));
     return useCaseDatabase.filter((useCase) => {
-        const verticalMatch = useCase.vertical === vertical;
+        const verticalMatch = vertical === 'all' || useCase.vertical === vertical;
         const useCaseDeptIds = useCase.departments.map(normalizeDepartment);
         const useCaseSourceIds = useCase.dataSources.map(normalizeDataSource);
         const deptMatch = requestedDeptIds.size === 0 || useCaseDeptIds.some((dept) => requestedDeptIds.has(dept));

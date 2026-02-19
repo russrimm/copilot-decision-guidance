@@ -67,8 +67,7 @@ Use this checklist for every feature before merge/deploy:
 ✅ **Deterministic Scoring** - Transparent, test-covered recommendation engine with weighted platform scores  
 ✅ **Comprehensive Results** - Rationale, next steps, risks, compliance considerations, and verified Microsoft Learn sources  
 ✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms  
-✅ **Readiness Assessment 2.0** - Score identity, data, security, platform, and operating model readiness with blocker detection  
-✅ **Use Case Portfolio Prioritizer** - Rank candidate scenarios with weighted scoring and generate a 30/60/90 execution view  
+✅ **Readiness Assessment** - Score identity, data, security, platform, and operating model readiness with blocker detection  
 ✅ **Export Functionality** - Download results as JSON, Markdown, or PDF  
 ✅ **Agentic Decision Assistant** - AI-powered chat for licensing guidance and follow-up questions  
 ✅ **Admin Panel** - Local configuration and telemetry viewing  
@@ -271,7 +270,7 @@ The app includes a page that shows upcoming **Public Preview** and **GA** dates 
 
 - Page: [http://localhost:3000/copilot-studio-release-dates](http://localhost:3000/copilot-studio-release-dates)
 
-## Readiness Assessment 2.0
+## Readiness Assessment
 
 The app now includes a readiness page to assess deployment blockers and action priorities before rollout.
 
