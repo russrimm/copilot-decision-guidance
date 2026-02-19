@@ -16,7 +16,7 @@ export function downloadJSON(data: any, filename: string) {
 
 export function generateMarkdownSummary(
   recommendation: Recommendation,
-  answers?: Array<{ question: string; answer: string }>
+  answers?: Array<{ question: string; answer: string; comment?: string }>
 ): string {
   const {
     type,
@@ -79,6 +79,9 @@ export function generateMarkdownSummary(
     answers.forEach((qa, idx) => {
       markdown += `**Q${idx + 1}:** ${qa.question}\n\n`;
       markdown += `**A:** ${qa.answer}\n\n`;
+      if (qa.comment && qa.comment.trim()) {
+        markdown += `**Comment:** ${qa.comment}\n\n`;
+      }
     });
   }
 
@@ -144,7 +147,7 @@ export function downloadMarkdown(markdown: string, filename: string) {
 
 export function generatePDF(
   recommendation: Recommendation,
-  answers: Array<{ question: string; answer: string }>
+  answers: Array<{ question: string; answer: string; comment?: string }>
 ) {
   const {
     type,
@@ -394,18 +397,22 @@ export function generatePDF(
     doc.text('Your Answers', margin, yPosition);
     yPosition += 12;
 
-    // Create table data
-    const tableData = answers.map((qa) => [qa.question, qa.answer]);
+    // Create table data with comments
+    const tableData = answers.map((qa) => {
+      const comment = (qa.comment ?? '').trim();
+      return comment ? [qa.question, qa.answer, comment] : [qa.question, qa.answer, ''];
+    });
 
     autoTable(doc, {
       startY: yPosition,
-      head: [['Question', 'Answer']],
+      head: [['Question', 'Answer', 'Comment']],
       body: tableData,
       theme: 'striped',
       headStyles: { fillColor: [59, 130, 246], fontStyle: 'bold' },
       columnStyles: {
-        0: { cellWidth: 80 },
-        1: { cellWidth: 100 },
+        0: { cellWidth: 50 },
+        1: { cellWidth: 60 },
+        2: { cellWidth: 60, fontStyle: 'italic' },
       },
       styles: {
         fontSize: 9,
@@ -436,7 +443,7 @@ export function generatePDF(
 
 export function downloadPDF(
   recommendation: Recommendation,
-  answers: Array<{ question: string; answer: string }>,
+  answers: Array<{ question: string; answer: string; comment?: string }>,
   filename: string
 ) {
   const doc = generatePDF(recommendation, answers);

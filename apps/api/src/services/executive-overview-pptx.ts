@@ -1,4 +1,4 @@
-import PptxGenJS from 'pptxgenjs';
+import * as PptxGenJS from 'pptxgenjs';
 import type { ScoringResult } from '@copilot-guidance/decision-engine';
 
 type RecommendationType = ScoringResult['recommendation'];

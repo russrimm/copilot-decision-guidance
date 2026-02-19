@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useWizardStore } from '../store/wizardStore';
 import {
-  downloadJSON,
-  downloadMarkdown,
   generateMarkdownSummary,
   downloadPDF,
 } from '../lib/export';
@@ -374,38 +372,10 @@ export default function Results() {
     return keywordParts.length > 0 ? keywordParts : [{ text }];
   };
 
-  const handleExportJSON = () => {
-    const exportData = {
-      recommendation: {
-        ...recommendation,
-        enhancedExplanation: enhancedExplanation || null,
-      },
-      scoringResult,
-    };
-    downloadJSON(exportData, `copilot-recommendation-${Date.now()}.json`);
-  };
-
-  const handleExportMarkdown = () => {
-    if (!model) return;
-
-    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer }));
-
-    const enhancedRecommendation = {
-      ...recommendation,
-      introduction: displayIntroduction,
-      summary: displaySummary,
-      reasons: displayReasons,
-      nextSteps: displayNextSteps,
-      complianceConsiderations: displayCompliance,
-    };
-    const markdown = generateMarkdownSummary(enhancedRecommendation, qaData);
-    downloadMarkdown(markdown, `copilot-recommendation-${Date.now()}.md`);
-  };
-
   const handleEmailToCSAM = () => {
     if (!model || !csamEmail) return;
 
-    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer }));
+    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer, comment: qa.comment }));
 
     const enhancedRecommendation = {
       ...recommendation,
@@ -437,7 +407,7 @@ export default function Results() {
   const handleExportPDF = () => {
     if (!model) return;
 
-    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer }));
+    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer, comment: qa.comment }));
 
     const enhancedRecommendation = {
       ...recommendation,
@@ -1339,12 +1309,6 @@ export default function Results() {
                 ✉️ Email to CSAM
               </button>
             )}
-            <button onClick={handleExportJSON} className="btn-secondary">
-              📥 Export JSON
-            </button>
-            <button onClick={handleExportMarkdown} className="btn-secondary">
-              📄 Export Markdown
-            </button>
             <button onClick={handleExportPDF} className="btn-secondary">
               📋 Export PDF
             </button>

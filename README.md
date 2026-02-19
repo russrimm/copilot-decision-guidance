@@ -62,6 +62,7 @@ Use this checklist for every feature before merge/deploy:
 ## Features
 
 ### Core Decision Engine
+
 ✅ **Guided Decision Flow** - 21-question survey covering all Microsoft AI Decision Framework evaluation criteria  
 ✅ **3-Platform Focus** - Per-scenario guidance for Microsoft 365 Copilot, Copilot Studio, and Microsoft Foundry  
 ✅ **Framework-Aligned** - Questions map to Technical Complexity, Skills, Budget, Time, Governance, Action Safety, Memory, and Scale  
@@ -71,25 +72,23 @@ Use this checklist for every feature before merge/deploy:
 ✅ **Export Functionality** - Download results as JSON, Markdown, or PDF
 
 ### Planning & Assessment Tools
+
 ✅ **Use Case Assistant** - Interactive discovery and exploration of common Microsoft Copilot use cases with detailed implementation guidance  
 ✅ **Readiness Assessment** - Score identity, data, security, platform, and operating model readiness with blocker detection  
 ✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms (integrated in Use Case Assistant)
 
 ### Release Tracking & News
+
 ✅ **Copilot Studio Release Dates** - Track upcoming Public Preview and GA dates from Power Platform Release Planner API  
 ✅ **Microsoft Foundry News** - Curated feed of Azure AI Foundry updates, announcements, and documentation changes
 
-### Optional Enterprise Features
-✅ **Enterprise Dashboard** - Holistic view of Azure costs, Power Platform inventory, licenses, and Secure Score (when Azure credentials configured)  
-✅ **Agentic Decision Assistant** - AI-powered chat for licensing guidance and follow-up questions  
-✅ **Admin Panel** - Local configuration and telemetry viewing (development mode only)
-
 ### Quality & Maintenance
+
 ✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation and AI Decision Framework  
 ✅ **Automated Content Validation** - Monthly licensing validation and weekly product update tracking  
 ✅ **Self-Hostable** - Customer-cloneable solution with optional Azure integrations
 
-## Scoring Logic Diagram (Mermaid)
+## Scoring Logic Diagram
 
 The recommendation engine is deterministic. Each selected answer contributes platform weights, then recommendation rules evaluate score distribution and hybrid thresholds.
 
@@ -118,47 +117,6 @@ flowchart TD
 ```
 
 For an interactive web view of this diagram, open `/scoring-weights-diagram.html` in the app.
-
-## Optional Enterprise Features
-
-### 🎯 Holistic Tenant Dashboard
-
-When Azure credentials are configured, the tool can display a comprehensive enterprise dashboard showing:
-
-- **Organizational Readiness Scores**: Overall, Technical, Security, and Financial readiness for Copilot adoption
-- **Cost Analysis**: Azure subscription costs with AI/Copilot-specific cost breakdowns
-- **License Overview**: Microsoft 365 Copilot and Copilot Studio license counts
-- **Power Platform Inventory**: Environment counts, capacity consumption, and app statistics
-- **Secure Score**: Microsoft Secure Score and top security recommendations
-
-**Dashboard URL**: [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
-
-**Demo Mode**: When Azure credentials are not configured, the dashboard displays **realistic sample data** so customers can explore features before connecting their tenant.
-
-### 🤖 AI-Powered Personalized Recommendations
-
-After completing the survey, users see:
-
-- **Completion Timestamp**: Exact date and time when the assessment was completed
-- **AI-Generated Insights**: Comprehensive personalized recommendations including:
-  - Executive Summary
-  - Detailed Analysis
-  - Implementation Roadmap
-  - Timeline Estimate
-  - Cost Considerations
-  - Personalization Factors (when tenant metrics are available)
-
-**How It Works**:
-
-1. User completes the guided questionnaire
-2. Deterministic scoring engine calculates recommendation
-3. Optional: AI service generates enhanced personalized insights by combining:
-   - Survey responses
-   - Scoring results
-   - Organizational context (if Azure integration enabled)
-4. Results page displays both the deterministic recommendation and AI-enhanced guidance
-
-**Configuration**: See [Configuration Guide](#configuration-guide) below for setup instructions.
 
 ## Tech Stack
 
@@ -225,17 +183,11 @@ ENABLE_AI_RECOMMENDATIONS=true
 # Optional: Enterprise Dashboard Features
 # ============================================
 
-# Azure Authentication (Required for dashboard features)
-AZURE_TENANT_ID=your-tenant-id
-AZURE_CLIENT_ID=your-client-id
-AZURE_CLIENT_SECRET=your-client-secret
-AZURE_SUBSCRIPTION_ID=your-subscription-id
-
-# Feature Flags - Enable/disable specific dashboard components
-ENABLE_COST_REPORTS=true          # Azure Cost Management API
-ENABLE_POWER_PLATFORM=true        # Power Platform inventory
-ENABLE_LICENSES=true              # Microsoft 365 license counts
-ENABLE_SECURE_SCORE=true          # Microsoft Secure Score
+# Optional: Azure Authentication (for future enterprise features)
+# AZURE_TENANT_ID=your-tenant-id
+# AZURE_CLIENT_ID=your-client-id
+# AZURE_CLIENT_SECRET=your-client-secret
+# AZURE_SUBSCRIPTION_ID=your-subscription-id
 
 # ============================================
 # Server Configuration
@@ -282,19 +234,23 @@ Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 The application includes the following pages:
 
 ### Main User Journey
+
 - **Home** - [http://localhost:3000](http://localhost:3000) - Landing page with overview
 - **Wizard** - [http://localhost:3000/wizard](http://localhost:3000/wizard) - Interactive questionnaire
 - **Results** - [http://localhost:3000/results](http://localhost:3000/results) - Platform recommendations with AI insights
 
 ### Planning & Discovery
+
 - **Use Case Assistant** - [http://localhost:3000/use-cases](http://localhost:3000/use-cases) - Explore common Copilot use cases with implementation guidance
 - **Readiness Assessment** - [http://localhost:3000/readiness](http://localhost:3000/readiness) - Assess deployment blockers and readiness scores
 
 ### Release Intelligence
+
 - **Copilot Studio Release Dates** - [http://localhost:3000/copilot-studio-release-dates](http://localhost:3000/copilot-studio-release-dates) - Track upcoming Public Preview and GA dates
 - **Microsoft Foundry News** - [http://localhost:3000/foundry-news](http://localhost:3000/foundry-news) - Latest Azure AI Foundry updates and announcements
 
 ### Admin & Configuration
+
 - **Admin Panel** - [http://localhost:3000/admin](http://localhost:3000/admin) - Local configuration (development mode only, requires `__ENABLE_ADMIN__` flag)
 
 ## Build for Production
@@ -720,26 +676,26 @@ graph TB
         M2 --> M3[Download Licensing<br/>Guide Metadata]
         M3 --> M4[Check Appendix<br/>Changes]
         M4 --> M5[Validate Pricing<br/>& Entitlements]
-        
+
         M1 --> M6[Run Survey<br/>Validation]
         M6 --> M7[Fetch 5 Microsoft<br/>Sources]
         M7 --> M8[Parse Enablement<br/>Resources]
         M8 --> M9[Validate Questions<br/>& Answers]
-        
+
         M5 --> M10{Changes<br/>Detected?}
         M9 --> M10
-        
+
         M10 -->|Yes| M11[Create GitHub Issue<br/>Combined Report]
         M10 -->|Yes| M12[Upload Artifacts<br/>365-day retention]
         M10 -->|Yes| M13[Commit Check Data<br/>.github/data/]
         M10 -->|Yes| M14[Send Slack<br/>Notification]
         M10 -->|No| M15[Post Summary<br/>All Current]
-        
+
         M11 --> M16[Manual Review<br/>Required]
         M16 --> M17[Update Repository<br/>Files]
         M17 --> M18[Close Issue]
     end
-    
+
     subgraph "Weekly Validation (Mondays @ 9 AM UTC)"
         W1[Schedule Trigger<br/>cron: 0 9 * * 1] --> W2[Run Updates<br/>Validation]
         W2 --> W3[Check M365 Copilot<br/>Documentation Hub]
@@ -748,25 +704,25 @@ graph TB
         W2 --> W6[Check Copilot Studio<br/>What's New]
         W2 --> W7[Check Azure AI<br/>Foundry]
         W2 --> W8[Check Roadmap &<br/>Pricing]
-        
+
         W3 --> W9[Parse for Changes]
         W4 --> W9
         W5 --> W9
         W6 --> W9
         W7 --> W9
         W8 --> W9
-        
+
         W9 --> W10{Changes<br/>Detected?}
-        
+
         W10 -->|Yes| W11[Create GitHub Issue<br/>With Report]
         W10 -->|Yes| W12[Upload Artifacts<br/>90-day retention]
         W10 -->|Yes| W13[Send Email via<br/>Power Automate]
         W10 -->|No| W14[Post Summary<br/>No Changes]
-        
+
         W11 --> W15[Manual Review<br/>& Updates]
         W15 --> W16[Close Issue]
     end
-    
+
     subgraph "Primary Sources"
         S1["📄 Power Platform<br/>Licensing Guide (PDF)"]
         S2["📚 M365 Copilot<br/>Documentation Hub"]
@@ -774,14 +730,14 @@ graph TB
         S4["📋 Release Notes &<br/>What's New"]
         S5["☁️ Azure AI Foundry<br/>& Pricing"]
     end
-    
+
     subgraph "Outputs & Artifacts"
         O1["📋 GitHub Issues<br/>(Combined Reports)"]
         O2["📦 Workflow Artifacts<br/>(JSON + Markdown)"]
         O3["💾 Check Data<br/>(.github/data/)"]
         O4["💬 Notifications<br/>(Slack/Email)"]
     end
-    
+
     M11 -.-> O1
     W11 -.-> O1
     M12 -.-> O2
@@ -789,7 +745,7 @@ graph TB
     M13 -.-> O3
     M14 -.-> O4
     W13 -.-> O4
-    
+
     S1 -.-> M3
     S2 -.-> M7
     S2 -.-> W3
@@ -799,13 +755,13 @@ graph TB
     S4 -.-> W5
     S4 -.-> W6
     S5 -.-> W7
-    
+
     classDef monthly fill:#e1f5ff,stroke:#01579b,stroke-width:2px
     classDef weekly fill:#fff3e0,stroke:#e65100,stroke-width:2px
     classDef sources fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef outputs fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
     classDef decision fill:#fff9c4,stroke:#f57f17,stroke-width:3px
-    
+
     class M1,M2,M3,M4,M5,M6,M7,M8,M9,M11,M12,M13,M14,M15,M16,M17,M18 monthly
     class W1,W2,W3,W4,W5,W6,W7,W8,W9,W11,W12,W13,W14,W15,W16 weekly
     class S1,S2,S3,S4,S5 sources
@@ -814,6 +770,7 @@ graph TB
 ```
 
 **Key Points:**
+
 - 🗓️ **Monthly**: Focuses on licensing accuracy and survey question validation
 - 📅 **Weekly**: Tracks feature updates and product changes
 - 📦 **Artifacts**: Monthly reports kept 1 year, weekly kept 90 days
