@@ -842,6 +842,7 @@ export default function Results() {
                         {group.questions.map((question) => {
                           const answerId = answers[question.id];
                           const selectedAnswer = question.answers.find((a) => a.id === answerId);
+                          const comment = comments?.[question.id]?.trim();
 
                           return (
                             <div
@@ -851,7 +852,7 @@ export default function Results() {
                               <div className="font-medium text-gray-900 dark:text-gray-50 mb-2">
                                 Q: {question.title}
                               </div>
-                              <div className="text-primary-700 dark:text-primary-300 flex items-start">
+                              <div className="text-primary-700 dark:text-primary-300 flex items-start mb-2">
                                 <svg
                                   className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5"
                                   fill="currentColor"
@@ -865,6 +866,11 @@ export default function Results() {
                                 </svg>
                                 <span>A: {selectedAnswer?.label || 'Not answered'}</span>
                               </div>
+                              {comment && (
+                                <div className="text-gray-600 dark:text-gray-300 text-sm italic pl-7">
+                                  Comment: {comment}
+                                </div>
+                              )}
                             </div>
                           );
                         })}
