@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useWizardStore } from '../store/wizardStore';
-import {
-  generateMarkdownSummary,
-  downloadPDF,
-} from '../lib/export';
+import { generateMarkdownSummary, downloadPDF } from '../lib/export';
 import type { DecisionModel, Question, AIRecommendation } from '../types';
 
 export default function Results() {
@@ -376,7 +373,11 @@ export default function Results() {
   const handleEmailToCSAM = () => {
     if (!model || !csamEmail) return;
 
-    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer, comment: qa.comment }));
+    const qaData = buildQaData(model).map((qa) => ({
+      question: qa.question,
+      answer: qa.answer,
+      comment: qa.comment,
+    }));
 
     const enhancedRecommendation = {
       ...recommendation,
@@ -410,7 +411,11 @@ export default function Results() {
 
     setIsExportingPdf(true);
 
-    const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer, comment: qa.comment }));
+    const qaData = buildQaData(model).map((qa) => ({
+      question: qa.question,
+      answer: qa.answer,
+      comment: qa.comment,
+    }));
 
     const enhancedRecommendation = {
       ...recommendation,
