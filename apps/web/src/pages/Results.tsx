@@ -17,6 +17,7 @@ export default function Results() {
   const [loadingEnhancement, setLoadingEnhancement] = useState(true);
   const [aiRecommendation, setAiRecommendation] = useState<AIRecommendation | null>(null);
   const [loadingAiRec, setLoadingAiRec] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [completionTimestamp] = useState(new Date().toISOString());
 
   const resolveAnswerLabel = (question: Question, answerValue: any): string => {
@@ -404,8 +405,10 @@ export default function Results() {
     window.location.href = mailtoLink;
   };
 
-  const handleExportPDF = () => {
-    if (!model) return;
+  const handleExportPDF = async () => {
+    if (!model || isExportingPdf) return;
+
+    setIsExportingPdf(true);
 
     const qaData = buildQaData(model).map((qa) => ({ question: qa.question, answer: qa.answer, comment: qa.comment }));
 
@@ -418,7 +421,14 @@ export default function Results() {
       complianceConsiderations: displayCompliance,
     };
 
-    downloadPDF(enhancedRecommendation, qaData, `copilot-recommendation-${Date.now()}.pdf`);
+    try {
+      await downloadPDF(enhancedRecommendation, qaData, `copilot-recommendation-${Date.now()}.pdf`);
+    } catch (error) {
+      console.error('Failed to export PDF:', error);
+      alert('Failed to export PDF. Please try again.');
+    } finally {
+      setIsExportingPdf(false);
+    }
   };
 
   const handleExportExecutiveOverviewPPTX = async () => {
@@ -1315,8 +1325,8 @@ export default function Results() {
                 ✉️ Email to CSAM
               </button>
             )}
-            <button onClick={handleExportPDF} className="btn-secondary">
-              📋 Export PDF
+            <button onClick={handleExportPDF} className="btn-secondary" disabled={isExportingPdf}>
+              {isExportingPdf ? '⏳ Exporting PDF...' : '📋 Export PDF'}
             </button>
             <button onClick={handleExportExecutiveOverviewPPTX} className="btn-secondary">
               📊 Executive Overview PPTX

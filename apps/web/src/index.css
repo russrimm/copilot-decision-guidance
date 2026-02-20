@@ -45,7 +45,7 @@ body.dark {
 
 @layer components {
   .btn {
-    @apply inline-flex h-12 items-center justify-center rounded-xl px-5 text-base font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+    @apply inline-flex h-12 items-center justify-center rounded-xl px-5 text-base font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:pointer-events-none dark:focus:ring-offset-gray-900;
   }
 
   .btn-primary {

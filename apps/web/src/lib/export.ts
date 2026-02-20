@@ -1,5 +1,3 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import type { Recommendation } from '../types';
 
 export function downloadJSON(data: any, filename: string) {
@@ -145,10 +143,15 @@ export function downloadMarkdown(markdown: string, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export function generatePDF(
+export async function generatePDF(
   recommendation: Recommendation,
   answers: Array<{ question: string; answer: string; comment?: string }>
 ) {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import('jspdf'),
+    import('jspdf-autotable'),
+  ]);
+
   const {
     type,
     summary,
@@ -412,7 +415,7 @@ export function generatePDF(
       columnStyles: {
         0: { cellWidth: 50 },
         1: { cellWidth: 60 },
-        2: { cellWidth: 60, fontStyle: 'italic' },
+        2: { cellWidth: 60 },
       },
       styles: {
         fontSize: 9,
@@ -441,11 +444,11 @@ export function generatePDF(
   return doc;
 }
 
-export function downloadPDF(
+export async function downloadPDF(
   recommendation: Recommendation,
   answers: Array<{ question: string; answer: string; comment?: string }>,
   filename: string
 ) {
-  const doc = generatePDF(recommendation, answers);
+  const doc = await generatePDF(recommendation, answers);
   doc.save(filename);
 }
