@@ -284,7 +284,7 @@ function addBullets(
 export async function generateExecutiveOverviewPPTX(
   input: ExecutiveOverviewPptxInput
 ): Promise<Buffer> {
-  const prs = new PptxGenJS();
+  const prs = new PptxGenJS.default();
   prs.defineLayout({ name: 'LAYOUT_EXEC', width: 10, height: 7.5 });
 
   const recType = input.recommendation?.type ?? input.scoringResult.recommendation;

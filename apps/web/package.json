@@ -11,7 +11,7 @@
   "dependencies": {
     "@copilot-guidance/decision-engine": "*",
     "@hookform/resolvers": "^3.9.1",
-    "jspdf": "^4.1.0",
+    "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.574.0",
     "react": "^18.3.1",
