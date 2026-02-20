@@ -339,27 +339,22 @@ export async function generateExecutiveOverviewPPTX(input) {
     const summaryText = (input.aiRecommendation?.summary ||
         input.recommendation.summary ||
         '').trim();
+    // Slide 3: Executive Summary (dedicated slide to avoid clipping)
     if (summaryText) {
-        s2.addText('Executive Summary', {
+        const sSummary = prs.addSlide();
+        addTitle(sSummary, 'Executive Summary');
+        sSummary.addText(summaryText, {
             x: 0.6,
-            y: 4.2,
+            y: 1.3,
             w: 8.8,
-            h: 0.3,
+            h: 5.7,
             fontSize: 14,
-            bold: true,
-            color: COLOR_DARK,
-        });
-        s2.addText(summaryText, {
-            x: 0.6,
-            y: 4.55,
-            w: 8.8,
-            h: 2.6,
-            fontSize: 12,
             color: COLOR_DARK,
             valign: 'top',
+            fit: 'shrink',
         });
     }
-    // Slide 3: Deployment Overview
+    // Deployment Overview
     const s3 = prs.addSlide();
     addTitle(s3, 'Overall Deployment Overview');
     s3.addText(deploy.overview, {
