@@ -1,4 +1,4 @@
-import PptxGenJS from 'pptxgenjs';
+import PptxGenJSImport from 'pptxgenjs';
 const COLOR_PRIMARY = '2563EB';
 const COLOR_DARK = '1F2937';
 const COLOR_LIGHT = 'F3F4F6';
@@ -227,7 +227,13 @@ function addBullets(slide, items, opts) {
     });
 }
 export async function generateExecutiveOverviewPPTX(input) {
-    const prs = new PptxGenJS();
+    const PptxGenJSCtor = typeof PptxGenJSImport === 'function'
+        ? PptxGenJSImport
+        : PptxGenJSImport.default;
+    if (typeof PptxGenJSCtor !== 'function') {
+        throw new Error('Unable to resolve pptxgenjs constructor');
+    }
+    const prs = new PptxGenJSCtor();
     prs.defineLayout({ name: 'LAYOUT_EXEC', width: 10, height: 7.5 });
     const recType = input.recommendation?.type ?? input.scoringResult.recommendation;
     const recLabel = formatRecommendationType(recType);

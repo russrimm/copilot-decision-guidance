@@ -1,4 +1,4 @@
-import * as PptxGenJS from 'pptxgenjs';
+import PptxGenJSImport from 'pptxgenjs';
 import type { ScoringResult } from '@copilot-guidance/decision-engine';
 
 type RecommendationType = ScoringResult['recommendation'];
@@ -284,7 +284,18 @@ function addBullets(
 export async function generateExecutiveOverviewPPTX(
   input: ExecutiveOverviewPptxInput
 ): Promise<Buffer> {
-  const prs = new PptxGenJS.default();
+  const PptxGenJSCtor =
+    typeof PptxGenJSImport === 'function'
+      ? PptxGenJSImport
+      : ((PptxGenJSImport as unknown as { default?: unknown }).default as
+          | (new () => any)
+          | undefined);
+
+  if (typeof PptxGenJSCtor !== 'function') {
+    throw new Error('Unable to resolve pptxgenjs constructor');
+  }
+
+  const prs = new PptxGenJSCtor();
   prs.defineLayout({ name: 'LAYOUT_EXEC', width: 10, height: 7.5 });
 
   const recType = input.recommendation?.type ?? input.scoringResult.recommendation;

@@ -314,15 +314,12 @@ When API keys are configured:
 
 **Microsoft Learn MCP Integration (v1.2.0+)**:
 
-- **Live documentation fetching** from Microsoft Learn MCP API (`https://learn.microsoft.com/api/mcp`)
-- Automatically retrieves real-time documentation during AI explanation generation
-- Queries are recommendation-specific:
-  - **M365 Copilot**: Extensibility, security, compliance, data residency
-  - **Copilot Studio**: Agents, connectors, governance, deployment channels
-  - **Hybrid**: Combined queries from both
-- Enhances AI explanations with up-to-date Microsoft Learn content
-- Maintains graceful fallback to static framework knowledge if API unavailable
-- No additional MCP server setup required - uses public Microsoft Learn endpoint
+- Microsoft documentation lookup is handled through **MCP tools in the agent layer**
+- Use Microsoft Learn MCP tools for a two-step flow:
+  - search with `microsoft_docs_search`
+  - fetch full pages with `microsoft_docs_fetch` when deeper context is needed
+- Keep API recommendation logic deterministic and independent from remote MCP availability
+- If MCP tools are unavailable, recommendations still use static framework knowledge plus deterministic scoring
 - Falls back to deterministic templates if AI unavailable
 
 ## API Endpoints
@@ -894,11 +891,13 @@ Every **1st of the month at 3 AM UTC**, an Azure Function automatically monitors
   - Testing agents
   - Dynamics 365 Omnichannel
 
-**Documentation:** 
+**Documentation:**
+
 - [Implementation Guide Monitoring System](docs/IMPLEMENTATION_GUIDE_MONITORING.md)
 - [Implementation Guide Alignment Plan](docs/IMPLEMENTATION_GUIDE_ALIGNMENT.md)
 
 **Implementation Guide Source:**
+
 - GitHub: [microsoft/CopilotStudioSamples](https://github.com/microsoft/CopilotStudioSamples/tree/main/ImplementationGuide)
 - Direct Download: [aka.ms/CopilotStudioImplementationGuide](https://aka.ms/CopilotStudioImplementationGuide)
 - Current Version: **v2.2** (February 2, 2026)

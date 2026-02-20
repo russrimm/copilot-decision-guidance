@@ -7,6 +7,29 @@
 
 import { BlobServiceClient } from '@azure/storage-blob';
 
+let hasLoggedMissingStorageConfig = false;
+
+function getStorageConnectionString(): string | undefined {
+  const storageConnectionString = process.env.AZURE_STORAGE_CONNECTION_STRING?.trim();
+
+  if (storageConnectionString) {
+    return storageConnectionString;
+  }
+
+  if (!hasLoggedMissingStorageConfig) {
+    const message =
+      'Implementation guide update checks are disabled: AZURE_STORAGE_CONNECTION_STRING is not configured.';
+    if (process.env.NODE_ENV === 'production') {
+      console.warn(message);
+    } else {
+      console.info(message);
+    }
+    hasLoggedMissingStorageConfig = true;
+  }
+
+  return undefined;
+}
+
 export interface ImplementationGuideUpdate {
   updateAvailable: boolean;
   version?: string;
@@ -40,11 +63,14 @@ export interface ImplementationGuideMetadata {
  */
 export async function checkImplementationGuideUpdate(): Promise<ImplementationGuideUpdate> {
   try {
-    const storageConnectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
-    
+    const storageConnectionString = getStorageConnectionString();
+
     if (!storageConnectionString) {
-      console.warn('AZURE_STORAGE_CONNECTION_STRING not configured. Update checking disabled.');
-      return { updateAvailable: false };
+      return {
+        updateAvailable: false,
+        message:
+          'Update checking is disabled because AZURE_STORAGE_CONNECTION_STRING is not configured.',
+      };
     }
 
     const blobServiceClient = BlobServiceClient.fromConnectionString(storageConnectionString);
@@ -75,8 +101,8 @@ export async function checkImplementationGuideUpdate(): Promise<ImplementationGu
  */
 export async function getImplementationGuideMetadata(): Promise<ImplementationGuideMetadata | null> {
   try {
-    const storageConnectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
-    
+    const storageConnectionString = getStorageConnectionString();
+
     if (!storageConnectionString) {
       return null;
     }
@@ -107,8 +133,8 @@ export async function getImplementationGuideMetadata(): Promise<ImplementationGu
  */
 export async function acknowledgeImplementationGuideUpdate(): Promise<boolean> {
   try {
-    const storageConnectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
-    
+    const storageConnectionString = getStorageConnectionString();
+
     if (!storageConnectionString) {
       return false;
     }
@@ -132,8 +158,8 @@ export async function acknowledgeImplementationGuideUpdate(): Promise<boolean> {
  */
 export async function getImplementationGuideUpdateHistory(): Promise<any[]> {
   try {
-    const storageConnectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
-    
+    const storageConnectionString = getStorageConnectionString();
+
     if (!storageConnectionString) {
       return [];
     }

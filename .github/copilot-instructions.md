@@ -7,26 +7,27 @@ This guide helps customers understand when to use **Microsoft 365 Copilot** vers
 ## 🧭 1. Interactive Decision Guide
 
 Build a wizard or flowchart to guide customers based on:
+
 - Organization size
 - Industry
 - Use case (internal productivity vs. external-facing bots)
 - Integration needs
 - Preferred pricing model
 
-**Output**: A personalized recommendation (e.g., *"You should use Copilot Studio with M365 Copilot for hybrid scenarios"*).
+**Output**: A personalized recommendation (e.g., _"You should use Copilot Studio with M365 Copilot for hybrid scenarios"_).
 
 ---
 
 ## 📊 2. Feature Comparison Table
 
-| Feature | Microsoft 365 Copilot | Microsoft Copilot Studio |
-|--------|------------------------|---------------------------|
-| Embedded in Microsoft 365 Apps | ✅ | ❌ |
-| Build Custom Agents/Copilots | ❌ | ✅ |
-| Extend M365 Copilot | ✅ (via Copilot Studio) | ✅ |
-| Generative AI Capabilities | Limited (in apps) | Full, configurable |
-| Publish to External Channels (e.g., Web, WhatsApp) | ❌ | ✅ |
-| Pricing Model | $30/user/month | $0.01/message or $200/25k messages/month |
+| Feature                                            | Microsoft 365 Copilot   | Microsoft Copilot Studio                 |
+| -------------------------------------------------- | ----------------------- | ---------------------------------------- |
+| Embedded in Microsoft 365 Apps                     | ✅                      | ❌                                       |
+| Build Custom Agents/Copilots                       | ❌                      | ✅                                       |
+| Extend M365 Copilot                                | ✅ (via Copilot Studio) | ✅                                       |
+| Generative AI Capabilities                         | Limited (in apps)       | Full, configurable                       |
+| Publish to External Channels (e.g., Web, WhatsApp) | ❌                      | ✅                                       |
+| Pricing Model                                      | $30/user/month          | $0.01/message or $200/25k messages/month |
 
 > 📌 Source: [Power Platform Licensing Guide – May 2025](#):contentReference[oaicite:0]{index=0}
 
@@ -35,11 +36,13 @@ Build a wizard or flowchart to guide customers based on:
 ## 📁 3. Common Use Case Scenarios
 
 **Microsoft 365 Copilot**
+
 - "Summarize this document"
 - "Draft a response to this email"
 - "Analyze spreadsheet trends"
 
 **Microsoft Copilot Studio**
+
 - Internal helpdesk chatbot
 - HR onboarding agent with Dataverse integration
 - Multi-step process automation using Power Automate
@@ -49,12 +52,14 @@ Build a wizard or flowchart to guide customers based on:
 ## 💵 4. Licensing & Cost Calculator
 
 Let users input:
+
 - Number of users
 - Monthly message volume
 - Channels (Teams, Web, WhatsApp)
 - AI tools (basic/generative/graph)
 
 **Output**: Estimated monthly cost for:
+
 - M365 Copilot
 - Copilot Studio
 - Hybrid licensing
@@ -65,21 +70,23 @@ Let users input:
 
 ## 🔐 5. Security & Governance Comparison
 
-| Capability | M365 Copilot | Copilot Studio |
-|------------|--------------|----------------|
-| DLP / Sensitivity Labels | ✅ | ✅ (via Power Platform Managed Environments) |
-| Authentication & Access Control | Azure AD | Azure AD + channel-based |
-| Environment Management | Microsoft 365 Admin | Power Platform Admin Center |
+| Capability                      | M365 Copilot        | Copilot Studio                               |
+| ------------------------------- | ------------------- | -------------------------------------------- |
+| DLP / Sensitivity Labels        | ✅                  | ✅ (via Power Platform Managed Environments) |
+| Authentication & Access Control | Azure AD            | Azure AD + channel-based                     |
+| Environment Management          | Microsoft 365 Admin | Power Platform Admin Center                  |
 
 ---
 
 ## 🔌 6. Extensibility & Integration
 
 **Microsoft 365 Copilot**:
+
 - Uses Graph connectors
 - Plugins for extending Word, Excel, Teams
 
 **Copilot Studio**:
+
 - Power Automate Flows (cloud and desktop)
 - AI Builder for predictions, image/text analysis
 - Standard, Premium, and Custom Connectors
@@ -100,16 +107,19 @@ Let users input:
 ## 👥 9. Role-Based Recommendations
 
 **IT Admins**:
+
 - Licensing
 - Security
 - Managed Environments
 
 **Developers**:
+
 - Custom connectors
 - APIs
 - ALM integration
 
 **Business Users**:
+
 - Productivity tools
 - No-code agent creation
 - Microsoft 365 familiarity
@@ -118,9 +128,20 @@ Let users input:
 
 ## 📦 10. Integration with Microsoft Ecosystem
 
-| Platform | Microsoft 365 Copilot | Copilot Studio |
-|----------|------------------------|----------------|
-| Microsoft 365 Apps | ✅ | ❌ (used to extend) |
-| Power Platform | 🔗 via plugins | ✅ (native) |
-| Azure OpenAI Service | ❌ | ✅ (via custom action or prompt flow) |
-| Dynamics 365 | Partial | ✅ (some entitlements included) |
+| Platform             | Microsoft 365 Copilot | Copilot Studio                        |
+| -------------------- | --------------------- | ------------------------------------- |
+| Microsoft 365 Apps   | ✅                    | ❌ (used to extend)                   |
+| Power Platform       | 🔗 via plugins        | ✅ (native)                           |
+| Azure OpenAI Service | ❌                    | ✅ (via custom action or prompt flow) |
+| Dynamics 365         | Partial               | ✅ (some entitlements included)       |
+
+---
+
+## 🔎 11. Microsoft Learn MCP Usage
+
+When searching or validating Microsoft documentation, use MCP tools instead of ad-hoc HTTP calls:
+
+- Use `microsoft_docs_search` first to find relevant official Learn pages.
+- Use `microsoft_docs_fetch` for full-page content when deeper details are required.
+- Prefer this MCP workflow for citations, factual verification, and up-to-date guidance.
+- Do not rely on custom REST calls to guessed MCP subpaths (for example `/docs-search`); use MCP tool invocations.

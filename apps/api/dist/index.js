@@ -25,6 +25,7 @@ import useCasesRouter from './routes/use-cases.js';
 import { generateExecutiveOverviewPPTX } from './services/executive-overview-pptx.js';
 import { getCopilotStudioReleasePlannerData } from './services/release-planner.js';
 import { getFoundryNews } from './services/foundry-news.js';
+import { checkImplementationGuideUpdate, getImplementationGuideMetadata, acknowledgeImplementationGuideUpdate, getImplementationGuideUpdateHistory, } from './services/implementation-guide-monitor.js';
 console.log('[2/10] Core imports loaded successfully');
 let decisionModel;
 let calculateRecommendation;
@@ -828,6 +829,68 @@ app.get('/api/foundry/news', async (_req, res) => {
         });
     }
 });
+// Implementation Guide Update Monitoring
+app.get('/api/implementation-guide/update-check', async (_req, res) => {
+    try {
+        const updateInfo = await checkImplementationGuideUpdate();
+        res.json(updateInfo);
+    }
+    catch (error) {
+        console.error('Error checking for Implementation Guide updates:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: error instanceof Error ? error.message : 'Failed to check for updates',
+        });
+    }
+});
+app.get('/api/implementation-guide/metadata', async (_req, res) => {
+    try {
+        const metadata = await getImplementationGuideMetadata();
+        if (!metadata) {
+            return res.status(404).json({
+                error: 'Not Found',
+                message: 'Implementation Guide metadata not available',
+            });
+        }
+        res.json(metadata);
+    }
+    catch (error) {
+        console.error('Error retrieving Implementation Guide metadata:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: error instanceof Error ? error.message : 'Failed to retrieve metadata',
+        });
+    }
+});
+app.post('/api/implementation-guide/acknowledge-update', async (_req, res) => {
+    try {
+        const success = await acknowledgeImplementationGuideUpdate();
+        res.json({
+            success,
+            message: success ? 'Update acknowledged' : 'Failed to acknowledge update',
+        });
+    }
+    catch (error) {
+        console.error('Error acknowledging Implementation Guide update:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: error instanceof Error ? error.message : 'Failed to acknowledge update',
+        });
+    }
+});
+app.get('/api/implementation-guide/update-history', async (_req, res) => {
+    try {
+        const history = await getImplementationGuideUpdateHistory();
+        res.json(history);
+    }
+    catch (error) {
+        console.error('Error retrieving Implementation Guide update history:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: error instanceof Error ? error.message : 'Failed to retrieve update history',
+        });
+    }
+});
 // Agentic Decision Assistant - Chat endpoint
 app.post('/api/copilot-agent/chat', async (req, res) => {
     try {
@@ -1115,71 +1178,12 @@ app.post('/api/licensing/search', async (req, res) => {
         });
     }
 });
-// Helper to fetch real-time Microsoft Learn documentation
-// Uses Microsoft Learn MCP API at https://learn.microsoft.com/api/mcp
-async function fetchMicrosoftLearnContext(recommendationType) {
-    console.log(`[MS Learn MCP] Starting documentation fetch for recommendation type: ${recommendationType}`);
-    try {
-        // Define queries based on recommendation type
-        const searchQueries = [];
-        const recType = recommendationType.toUpperCase();
-        if (recType === 'M365_COPILOT' || recType === 'HYBRID') {
-            searchQueries.push('Microsoft 365 Copilot extensibility declarative agents plugins');
-            searchQueries.push('Microsoft 365 Copilot security compliance data residency GDPR');
-        }
-        if (recType === 'COPILOT_STUDIO' || recType === 'HYBRID') {
-            searchQueries.push('Copilot Studio agents Power Platform connectors governance');
-            searchQueries.push('Copilot Studio publish to Microsoft 365 Copilot Teams channels');
-        }
-        console.log(`[MS Learn MCP] Queries to execute:`, searchQueries);
-        const docsResults = [];
-        // Fetch documentation from Microsoft Learn MCP API
-        for (const query of searchQueries) {
-            try {
-                console.log(`[MS Learn MCP] Fetching docs for query: "${query}"`);
-                const response = await fetch('https://learn.microsoft.com/api/mcp/docs-search', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ query, maxResults: 2 }),
-                });
-                console.log(`[MS Learn MCP] Response status: ${response.status} for query: "${query}"`);
-                if (response.ok) {
-                    const data = (await response.json());
-                    console.log(`[MS Learn MCP] Received data:`, JSON.stringify(data).substring(0, 200));
-                    if (data.results && Array.isArray(data.results) && data.results.length > 0) {
-                        console.log(`[MS Learn MCP] Found ${data.results.length} results for query: "${query}"`);
-                        for (const result of data.results) {
-                            docsResults.push(`**${result.title}**\n${result.url}\n${result.content || result.description || ''}`);
-                        }
-                    }
-                    else {
-                        console.warn(`[MS Learn MCP] No results found for query: "${query}"`);
-                    }
-                }
-                else {
-                    console.warn(`[MS Learn MCP] API returned ${response.status} for query: ${query}`);
-                }
-            }
-            catch (err) {
-                console.error(`[MS Learn MCP] Failed to fetch docs for query "${query}":`, err);
-            }
-        }
-        console.log(`[MS Learn MCP] Total documentation results collected: ${docsResults.length}`);
-        if (docsResults.length > 0) {
-            console.log(`[MS Learn MCP] ✅ Successfully integrated Microsoft Learn documentation`);
-            return `\n\n**REAL-TIME MICROSOFT LEARN DOCUMENTATION:**\n\n${docsResults.join('\n\n---\n\n')}\n\n**ANALYSIS METHOD:** This recommendation combines deterministic scoring with the Microsoft AI Decision Framework, enhanced with real-time Microsoft Learn documentation.`;
-        }
-        // Fallback if no results
-        console.log(`[MS Learn MCP] ⚠️ No results from MCP API, using static framework`);
-        return '\n\n**ANALYSIS METHOD:** This recommendation combines deterministic scoring (based on your answers) with the comprehensive Microsoft AI Decision Framework. The framework content is verified against Microsoft Learn documentation.';
-    }
-    catch (error) {
-        console.error('[MS Learn MCP] ❌ Integration error:', error);
-        return '\n\n**ANALYSIS METHOD:** This recommendation uses deterministic scoring with the Microsoft AI Decision Framework (static framework knowledge).';
-    }
-}
+const microsoftLearnSourcingNote = `
+
+**MICROSOFT LEARN SOURCING APPROACH:**
+- Microsoft Learn lookups are performed via MCP tools in the agent layer (not via this API service).
+- Use MCP search/fetch tools against the Microsoft Learn MCP server to gather current documentation.
+- This API keeps recommendation generation deterministic and resilient even when external documentation services are unavailable.`;
 // AI explanation helper with comprehensive compliance-aware LLM integration
 async function generateAIExplanation(recommendation, userContext) {
     console.log(`[AI Explanation] Starting for recommendation type: ${recommendation.type}`);
@@ -1250,11 +1254,7 @@ async function generateAIExplanation(recommendation, userContext) {
     }
     try {
         const answers = userContext?.answers || {};
-        // Fetch real-time Microsoft Learn documentation
-        // Temporarily disabled due to MS Learn MCP API returning 500 errors
-        console.log(`[AI Explanation] Skipping Microsoft Learn MCP (API currently unavailable)`);
-        const learnContext = ''; // await fetchMicrosoftLearnContext(recommendation.type);
-        console.log(`[AI Explanation] Microsoft Learn context length: ${learnContext.length} characters`);
+        console.log('[AI Explanation] Microsoft Learn lookups are handled by MCP tools in the agent layer');
         const prompt = `You are a Microsoft AI solutions advisor helping enterprise customers evaluate Microsoft 365 Copilot and Copilot Studio for specific scenarios. Your guidance must be technically accurate, compliance-aware, and based solely on verified Microsoft documentation and the Microsoft AI Decision Framework.
 
 FRAMEWORK METHODOLOGY:
@@ -1451,7 +1451,7 @@ VERIFIED FACTS YOU MUST INCORPORATE:
   - Zero-rated for M365 Copilot licensed users (when using Graph grounding in M365/Teams/SharePoint)
   - Consumption-based for standalone use (measured in Copilot Credits)
   - Premium connectors may require additional Power Platform licenses
-${learnContext}
+${microsoftLearnSourcingNote}
 
 YOUR TASK:
 Rewrite the summary, reasons, next steps, AND compliance considerations that:
