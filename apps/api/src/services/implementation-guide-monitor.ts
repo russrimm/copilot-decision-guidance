@@ -1,6 +1,6 @@
 /**
  * Implementation Guide Update Service
- * 
+ *
  * Checks for updates to the Microsoft Copilot Studio Implementation Guide
  * by querying Azure Blob Storage for update markers created by the monitoring Azure Function.
  */
@@ -78,7 +78,7 @@ export async function checkImplementationGuideUpdate(): Promise<ImplementationGu
 
     // Check for update marker file
     const updateMarkerClient = containerClient.getBlobClient('update-available.json');
-    
+
     const exists = await updateMarkerClient.exists();
     if (!exists) {
       return { updateAvailable: false };
@@ -111,7 +111,7 @@ export async function getImplementationGuideMetadata(): Promise<ImplementationGu
     const containerClient = blobServiceClient.getContainerClient('implementation-guide');
 
     const metadataBlobClient = containerClient.getBlobClient('implementation-guide-metadata.json');
-    
+
     const exists = await metadataBlobClient.exists();
     if (!exists) {
       return null;
@@ -170,7 +170,7 @@ export async function getImplementationGuideUpdateHistory(): Promise<any[]> {
     // List notification files
     const notifications: any[] = [];
     const prefix = 'notifications/';
-    
+
     for await (const blob of containerClient.listBlobsFlat({ prefix })) {
       if (blob.name.endsWith('.json')) {
         const blobClient = containerClient.getBlobClient(blob.name);
