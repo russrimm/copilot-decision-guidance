@@ -434,6 +434,102 @@ export default function Landing() {
         </div>
       </div>
 
+      <div className="card mb-8">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
+              Copilot Studio vs Foundry: Decision Matrix
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-200">
+              Use this side-by-side view to choose a low-code, managed SaaS path, a pro-code
+              Azure-native path, or a hybrid approach.
+            </p>
+          </div>
+          <a
+            href="https://techcommunity.microsoft.com/blog/microsoft-security-blog/microsoft-copilot-studio-vs-microsoft-foundry-building-ai-agents-and-apps/4483160"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-semibold text-primary-700 dark:text-primary-300 hover:underline whitespace-nowrap"
+          >
+            Source article
+          </a>
+        </div>
+
+        <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold">Factor</th>
+                <th className="px-4 py-3 text-left font-semibold">Copilot Studio</th>
+                <th className="px-4 py-3 text-left font-semibold">Microsoft Foundry</th>
+              </tr>
+            </thead>
+            <tbody className="text-gray-700 dark:text-gray-100">
+              <tr className="border-t border-gray-200 dark:border-gray-700">
+                <td className="px-4 py-3 font-medium">Primary users</td>
+                <td className="px-4 py-3">Business teams, pro-makers, IT admins</td>
+                <td className="px-4 py-3">Professional developers and data scientists</td>
+              </tr>
+              <tr className="border-t border-gray-200 dark:border-gray-700">
+                <td className="px-4 py-3 font-medium">Platform model</td>
+                <td className="px-4 py-3">Managed SaaS with minimal infrastructure overhead</td>
+                <td className="px-4 py-3">
+                  Azure PaaS in your subscription with full environment control
+                </td>
+              </tr>
+              <tr className="border-t border-gray-200 dark:border-gray-700">
+                <td className="px-4 py-3 font-medium">Build experience</td>
+                <td className="px-4 py-3">Low-code visual authoring, rapid delivery</td>
+                <td className="px-4 py-3">Code-first SDK/CLI/DevOps-driven engineering</td>
+              </tr>
+              <tr className="border-t border-gray-200 dark:border-gray-700">
+                <td className="px-4 py-3 font-medium">Integration pattern</td>
+                <td className="px-4 py-3">M365 + Power Platform connectors out of the box</td>
+                <td className="px-4 py-3">
+                  Custom integration with Azure, on-prem, and multi-cloud systems
+                </td>
+              </tr>
+              <tr className="border-t border-gray-200 dark:border-gray-700">
+                <td className="px-4 py-3 font-medium">Governance posture</td>
+                <td className="px-4 py-3">M365 admin + Purview controls with managed defaults</td>
+                <td className="px-4 py-3">
+                  Custom Azure security stack + Purview and Defender integration
+                </td>
+              </tr>
+              <tr className="border-t border-gray-200 dark:border-gray-700">
+                <td className="px-4 py-3 font-medium">Best-fit scenarios</td>
+                <td className="px-4 py-3">Department copilots and workflow assistants</td>
+                <td className="px-4 py-3">
+                  Production-grade app-embedded agents and complex orchestration
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Hybrid Pattern</h3>
+            <div className="space-y-2 text-sm text-gray-700 dark:text-gray-100">
+              <p>1. Developers implement specialized tools and agent services in Foundry.</p>
+              <p>2. Makers assemble user-facing workflows and channels in Copilot Studio.</p>
+              <p>3. Both layers interoperate to deliver fast UX with deep backend intelligence.</p>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+              Security & Compliance
+            </h3>
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-100">
+              <li>Apply Microsoft Purview DSPM for AI, auditing, labels, and DLP consistently.</li>
+              <li>Use the same compliance workflows for investigations and lifecycle controls.</li>
+              <li>Design channel strategy early for external publishing and policy coverage.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <div className="rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 shadow-sm dark:border-blue-700 dark:from-blue-900/20 dark:to-indigo-900/20">
         <div className="flex items-center justify-between">
           <div>

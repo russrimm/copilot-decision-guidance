@@ -67,7 +67,7 @@ export default function Layout() {
                     to="/use-cases"
                     className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
                   >
-                    Use Cases
+                    Use Case Assistant
                   </Link>
                   <Link
                     to="/readiness"

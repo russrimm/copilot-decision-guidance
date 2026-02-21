@@ -214,6 +214,23 @@ function ensureDepartmentCoverage(verticalUseCases, selectedDepartmentsRaw, sele
     }
     return guaranteedMatches;
 }
+function ensureMinimumRecommendations(selectedUseCases, verticalUseCases, selectedDepartmentIds, selectedDataSourceIds, minimumCount = 3) {
+    if (selectedUseCases.length >= minimumCount) {
+        return selectedUseCases;
+    }
+    const result = [...selectedUseCases];
+    const rankedDefaults = [...verticalUseCases].sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
+        scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
+    for (const candidate of rankedDefaults) {
+        if (!result.some((item) => item.id === candidate.id)) {
+            result.push(candidate);
+        }
+        if (result.length >= minimumCount) {
+            break;
+        }
+    }
+    return result;
+}
 // Get all verticals available
 router.get('/verticals', (req, res) => {
     res.json(VERTICALS);
@@ -270,12 +287,13 @@ router.post('/generate', (req, res) => {
             .filter((useCase, index, all) => all.findIndex((entry) => entry.id === useCase.id) === index)
             .sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
             scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
+        const recommendedUseCases = ensureMinimumRecommendations(mergedUseCases, verticalUseCases, selectedDepartmentIds, selectedDataSourceIds, 3);
         res.json({
-            useCases: mergedUseCases,
+            useCases: recommendedUseCases,
             selectedCriteria,
             resolvedVertical,
             effectiveCriteria,
-            totalCount: mergedUseCases.length,
+            totalCount: recommendedUseCases.length,
             guaranteedDepartmentCoverage: guaranteedDepartmentMatches.map((entry) => entry.id),
         });
     }

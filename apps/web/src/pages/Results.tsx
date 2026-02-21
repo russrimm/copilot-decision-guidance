@@ -537,7 +537,7 @@ export default function Results() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div id="results-top" className="max-w-4xl mx-auto space-y-6">
       {/* Timestamp Banner */}
       <div className="card bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-700">
         <div className="flex items-center justify-between">
@@ -608,6 +608,14 @@ export default function Results() {
             className="btn btn-secondary"
           >
             Open scoring diagram
+          </a>
+        </div>
+        <div className="mt-3 text-sm">
+          <a
+            href="#quick-matrix"
+            className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
+          >
+            Jump to Copilot Studio vs Foundry Quick Matrix
           </a>
         </div>
       </div>
@@ -1157,6 +1165,118 @@ export default function Results() {
               ))}
             </div>
           )}
+
+          <div
+            id="quick-matrix"
+            className="card bg-slate-50 dark:bg-slate-900/20 border border-slate-200 dark:border-slate-700"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+                Copilot Studio vs Foundry: Quick Matrix
+              </h3>
+              <a
+                href="https://techcommunity.microsoft.com/blog/microsoft-security-blog/microsoft-copilot-studio-vs-microsoft-foundry-building-ai-agents-and-apps/4483160"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                Source article
+              </a>
+            </div>
+
+            <div className="overflow-x-auto mb-4 rounded-lg border border-slate-200 dark:border-slate-700">
+              <table className="min-w-full bg-white dark:bg-gray-800">
+                <thead className="bg-slate-100 dark:bg-slate-800">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-slate-900 dark:text-slate-100 font-semibold">
+                      Factor
+                    </th>
+                    <th className="px-4 py-2 text-left text-slate-900 dark:text-slate-100 font-semibold">
+                      Copilot Studio
+                    </th>
+                    <th className="px-4 py-2 text-left text-slate-900 dark:text-slate-100 font-semibold">
+                      Microsoft Foundry
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t border-slate-200 dark:border-slate-700">
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                      Platform model
+                    </td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                      Managed SaaS for rapid low-code delivery
+                    </td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                      Azure PaaS in your subscription with deep control
+                    </td>
+                  </tr>
+                  <tr className="border-t border-slate-200 dark:border-slate-700">
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                      Primary builders
+                    </td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                      Business teams, makers, and IT admins
+                    </td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                      Developers, engineers, and data science teams
+                    </td>
+                  </tr>
+                  <tr className="border-t border-slate-200 dark:border-slate-700">
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                      Integration style
+                    </td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                      M365 + Power Platform connectors
+                    </td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                      Custom Azure, enterprise, and multi-cloud integration
+                    </td>
+                  </tr>
+                  <tr className="border-t border-slate-200 dark:border-slate-700">
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                      Governance
+                    </td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                      Managed defaults with M365 admin and Purview controls
+                    </td>
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
+                      Custom Azure security stack with Purview/Defender alignment
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div className="rounded-lg bg-white dark:bg-gray-800 border border-slate-200 dark:border-slate-700 p-3">
+                <p className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                  Hybrid pattern
+                </p>
+                <p className="text-slate-700 dark:text-slate-200">
+                  Build specialized capabilities in Foundry and expose user-facing orchestration in
+                  Copilot Studio for a balanced speed + control model.
+                </p>
+              </div>
+              <div className="rounded-lg bg-white dark:bg-gray-800 border border-slate-200 dark:border-slate-700 p-3">
+                <p className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                  Security baseline
+                </p>
+                <p className="text-slate-700 dark:text-slate-200">
+                  Apply Purview DSPM for AI, DLP, and auditing across both platform layers.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-3 text-right text-sm">
+              <a
+                href="#results-top"
+                className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                Back to top
+              </a>
+            </div>
+          </div>
 
           {/* Licensing Breakdown */}
           {recommendation.licensingBreakdown && (

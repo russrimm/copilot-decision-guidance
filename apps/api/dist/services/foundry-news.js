@@ -1,4 +1,8 @@
-const SOURCE_URL = 'https://devblogs.microsoft.com/foundry/feed/';
+const DEFAULT_SOURCE_URLS = [
+    'https://devblogs.microsoft.com/foundry/feed/',
+    'https://devblogs.microsoft.com/foundry/feed',
+    'https://devblogs.microsoft.com/category/foundry/feed/',
+];
 let cached;
 function decodeHtmlEntities(input) {
     return input
@@ -44,13 +48,41 @@ async function fetchTextWithTimeout(url, timeoutMs) {
         clearTimeout(timeoutId);
     }
 }
+function getCandidateSourceUrls() {
+    const configuredSource = process.env.FOUNDRY_NEWS_FEED_URL?.trim();
+    if (!configuredSource) {
+        return DEFAULT_SOURCE_URLS;
+    }
+    if (configuredSource.includes(',')) {
+        return configuredSource
+            .split(',')
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+    return [configuredSource, ...DEFAULT_SOURCE_URLS.filter((url) => url !== configuredSource)];
+}
+async function fetchFoundryFeedXml(timeoutMs) {
+    const candidates = getCandidateSourceUrls();
+    const failures = [];
+    for (const candidateUrl of candidates) {
+        try {
+            const xml = await fetchTextWithTimeout(candidateUrl, timeoutMs);
+            return { sourceUrl: candidateUrl, xml };
+        }
+        catch (error) {
+            const reason = error instanceof Error ? error.message : 'Unknown error';
+            failures.push(`${candidateUrl} -> ${reason}`);
+        }
+    }
+    throw new Error(`All Foundry feed sources failed: ${failures.join(' | ')}`);
+}
 export async function getFoundryNews(options) {
     const cacheTtlMs = options?.cacheTtlMs ?? 30 * 60 * 1000;
     const maxItems = options?.maxItems ?? 15;
     if (cached && Date.now() - cached.fetchedAtMs < cacheTtlMs) {
         return cached.payload;
     }
-    const xml = await fetchTextWithTimeout(SOURCE_URL, 15000);
+    const { sourceUrl, xml } = await fetchFoundryFeedXml(15000);
     const itemMatches = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)];
     const items = itemMatches
         .map((match) => {
@@ -78,7 +110,7 @@ export async function getFoundryNews(options) {
         .sort((a, b) => b.isoDate.localeCompare(a.isoDate))
         .slice(0, maxItems);
     const payload = {
-        sourceUrl: SOURCE_URL,
+        sourceUrl,
         fetchedAt: new Date().toISOString(),
         totalItems: items.length,
         items,

@@ -359,6 +359,70 @@ const readinessQuestions = [
         ],
     },
 ];
+const fallbackReadinessControlsByDomain = {
+    identity: [
+        'Require MFA and conditional access for pilot and admin identities.',
+        'Enforce least-privilege role assignments with periodic access reviews.',
+    ],
+    data: [
+        'Validate source permissions and data boundaries before enabling grounding.',
+        'Apply residency and encryption baselines to all connected knowledge sources.',
+    ],
+    security: [
+        'Implement DLP policies and connector boundaries for pilot environments.',
+        'Require human approval gates for high-impact actions.',
+    ],
+    platform: [
+        'Validate integrations in non-production with least-privilege identities.',
+        'Use controlled dev/test/prod promotion with rollback criteria.',
+    ],
+    operatingModel: [
+        'Assign accountable owners and KPI review cadence for each use case.',
+        'Maintain incident runbooks with escalation paths and simulation drills.',
+    ],
+};
+const fallbackReadinessReferencesByDomain = {
+    identity: ['https://learn.microsoft.com/entra/identity/conditional-access/overview'],
+    data: ['https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio'],
+    security: ['https://learn.microsoft.com/power-platform/admin/wp-data-loss-prevention'],
+    platform: ['https://learn.microsoft.com/power-platform/alm/overview-alm'],
+    operatingModel: [
+        'https://learn.microsoft.com/microsoft-365-copilot/microsoft-365-copilot-adoption',
+    ],
+};
+function isMicrosoftLearnReference(url) {
+    try {
+        const hostname = new URL(url).hostname.toLowerCase();
+        return hostname === 'learn.microsoft.com' || hostname.endsWith('.learn.microsoft.com');
+    }
+    catch {
+        return false;
+    }
+}
+function ensureRecommendedControls(controls, domain) {
+    const normalized = Array.from(new Set((controls || []).map((c) => c.trim()).filter(Boolean)));
+    if (normalized.length > 0) {
+        return normalized;
+    }
+    return fallbackReadinessControlsByDomain[domain];
+}
+function prioritizeMicrosoftLearnReferences(references, domain) {
+    const normalized = Array.from(new Set((references || []).map((r) => r.trim()).filter(Boolean)));
+    const learn = normalized.filter((r) => isMicrosoftLearnReference(r));
+    const nonLearn = normalized.filter((r) => !isMicrosoftLearnReference(r));
+    const combined = [...learn, ...nonLearn];
+    if (learn.length > 0) {
+        return combined;
+    }
+    return [...fallbackReadinessReferencesByDomain[domain], ...combined];
+}
+function normalizeReadinessQuestion(q) {
+    return {
+        ...q,
+        recommendedControls: ensureRecommendedControls(q.recommendedControls, q.domain),
+        references: prioritizeMicrosoftLearnReferences(q.references, q.domain),
+    };
+}
 function isReadinessEquivalentToYes(questionId, answer) {
     return answer === 'yes' || (questionId === 'identity-1' && answer === 'na-anonymous-agent');
 }
@@ -569,7 +633,7 @@ app.get('/api/readiness/model', (_req, res) => {
     res.json({
         version: '2.0.0',
         domains: readinessDomains,
-        questions: readinessQuestions,
+        questions: readinessQuestions.map(normalizeReadinessQuestion),
         answerOptions: [
             { id: 'yes', label: 'Yes' },
             { id: 'partial', label: 'Partially' },
@@ -626,17 +690,20 @@ app.post('/api/readiness/assess', (req, res) => {
         const status = blockers.length > 0 ? 'blocked' : overallScore >= 75 ? 'ready' : 'needs-attention';
         const actionItems = readinessQuestions
             .filter((q) => !isReadinessEquivalentToYes(q.id, answers[q.id]))
-            .map((q) => ({
-            id: q.id,
-            domain: q.domain,
-            title: q.title,
-            priority: answers[q.id] === 'no' ? 'high' : 'medium',
-            whyItMatters: q.helperText,
-            currentState: answers[q.id],
-            highRiskExample: q.examples.highRisk,
-            recommendedControls: q.recommendedControls,
-            references: q.references,
-        }));
+            .map((rawQuestion) => {
+            const q = normalizeReadinessQuestion(rawQuestion);
+            return {
+                id: q.id,
+                domain: q.domain,
+                title: q.title,
+                priority: answers[q.id] === 'no' ? 'high' : 'medium',
+                whyItMatters: q.helperText,
+                currentState: answers[q.id],
+                highRiskExample: q.examples.highRisk,
+                recommendedControls: q.recommendedControls,
+                references: q.references,
+            };
+        });
         const actionPlan = actionItems.length
             ? actionItems.slice(0, 5).map((item, index) => {
                 const controlsPreview = item.recommendedControls.slice(0, 2).join(' | ');

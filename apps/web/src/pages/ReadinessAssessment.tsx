@@ -73,6 +73,16 @@ function toTitleCase(input: string): string {
     .join(' ');
 }
 
+function formatDomainLabel(domainId: string): string {
+  return domainId
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[_-]/g, ' ')
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
 function getReferenceTitle(url: string): string {
   const normalized = normalizeReferenceUrl(url);
   const mappedTitle = referenceTitleByUrl[normalized];
@@ -142,6 +152,12 @@ export default function ReadinessAssessment() {
     if (!model || !detailsQuestionId) return null;
     return model.questions.find((q) => q.id === detailsQuestionId) || null;
   }, [model, detailsQuestionId]);
+
+  const detailsDomainLabel = useMemo(() => {
+    if (!model || !detailsQuestion) return '';
+    const domain = model.domains.find((item) => item.id === detailsQuestion.domain);
+    return domain?.label || formatDomainLabel(detailsQuestion.domain);
+  }, [model, detailsQuestion]);
 
   const onChangeAnswer = (questionId: string, value: AnswerValue) => {
     setAnswers((prev) => ({
@@ -378,7 +394,7 @@ export default function ReadinessAssessment() {
             <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700 flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-wide text-primary-600 dark:text-primary-300 font-semibold">
-                  {detailsQuestion.domain}
+                  {detailsDomainLabel}
                 </p>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
                   {detailsQuestion.title}
