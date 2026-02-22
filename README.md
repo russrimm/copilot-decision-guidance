@@ -13,6 +13,7 @@ A production-quality web application that guides users through a structured ques
 - **[Implementation Guide Alignment](./docs/IMPLEMENTATION_GUIDE_ALIGNMENT.md)** - Enhancement plan aligned with official Microsoft Copilot Studio guidance
 - **[Monthly Licensing Validation](./docs/MONTHLY-LICENSING-VALIDATION.md)** - Automated validation of Copilot Studio licensing information
 - **[Weekly Validation Process](./docs/weekly-validation-process.md)** - Automated monitoring of official Microsoft release notes
+- **[Site Documentation (Playwright + Screenshots)](./docs/SITE_DOCUMENTATION_PLAYWRIGHT.md)** - Route-by-route site documentation with full-page screenshots
 - **[Quick Start](#quick-start)** - Get running in 5 minutes (no configuration required)
 
 ## Copilot Operating Guides (Instructions, Agents, Skills)
