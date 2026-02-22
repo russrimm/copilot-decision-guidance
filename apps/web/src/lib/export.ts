@@ -169,6 +169,37 @@ export async function generatePDF(
   const margin = 15;
   const maxWidth = pageWidth - margin * 2;
 
+  const buildSourceLinkMap = (sourceList: Recommendation['sources']): Record<string, string> => {
+    const linkMap: Record<string, string> = {};
+
+    sourceList.forEach((source) => {
+      const url = source.url.toLowerCase();
+      if (url.includes('microsoft-365-copilot-overview')) {
+        linkMap['microsoft 365 copilot'] = source.url;
+        linkMap['m365 copilot'] = source.url;
+      } else if (url.includes('copilot-studio') || url.includes('microsoft-copilot-studio')) {
+        linkMap['copilot studio'] = source.url;
+      } else if (url.includes('copilotstudioimplementationguide')) {
+        linkMap['copilot studio implementation guide'] = source.url;
+        linkMap['implementation guide'] = source.url;
+      } else if (url.includes('licensing')) {
+        linkMap['licensing'] = source.url;
+      } else if (url.includes('privacy') || url.includes('security')) {
+        linkMap['privacy'] = source.url;
+        linkMap['security'] = source.url;
+        linkMap['data privacy'] = source.url;
+      } else if (url.includes('extensibility')) {
+        linkMap['extensibility'] = source.url;
+        linkMap['extend'] = source.url;
+      }
+    });
+
+    return linkMap;
+  };
+
+  const sourceLinkMap = buildSourceLinkMap(sources);
+  const linkKeywords = Object.keys(sourceLinkMap).sort((a, b) => b.length - a.length);
+
   // Helper to sanitize text and remove problematic characters
   const sanitizeText = (text: string): string => {
     return text
@@ -201,6 +232,81 @@ export async function generatePDF(
       });
   };
 
+  const isWordBoundary = (text: string, index: number): boolean => {
+    if (index < 0 || index >= text.length) {
+      return true;
+    }
+    return !/[A-Za-z0-9]/.test(text[index]);
+  };
+
+  const findNextLinkMatch = (
+    line: string,
+    startIndex: number
+  ): { start: number; end: number; url: string } | null => {
+    const lowerLine = line.toLowerCase();
+    let bestMatch: { start: number; end: number; url: string } | null = null;
+
+    for (const keyword of linkKeywords) {
+      const index = lowerLine.indexOf(keyword, startIndex);
+      if (index === -1) {
+        continue;
+      }
+
+      const before = index - 1;
+      const after = index + keyword.length;
+      if (!isWordBoundary(line, before) || !isWordBoundary(line, after)) {
+        continue;
+      }
+
+      const candidate = {
+        start: index,
+        end: index + keyword.length,
+        url: sourceLinkMap[keyword],
+      };
+
+      if (!bestMatch || candidate.start < bestMatch.start) {
+        bestMatch = candidate;
+      }
+    }
+
+    return bestMatch;
+  };
+
+  const writeLineWithInlineLinks = (line: string, x: number, y: number): void => {
+    if (!linkKeywords.length) {
+      doc.text(line, x, y);
+      return;
+    }
+
+    let cursor = 0;
+    let currentX = x;
+
+    while (cursor < line.length) {
+      const match = findNextLinkMatch(line, cursor);
+
+      if (!match) {
+        const remainder = line.slice(cursor);
+        if (remainder) {
+          doc.text(remainder, currentX, y);
+        }
+        break;
+      }
+
+      const plainPart = line.slice(cursor, match.start);
+      if (plainPart) {
+        doc.text(plainPart, currentX, y);
+        currentX += doc.getTextWidth(plainPart);
+      }
+
+      const linkedPart = line.slice(match.start, match.end);
+      doc.setTextColor(0, 0, 255);
+      doc.textWithLink(linkedPart, currentX, y, { url: match.url });
+      doc.setTextColor(0, 0, 0);
+      currentX += doc.getTextWidth(linkedPart);
+      cursor = match.end;
+    }
+  };
+
   // Helper function to add text with proper wrapping
   const addText = (text: string, fontSize: number, isBold: boolean = false): void => {
     const cleanText = sanitizeText(text);
@@ -216,8 +322,7 @@ export async function generatePDF(
         doc.addPage();
         yPosition = 20;
       }
-      // Don't pass maxWidth to text() - splitTextToSize already handled line breaks
-      doc.text(lines[i], margin, yPosition);
+      writeLineWithInlineLinks(lines[i], margin, yPosition);
       yPosition += fontSize * 0.5 + 1;
     }
   };
