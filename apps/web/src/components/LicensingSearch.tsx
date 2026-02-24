@@ -42,7 +42,6 @@ export function LicensingSearch() {
       const data = await response.json();
       setResults(data.results || []);
     } catch (err) {
-      console.error('Search error:', err);
       setError(err instanceof Error ? err.message : 'Failed to search licensing documentation');
     } finally {
       setLoading(false);

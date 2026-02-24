@@ -87,9 +87,8 @@ export default function Dashboard() {
       if (data.message) {
         setError(data.message);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load metrics');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -408,10 +407,29 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-green-600 h-2 rounded-full transition-all"
-                    style={{ width: `${metrics.secureScore.percentage}%` }}
-                  ></div>
+                  <svg
+                    className="h-2 w-full"
+                    viewBox="0 0 100 2"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100"
+                      height="2"
+                      rx="1"
+                      className="fill-gray-200 dark:fill-gray-700"
+                    />
+                    <rect
+                      x="0"
+                      y="0"
+                      width={Math.max(0, Math.min(100, metrics.secureScore.percentage))}
+                      height="2"
+                      rx="1"
+                      className="fill-green-600"
+                    />
+                  </svg>
                 </div>
               </div>
 
@@ -498,10 +516,29 @@ function ScoreCard({
       </div>
       <div className="mt-2">
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-          <div
-            className={`bg-gradient-to-r ${gradientClass.split(' ')[0]} ${gradientClass.split(' ')[1]} h-2 rounded-full transition-all`}
-            style={{ width: `${score}%` }}
-          ></div>
+          <svg
+            className="h-2 w-full"
+            viewBox="0 0 100 2"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <rect
+              x="0"
+              y="0"
+              width="100"
+              height="2"
+              rx="1"
+              className="fill-gray-200 dark:fill-gray-700"
+            />
+            <rect
+              x="0"
+              y="0"
+              width={Math.max(0, Math.min(100, score))}
+              height="2"
+              rx="1"
+              className={`fill-current ${textClass}`}
+            />
+          </svg>
         </div>
       </div>
     </div>

@@ -36,100 +36,133 @@ const copilotStudioTree: MindMapNode = {
   label: 'Copilot Studio',
   children: [
     {
-      id: 'agent-design',
-      label: 'Agent Design',
+      id: 'build-publish',
+      label: 'Build & Publish',
       children: [
         {
-          id: 'conversation-design',
-          label: 'Conversation Design',
+          id: 'agent-authoring',
+          label: 'Agent Authoring',
           children: [
-            { id: 'instructions-goals', label: 'Instructions & Goals' },
-            { id: 'topic-triggers', label: 'Topic Triggers' },
-            { id: 'fallback-escalation', label: 'Fallback & Escalation' },
+            { id: 'visual-canvas', label: 'Visual Canvas & Low-code Design' },
+            { id: 'templates', label: 'Templates & Starter Experiences' },
+            { id: 'real-time-testing', label: 'Real-time Testing' },
           ],
         },
         {
-          id: 'knowledge-grounding',
-          label: 'Knowledge & Grounding',
+          id: 'topics-conversation',
+          label: 'Topics & Conversation Design',
           children: [
-            { id: 'website-file-sources', label: 'Website & File Sources' },
-            { id: 'sharepoint-graph-grounding', label: 'M365 Grounding' },
-            { id: 'response-quality-rules', label: 'Response Quality Rules' },
+            { id: 'specific-topics', label: 'Specific/Curated Topics' },
+            { id: 'multilingual-agents', label: 'Multilingual Agents' },
+            { id: 'rich-responses', label: 'Rich & Dynamic Responses' },
           ],
         },
         {
-          id: 'testing-evaluation',
-          label: 'Testing & Evaluation',
+          id: 'publish-channels',
+          label: 'Publish to Channels',
           children: [
-            { id: 'test-utterances', label: 'Test Utterances' },
-            { id: 'conversation-transcripts', label: 'Transcript Review' },
-            { id: 'improvement-loop', label: 'Iteration Loop' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'automation',
-      label: 'Automation & Actions',
-      children: [
-        {
-          id: 'power-automate-flows',
-          label: 'Power Automate Flows',
-          children: [
-            { id: 'instant-cloud-flows', label: 'Instant Cloud Flows' },
-            { id: 'approval-patterns', label: 'Approval Patterns' },
-            { id: 'error-handling-flow', label: 'Error Handling & Retries' },
-          ],
-        },
-        {
-          id: 'connector-strategy',
-          label: 'Connectors',
-          children: [
-            { id: 'standard-connectors', label: 'Standard Connectors' },
-            { id: 'premium-connectors', label: 'Premium Connectors' },
-            { id: 'custom-connectors', label: 'Custom Connectors' },
-          ],
-        },
-        {
-          id: 'business-processes',
-          label: 'Business Processes',
-          children: [
-            { id: 'ticketing-scenarios', label: 'Support/Ticketing' },
-            { id: 'hr-onboarding-scenarios', label: 'HR Onboarding' },
-            { id: 'operations-assistants', label: 'Ops Assistants' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'channels',
-      label: 'Channels & Experience',
-      children: [
-        {
-          id: 'microsoft-channels',
-          label: 'Microsoft Channels',
-          children: [
+            { id: 'm365-copilot-channel', label: 'Microsoft 365 Copilot' },
             { id: 'teams-channel', label: 'Microsoft Teams' },
-            { id: 'm365-copilot-extension', label: 'M365 Copilot Extension' },
-            { id: 'sharepoint-channel', label: 'SharePoint' },
+            { id: 'custom-channel-runtime', label: 'Web/Custom Channels' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'language-dialog-orchestration',
+      label: 'Language, Dialog & Orchestration',
+      children: [
+        {
+          id: 'language-understanding',
+          label: 'Language Understanding',
+          children: [
+            { id: 'classic-nlu', label: 'Classic NLU' },
+            { id: 'builtin-nlu', label: 'Built-in NLU' },
+            { id: 'byo-nlu', label: 'Bring-your-own NLU' },
           ],
         },
         {
-          id: 'external-channels',
-          label: 'External Channels',
+          id: 'dialog-management',
+          label: 'Dialog Management',
           children: [
-            { id: 'web-embed', label: 'Web Embed' },
-            { id: 'omnichannel-dynamics', label: 'Dynamics Omnichannel' },
-            { id: 'custom-channel', label: 'Custom Channel Integration' },
+            { id: 'multi-turn', label: 'Multi-turn Conversations' },
+            { id: 'inputs-outputs', label: 'Inputs, Outputs & Variables' },
+            { id: 'escalation', label: 'Escalate to Live Agent' },
           ],
         },
         {
-          id: 'ux-patterns',
-          label: 'UX Patterns',
+          id: 'orchestration-triggers',
+          label: 'Orchestration & Triggers',
           children: [
-            { id: 'handoff-patterns', label: 'Human Handoff' },
-            { id: 'adaptive-card-patterns', label: 'Cards & Forms' },
-            { id: 'multilingual-strategy', label: 'Multi-language Strategy' },
+            { id: 'generative-orch', label: 'Generative Orchestration' },
+            { id: 'autonomous-triggers', label: 'Autonomous Triggers' },
+            { id: 'system-triggers', label: 'System-driven Triggers' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'knowledge-generative-answers',
+      label: 'Knowledge & Generative Answers',
+      children: [
+        {
+          id: 'knowledge-sources',
+          label: 'Knowledge Sources',
+          children: [
+            { id: 'public-websites', label: 'Public Websites' },
+            { id: 'dataverse-documents', label: 'Dataverse Documents' },
+            { id: 'sharepoint-knowledge', label: 'SharePoint Knowledge' },
+          ],
+        },
+        {
+          id: 'enterprise-grounding',
+          label: 'Enterprise Grounding',
+          children: [
+            { id: 'graph-grounding', label: 'Microsoft Graph Grounding' },
+            { id: 'connector-grounding', label: 'Enterprise Connectors' },
+            { id: 'azure-ai-search', label: 'Azure AI Search Grounding' },
+          ],
+        },
+        {
+          id: 'answer-controls',
+          label: 'Answer Controls',
+          children: [
+            { id: 'fallback-pattern', label: 'Fallback with Generative Answers' },
+            { id: 'content-moderation', label: 'Content Moderation Levels' },
+            { id: 'citations-behavior', label: 'Citations & Response Handling' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'actions-integrations',
+      label: 'Actions & Integrations',
+      children: [
+        {
+          id: 'integration-options',
+          label: 'Integration Options',
+          children: [
+            { id: 'http-requests', label: 'HTTP Requests' },
+            { id: 'power-platform-connectors', label: 'Power Platform Connectors' },
+            { id: 'bot-framework-skills', label: 'Bot Framework Skills' },
+          ],
+        },
+        {
+          id: 'action-patterns',
+          label: 'Action Patterns',
+          children: [
+            { id: 'workflows', label: 'Agent Flows / Workflows' },
+            { id: 'generative-actions', label: 'Generative Actions' },
+            { id: 'long-running-tasks', label: 'Long-running Tasks' },
+          ],
+        },
+        {
+          id: 'pro-dev-extensibility',
+          label: 'Pro-dev Extensibility',
+          children: [
+            { id: 'byom', label: 'Bring your own model (BYOM)' },
+            { id: 'custom-knowledge', label: 'Knowledge Base Extension' },
+            { id: 'custom-analytics', label: 'Custom Analytics Integration' },
           ],
         },
       ],
@@ -139,69 +172,118 @@ const copilotStudioTree: MindMapNode = {
       label: 'Security & Governance',
       children: [
         {
-          id: 'environment-security',
-          label: 'Environment Security',
+          id: 'data-policy-controls',
+          label: 'Data Policy Controls (DLP)',
           children: [
-            { id: 'security-groups', label: 'Security Groups' },
-            { id: 'environment-roles', label: 'Environment Roles' },
-            { id: 'admin-center-management', label: 'Admin Center Management' },
+            { id: 'auth-governance', label: 'Maker/User Authentication Controls' },
+            { id: 'knowledge-governance', label: 'Knowledge Source Governance' },
+            { id: 'connector-trigger-governance', label: 'Connector/Trigger Governance' },
           ],
         },
         {
-          id: 'dataverse-security',
-          label: 'Dataverse Security',
+          id: 'security-controls',
+          label: 'Security Controls',
           children: [
-            { id: 'role-based-security', label: 'Role-Based Security' },
-            { id: 'business-units-teams', label: 'Business Units & Teams' },
-            { id: 'field-level-security', label: 'Field/Column-Level Security' },
+            { id: 'runtime-protection', label: 'Agent Runtime Protection Status' },
+            { id: 'security-scan', label: 'Automatic Security Scan' },
+            { id: 'cmk-support', label: 'Customer-managed Keys (CMK)' },
           ],
         },
         {
-          id: 'compliance-controls',
-          label: 'Compliance Controls',
+          id: 'audit-compliance',
+          label: 'Audit & Compliance',
           children: [
-            { id: 'dlp-policies', label: 'DLP Policies' },
-            { id: 'audit-logging', label: 'Audit Logging' },
-            { id: 'managed-environments', label: 'Managed Environments' },
+            { id: 'purview-logs', label: 'Microsoft Purview Audit Logs' },
+            { id: 'sentinel-logs', label: 'Microsoft Sentinel Monitoring' },
+            { id: 'compliance-offerings', label: 'Compliance Offerings & Residency' },
           ],
         },
       ],
     },
     {
-      id: 'operations',
-      label: 'Operations & Lifecycle',
+      id: 'alm-solutions',
+      label: 'ALM & Solutions',
       children: [
         {
-          id: 'release-management',
-          label: 'Release Management',
+          id: 'solution-model',
+          label: 'Solution Model',
           children: [
-            { id: 'solution-packaging', label: 'Solution Packaging' },
-            { id: 'environment-promotion', label: 'Environment Promotion' },
-            { id: 'rollback-plans', label: 'Rollback Strategy' },
+            { id: 'agent-in-solution', label: 'Agents in Power Platform Solutions' },
+            { id: 'custom-solutions', label: 'Custom Solutions' },
+            { id: 'preferred-solution', label: 'Preferred Solution Setting' },
           ],
         },
         {
-          id: 'monitoring',
-          label: 'Monitoring',
+          id: 'environment-strategy',
+          label: 'Environment Strategy',
           children: [
-            { id: 'conversation-analytics', label: 'Conversation Analytics' },
-            { id: 'failure-alerts', label: 'Failure Alerts' },
-            { id: 'feedback-loop', label: 'User Feedback Loop' },
+            { id: 'dev-test-prod', label: 'Dev/Test/Prod Environments' },
+            { id: 'ring-deployment', label: 'Ring Deployments' },
+            { id: 'environment-routing', label: 'Environment Routing' },
           ],
         },
         {
-          id: 'platform-adoption',
-          label: 'Adoption & Enablement',
+          id: 'deployment-automation',
+          label: 'Deployment Automation',
           children: [
-            { id: 'maker-guidelines', label: 'Maker Guidelines' },
-            { id: 'support-model', label: 'Support Model' },
-            { id: 'success-metrics', label: 'Success Metrics' },
+            { id: 'import-export', label: 'Import/Export Solutions' },
+            { id: 'solution-pipelines', label: 'Solution Pipelines (CI/CD)' },
+            { id: 'managed-layers', label: 'Managed/Unmanaged Layers' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'analytics-operations',
+      label: 'Analytics & Operations',
+      children: [
+        {
+          id: 'analyze-improve',
+          label: 'Analyze & Improve Lifecycle',
+          children: [
+            { id: 'oob-insights', label: 'Out-of-box Insights' },
+            { id: 'continuous-improvement', label: 'Continuous Improvement Loop' },
+            { id: 'performance-testing', label: 'Performance Testing' },
+          ],
+        },
+        {
+          id: 'analytics-telemetry',
+          label: 'Analytics & Telemetry',
+          children: [
+            { id: 'conversation-transcripts', label: 'Conversation Transcripts' },
+            { id: 'technical-telemetry', label: 'Technical Telemetry' },
+            { id: 'app-insights', label: 'Application Insights Integration' },
+          ],
+        },
+        {
+          id: 'platform-services',
+          label: 'Connected Platform Services',
+          children: [
+            { id: 'entra-id', label: 'Microsoft Entra ID' },
+            { id: 'azure-monitor-storage', label: 'Azure Monitor / Storage' },
+            { id: 'foundry-ai-services', label: 'Foundry & Azure AI Services' },
           ],
         },
       ],
     },
   ],
 };
+
+function distanceBetween(
+  pointA: { x: number; y: number },
+  pointB: { x: number; y: number }
+): number {
+  const deltaX = pointA.x - pointB.x;
+  const deltaY = pointA.y - pointB.y;
+  return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+function midpoint(pointA: { x: number; y: number }, pointB: { x: number; y: number }) {
+  return {
+    x: (pointA.x + pointB.x) / 2,
+    y: (pointA.y + pointB.y) / 2,
+  };
+}
 
 function hasChildren(node: MindMapNode): boolean {
   return Boolean(node.children && node.children.length > 0);
@@ -388,6 +470,25 @@ export default function CopilotStudioMindMap() {
     originX: 0,
     originY: 0,
   });
+  const touchStateRef = useRef<
+    | {
+        mode: 'none';
+      }
+    | {
+        mode: 'pan';
+        startX: number;
+        startY: number;
+        originX: number;
+        originY: number;
+      }
+    | {
+        mode: 'pinch';
+        startDistance: number;
+        startZoom: number;
+        worldX: number;
+        worldY: number;
+      }
+  >({ mode: 'none' });
   const suppressClickRef = useRef(false);
   const [viewportWidth, setViewportWidth] = useState(0);
 
@@ -493,6 +594,140 @@ export default function CopilotStudioMindMap() {
       surface.removeEventListener('wheel', onWheel);
     };
   }, [applyZoomAtPoint, zoom]);
+
+  useEffect(() => {
+    const surface = surfaceRef.current;
+    if (!surface) {
+      return;
+    }
+
+    const onTouchStart = (event: TouchEvent) => {
+      if (!surfaceRef.current) {
+        return;
+      }
+
+      if (event.touches.length === 1) {
+        const touch = event.touches[0];
+        touchStateRef.current = {
+          mode: 'pan',
+          startX: touch.clientX,
+          startY: touch.clientY,
+          originX: offset.x,
+          originY: offset.y,
+        };
+        setIsPanning(true);
+        return;
+      }
+
+      if (event.touches.length === 2) {
+        event.preventDefault();
+        const bounds = surface.getBoundingClientRect();
+        const touchA = event.touches[0];
+        const touchB = event.touches[1];
+        const pointA = { x: touchA.clientX, y: touchA.clientY };
+        const pointB = { x: touchB.clientX, y: touchB.clientY };
+        const centerClient = midpoint(pointA, pointB);
+        const anchorX = centerClient.x - bounds.left;
+        const anchorY = centerClient.y - bounds.top;
+
+        touchStateRef.current = {
+          mode: 'pinch',
+          startDistance: distanceBetween(pointA, pointB),
+          startZoom: zoom,
+          worldX: (anchorX - offset.x) / zoom,
+          worldY: (anchorY - offset.y) / zoom,
+        };
+
+        setIsPanning(true);
+      }
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (!surfaceRef.current) {
+        return;
+      }
+
+      const state = touchStateRef.current;
+      if (state.mode === 'none') {
+        return;
+      }
+
+      if (state.mode === 'pan' && event.touches.length === 1) {
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - state.startX;
+        const deltaY = touch.clientY - state.startY;
+
+        if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+          suppressClickRef.current = true;
+        }
+
+        setOffset({
+          x: Number((state.originX + deltaX).toFixed(2)),
+          y: Number((state.originY + deltaY).toFixed(2)),
+        });
+
+        event.preventDefault();
+        return;
+      }
+
+      if (state.mode === 'pinch' && event.touches.length === 2) {
+        const bounds = surface.getBoundingClientRect();
+        const touchA = event.touches[0];
+        const touchB = event.touches[1];
+        const pointA = { x: touchA.clientX, y: touchA.clientY };
+        const pointB = { x: touchB.clientX, y: touchB.clientY };
+        const nextDistance = distanceBetween(pointA, pointB);
+        const scaleFactor = state.startDistance > 0 ? nextDistance / state.startDistance : 1;
+        const nextZoomRaw = state.startZoom * scaleFactor;
+        const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, nextZoomRaw));
+
+        const centerClient = midpoint(pointA, pointB);
+        const anchorX = centerClient.x - bounds.left;
+        const anchorY = centerClient.y - bounds.top;
+
+        const nextOffsetX = Number((anchorX - state.worldX * nextZoom).toFixed(2));
+        const nextOffsetY = Number((anchorY - state.worldY * nextZoom).toFixed(2));
+
+        setZoom(Number(nextZoom.toFixed(2)));
+        setOffset({ x: nextOffsetX, y: nextOffsetY });
+
+        suppressClickRef.current = true;
+        event.preventDefault();
+      }
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+      if (event.touches.length === 0) {
+        touchStateRef.current = { mode: 'none' };
+        setIsPanning(false);
+        return;
+      }
+
+      if (event.touches.length === 1) {
+        const touch = event.touches[0];
+        touchStateRef.current = {
+          mode: 'pan',
+          startX: touch.clientX,
+          startY: touch.clientY,
+          originX: offset.x,
+          originY: offset.y,
+        };
+        setIsPanning(true);
+      }
+    };
+
+    surface.addEventListener('touchstart', onTouchStart, { passive: false });
+    surface.addEventListener('touchmove', onTouchMove, { passive: false });
+    surface.addEventListener('touchend', onTouchEnd, { passive: false });
+    surface.addEventListener('touchcancel', onTouchEnd, { passive: false });
+
+    return () => {
+      surface.removeEventListener('touchstart', onTouchStart);
+      surface.removeEventListener('touchmove', onTouchMove);
+      surface.removeEventListener('touchend', onTouchEnd);
+      surface.removeEventListener('touchcancel', onTouchEnd);
+    };
+  }, [offset.x, offset.y, zoom]);
 
   useEffect(() => {
     const onMouseMove = (event: MouseEvent) => {
@@ -606,8 +841,7 @@ export default function CopilotStudioMindMap() {
           Click a box with an arrow to expand into the next level of sub-topics.
         </p>
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-300">
-          Tip: use your mouse wheel over the map to zoom at the cursor position, and click-drag to
-          pan.
+          Tip: use mouse wheel to zoom at cursor, click-drag to pan, or pinch on touch devices.
         </p>
       </div>
 

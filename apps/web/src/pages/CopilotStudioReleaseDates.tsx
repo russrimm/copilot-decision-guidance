@@ -113,8 +113,7 @@ export default function CopilotStudioReleaseDates() {
           </Link>
         </div>
         <p className="mt-2 text-gray-600 dark:text-gray-100">
-          Upcoming <strong>Public Preview</strong> and <strong>GA</strong> dates from the Power
-          Platform Release Planner.
+          Feature milestone dates from the Power Platform Release Planner.
         </p>
       </div>
 
@@ -160,14 +159,14 @@ export default function CopilotStudioReleaseDates() {
         <div className="grid gap-6">
           <div className="card">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Upcoming Public Preview
+              Upcoming Public Preview (No defined GA date)
             </h2>
             <MilestoneTable items={data?.upcomingPublicPreview ?? []} />
           </div>
 
           <div className="card">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Upcoming GA
+              Upcoming Feature GA Dates
             </h2>
             <MilestoneTable items={data?.upcomingGA ?? []} />
           </div>

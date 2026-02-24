@@ -115,9 +115,7 @@ export default function UseCaseAssistant() {
         if (vertRes.ok) setVerticals(await vertRes.json());
         if (deptRes.ok) setDepartments(await deptRes.json());
         if (dsRes.ok) setDataSources(await dsRes.json());
-      } catch (error) {
-        console.error('Failed to load use case options:', error);
-      }
+      } catch {}
     };
 
     loadData();
@@ -296,10 +294,10 @@ export default function UseCaseAssistant() {
           response,
           'Failed to generate use cases'
         );
-        console.error('Failed to generate use cases:', friendlyError);
+        alert(friendlyError);
       }
-    } catch (error) {
-      console.error('Failed to generate use cases:', error);
+    } catch {
+      alert('Failed to generate use cases');
     } finally {
       setLoading(false);
     }
@@ -308,17 +306,13 @@ export default function UseCaseAssistant() {
   const handleExportPDF = async (useCase: UseCase) => {
     try {
       window.location.href = `/api/use-cases/export/pdf/${useCase.id}`;
-    } catch (error) {
-      console.error('Failed to export PDF:', error);
-    }
+    } catch {}
   };
 
   const handleExportPPTX = async (useCase: UseCase) => {
     try {
       window.location.href = `/api/use-cases/export/pptx/${useCase.id}`;
-    } catch (error) {
-      console.error('Failed to export PPTX:', error);
-    }
+    } catch {}
   };
 
   return (

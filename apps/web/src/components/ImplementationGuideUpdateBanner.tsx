@@ -1,7 +1,7 @@
 /**
  * Implementation Guide Update Banner
- * 
- * Displays a notification when a new version of the Microsoft Copilot Studio 
+ *
+ * Displays a notification when a new version of the Microsoft Copilot Studio
  * Implementation Guide has been detected by the monitoring system.
  */
 
@@ -29,10 +29,10 @@ export function ImplementationGuideUpdateBanner() {
 
   useEffect(() => {
     checkForUpdates();
-    
+
     // Check every hour for updates
     const interval = setInterval(checkForUpdates, 60 * 60 * 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -43,8 +43,7 @@ export function ImplementationGuideUpdateBanner() {
         const data = await response.json();
         setUpdateInfo(data);
       }
-    } catch (error) {
-      console.error('Failed to check for Implementation Guide updates:', error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -56,13 +55,12 @@ export function ImplementationGuideUpdateBanner() {
       const response = await fetch('/api/implementation-guide/acknowledge-update', {
         method: 'POST',
       });
-      
+
       if (response.ok) {
         setUpdateInfo({ updateAvailable: false });
         setDismissed(true);
       }
-    } catch (error) {
-      console.error('Failed to acknowledge update:', error);
+    } catch {
     } finally {
       setAcknowledging(false);
     }
@@ -76,7 +74,7 @@ export function ImplementationGuideUpdateBanner() {
     return null;
   }
 
-  const formattedDate = updateInfo.detectedAt 
+  const formattedDate = updateInfo.detectedAt
     ? new Date(updateInfo.detectedAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -94,11 +92,10 @@ export function ImplementationGuideUpdateBanner() {
               🎉 Implementation Guide Updated
             </h3>
             <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-              A new version of the <strong>Microsoft Copilot Studio Implementation Guide</strong> has been detected.
+              A new version of the <strong>Microsoft Copilot Studio Implementation Guide</strong>{' '}
+              has been detected.
               {updateInfo.version && (
-                <span className="ml-1 font-medium">
-                  Version {updateInfo.version}
-                </span>
+                <span className="ml-1 font-medium">Version {updateInfo.version}</span>
               )}
             </p>
 
@@ -107,7 +104,7 @@ export function ImplementationGuideUpdateBanner() {
                 <Calendar className="h-4 w-4" />
                 <span>Detected: {formattedDate}</span>
               </div>
-              
+
               {updateInfo.extractedContent && (
                 <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
                   <FileText className="h-4 w-4" />
@@ -155,7 +152,7 @@ export function ImplementationGuideUpdateBanner() {
                 View Guide
                 <ExternalLink className="ml-1 h-3 w-3" />
               </a>
-              
+
               <a
                 href="/docs/IMPLEMENTATION_GUIDE_ALIGNMENT.md"
                 className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"

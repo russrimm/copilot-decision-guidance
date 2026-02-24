@@ -31,7 +31,6 @@ export default function Wizard() {
     getDecisionModel()
       .then(setModel)
       .catch((err) => {
-        console.error('Failed to load decision model:', err);
         setError(err.message || 'Failed to load questionnaire. Please try again.');
       })
       .finally(() => setLoading(false));
@@ -100,22 +99,15 @@ export default function Wizard() {
       setCalculating(true);
       try {
         const finalAnswers: UserAnswers = { ...answers, ...nextAnswers } as UserAnswers;
-        console.log('[Wizard] Submitting answers:', finalAnswers);
         const result = await calculateScore(finalAnswers);
-        console.log('[Wizard] Received result:', result);
 
         if (!result.recommendation || !result.scoringResult) {
-          console.error(
-            '[Wizard] Invalid result - missing recommendation or scoringResult:',
-            result
-          );
           throw new Error('Invalid response from server - missing recommendation data');
         }
 
         setRecommendation(result.recommendation, result.scoringResult);
         navigate('/results');
-      } catch (error) {
-        console.error('Error calculating recommendation:', error);
+      } catch {
         alert('Failed to calculate recommendation. Please try again.');
       } finally {
         setCalculating(false);
@@ -140,10 +132,29 @@ export default function Wizard() {
           <span>{Math.round(progress)}% Complete</span>
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-          <div
-            className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
+          <svg
+            className="h-2 w-full"
+            viewBox="0 0 100 2"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <rect
+              x="0"
+              y="0"
+              width="100"
+              height="2"
+              rx="1"
+              className="fill-gray-200 dark:fill-gray-700"
+            />
+            <rect
+              x="0"
+              y="0"
+              width={Math.max(0, Math.min(100, progress))}
+              height="2"
+              rx="1"
+              className="fill-primary-600"
+            />
+          </svg>
         </div>
       </div>
 

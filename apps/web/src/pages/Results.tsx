@@ -57,15 +57,13 @@ export default function Results() {
     fetch('/api/model')
       .then((res) => res.json())
       .then((data) => setModel(data))
-      .catch((err) => console.error('Failed to load model:', err));
+      .catch(() => undefined);
 
     // Fetch AI-enhanced explanation
     if (recommendation) {
-      console.log('[Results] Fetching AI explanation for type:', recommendation.type);
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
         controller.abort();
-        console.error('[Results] AI explanation request timed out after 35 seconds');
       }, 35000); // 35 second timeout (slightly longer than backend)
 
       fetch('/api/explain', {
@@ -82,24 +80,14 @@ export default function Results() {
           return res.json();
         })
         .then((data) => {
-          console.log('[Results] Received explanation data:', data);
           if (data.explanation) {
-            console.log('[Results] Setting enhanced explanation:', {
-              hasIntroduction: !!data.explanation.introduction,
-              hasSummary: !!data.explanation.summary,
-              enhanced: data.enhanced,
-            });
             setEnhancedExplanation(data.explanation);
-          } else {
-            console.warn('[Results] No explanation in response data');
           }
         })
         .catch((err) => {
           clearTimeout(timeoutId);
-          if (err.name === 'AbortError') {
-            console.error('[Results] Request timed out - using fallback explanation');
-          } else {
-            console.error('Failed to load enhanced explanation:', err);
+          if (err.name !== 'AbortError') {
+            return;
           }
         })
         .finally(() => setLoadingEnhancement(false));
@@ -428,8 +416,7 @@ export default function Results() {
 
     try {
       await downloadPDF(enhancedRecommendation, qaData, `copilot-recommendation-${Date.now()}.pdf`);
-    } catch (error) {
-      console.error('Failed to export PDF:', error);
+    } catch {
       alert('Failed to export PDF. Please try again.');
     } finally {
       setIsExportingPdf(false);
@@ -474,8 +461,7 @@ export default function Results() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to export Executive Overview PPTX:', error);
+    } catch {
       alert('Failed to export Executive Overview PPTX. Please try again.');
     }
   };
@@ -529,8 +515,7 @@ export default function Results() {
       });
       const data = await response.json();
       setAiRecommendation(data.recommendation);
-    } catch (error) {
-      console.error('Failed to fetch AI recommendation:', error);
+    } catch {
     } finally {
       setLoadingAiRec(false);
     }

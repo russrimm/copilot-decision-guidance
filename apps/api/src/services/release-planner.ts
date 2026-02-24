@@ -184,7 +184,11 @@ export async function getCopilotStudioReleasePlannerData(options?: {
     const featureUrl = toAbsoluteLearnUrl(docsUrlRaw) || toAbsoluteReleasePlansUrl(articlePathRaw);
 
     const ppDate = parseUsDateToUtc(ppDateStr);
-    if (ppDate && ppDate.getTime() >= todayUtcMs) {
+    const gaDate = parseUsDateToUtc(gaDateStr);
+
+    const isCurrentlyInPreviewWithoutGaDate = !!ppDate && ppDate.getTime() <= todayUtcMs && !gaDate;
+
+    if (isCurrentlyInPreviewWithoutGaDate) {
       upcomingPublicPreview.push({
         date: formatDateUtc(ppDate),
         featureName: featureName || '(Unnamed feature)',
@@ -194,7 +198,6 @@ export async function getCopilotStudioReleasePlannerData(options?: {
       });
     }
 
-    const gaDate = parseUsDateToUtc(gaDateStr);
     if (gaDate && gaDate.getTime() >= todayUtcMs) {
       upcomingGA.push({
         date: formatDateUtc(gaDate),
