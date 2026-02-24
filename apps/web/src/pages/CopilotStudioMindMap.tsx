@@ -294,6 +294,31 @@ function buildLearnSearchUrl(rootTopic: string, nodeTopic: string): string {
   return `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
 }
 
+function buildLearnSearchUrlFromPath(labels: string[]): string {
+  // Build a search query from the path
+  // Include each label's unique words, avoiding duplicates
+  // Order: most specific (current) to least specific (root)
+
+  const seenWords = new Set<string>();
+  const resultWords: string[] = [];
+
+  // Process labels from most specific (last) to least specific (first)
+  for (let i = labels.length - 1; i >= 0; i--) {
+    const label = labels[i];
+    const words = label.split(/\s+/).filter((word) => word.length > 0 && word !== '&');
+
+    for (const word of words) {
+      if (!seenWords.has(word)) {
+        seenWords.add(word);
+        resultWords.push(word);
+      }
+    }
+  }
+
+  const query = `site:learn.microsoft.com ${resultWords.join(' ')}`;
+  return `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+}
+
 function hasChildren(node: MindMapNode): boolean {
   return Boolean(node.children && node.children.length > 0);
 }
@@ -915,7 +940,16 @@ export default function CopilotStudioMindMap() {
 
                 const onHelpClick = (event: ReactMouseEvent<SVGGElement>) => {
                   event.stopPropagation();
-                  const searchUrl = buildLearnSearchUrl(copilotStudioTree.label, entry.node.label);
+                  // Build path from root to current node
+                  const path: string[] = [];
+                  let currentEntry: PositionedNode | undefined = entry;
+                  while (currentEntry) {
+                    path.unshift(currentEntry.node.label);
+                    const parentId = currentEntry.parentId;
+                    if (!parentId) break;
+                    currentEntry = positionedNodes.find((n) => n.id === parentId);
+                  }
+                  const searchUrl = buildLearnSearchUrlFromPath(path);
                   window.open(searchUrl, '_blank', 'noopener,noreferrer');
                 };
 
@@ -938,14 +972,27 @@ export default function CopilotStudioMindMap() {
                     />
 
                     {!isRoot && (
-                      <circle
-                        cx={-11}
-                        cy={NODE_HEIGHT / 2}
-                        r={8.5}
-                        fill="rgba(15, 23, 42, 1)"
-                        stroke="rgba(148, 163, 184, 0.75)"
-                        strokeWidth={1.2}
-                      />
+                      <g onClick={onHelpClick} className="cursor-pointer">
+                        <circle
+                          cx={-11}
+                          cy={NODE_HEIGHT / 2}
+                          r={8.5}
+                          fill="rgba(15, 23, 42, 1)"
+                          stroke="rgba(148, 163, 184, 0.75)"
+                          strokeWidth={1.2}
+                        />
+                        <text
+                          x={-11}
+                          y={NODE_HEIGHT / 2 + 0.5}
+                          fill="rgb(226 232 240)"
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fontSize={16}
+                          fontWeight={700}
+                        >
+                          ?
+                        </text>
+                      </g>
                     )}
 
                     <text
@@ -959,27 +1006,29 @@ export default function CopilotStudioMindMap() {
                       {entry.node.label}
                     </text>
 
-                    <g onClick={onHelpClick} className="cursor-pointer">
-                      <circle
-                        cx={nodeWidth - 50}
-                        cy={NODE_HEIGHT / 2}
-                        r={10}
-                        fill="rgba(15, 23, 42, 1)"
-                        stroke={isRoot ? 'rgba(199, 210, 254, 0.8)' : 'rgba(148, 163, 184, 0.75)'}
-                        strokeWidth={1.2}
-                      />
-                      <text
-                        x={nodeWidth - 50}
-                        y={NODE_HEIGHT / 2 + 0.5}
-                        fill={isRoot ? 'rgb(224 231 255)' : 'rgb(226 232 240)'}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fontSize={14}
-                        fontWeight={700}
-                      >
-                        ?
-                      </text>
-                    </g>
+                    {isRoot && (
+                      <g onClick={onHelpClick} className="cursor-pointer">
+                        <circle
+                          cx={-11}
+                          cy={NODE_HEIGHT / 2}
+                          r={10}
+                          fill="rgba(15, 23, 42, 1)"
+                          stroke="rgba(199, 210, 254, 0.8)"
+                          strokeWidth={1.2}
+                        />
+                        <text
+                          x={-11}
+                          y={NODE_HEIGHT / 2 + 0.5}
+                          fill="rgb(224 231 255)"
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fontSize={18}
+                          fontWeight={700}
+                        >
+                          ?
+                        </text>
+                      </g>
+                    )}
 
                     {(expandable || isRoot) && (
                       <g>
