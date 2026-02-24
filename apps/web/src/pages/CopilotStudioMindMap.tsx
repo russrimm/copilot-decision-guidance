@@ -267,7 +267,9 @@ function buildLayout(root: MindMapNode, expandedNodeIds: Set<string>) {
   const subtreeHeightCache = new Map<string, number>();
 
   const topChildren = root.children ?? [];
-  const topHeights = topChildren.map((child) => getSubtreeHeight(child, expandedNodeIds, subtreeHeightCache));
+  const topHeights = topChildren.map((child) =>
+    getSubtreeHeight(child, expandedNodeIds, subtreeHeightCache)
+  );
 
   const topTotalHeight =
     topHeights.reduce((sum, height) => sum + height, 0) +
@@ -285,11 +287,7 @@ function buildLayout(root: MindMapNode, expandedNodeIds: Set<string>) {
     y: rootCenterY,
   });
 
-  const placeChildren = (
-    parent: MindMapNode,
-    parentCenterY: number,
-    depth: number
-  ) => {
+  const placeChildren = (parent: MindMapNode, parentCenterY: number, depth: number) => {
     const children = parent.children ?? [];
     if (!children.length) {
       return;
@@ -608,8 +606,8 @@ export default function CopilotStudioMindMap() {
           Click a box with an arrow to expand into the next level of sub-topics.
         </p>
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-300">
-          Tip: use your mouse wheel over the map to zoom at the cursor position, and click-drag
-          to pan.
+          Tip: use your mouse wheel over the map to zoom at the cursor position, and click-drag to
+          pan.
         </p>
       </div>
 
@@ -621,7 +619,12 @@ export default function CopilotStudioMindMap() {
             isPanning ? 'cursor-grabbing' : 'cursor-grab'
           }`}
         >
-          <svg width={canvasWidth} height={canvasHeight} className="block" aria-label="Copilot Studio drill-down map">
+          <svg
+            width={canvasWidth}
+            height={canvasHeight}
+            className="block"
+            aria-label="Copilot Studio drill-down map"
+          >
             <g transform={`translate(${offset.x} ${offset.y}) scale(${zoom})`}>
               {connectorPaths.map((path) => (
                 <path

@@ -268,8 +268,8 @@ export default function Landing() {
               Interactive Mind Map
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-100">
-              Drill down from Copilot Studio top-level topics into deeper sub-topics by clicking each
-              box.
+              Drill down from Copilot Studio top-level topics into deeper sub-topics by clicking
+              each box.
             </p>
           </div>
           <Link
