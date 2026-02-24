@@ -75,6 +75,12 @@ export default function Layout() {
                   >
                     Readiness
                   </Link>
+                  <Link
+                    to="/implementation-guide"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    Implementation Guide
+                  </Link>
                   <button
                     type="button"
                     onClick={() => setIsInfographicOpen(true)}

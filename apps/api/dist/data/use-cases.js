@@ -543,6 +543,8 @@ function normalizeToken(input) {
 function normalizeDepartment(input) {
     const t = normalizeToken(input);
     const map = {
+        'customer-service': 'operations',
+        customerservice: 'operations',
         operations: 'operations',
         engineering: 'engineering',
         finance: 'finance',

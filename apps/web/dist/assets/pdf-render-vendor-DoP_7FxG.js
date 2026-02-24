@@ -1,4 +1,4 @@
-import{R as Fn,f as Ae,h as nB,k as Ye,l as Wr,n as ni}from"./vendor-De8J6tqH.js";/*!
+import{R as Fn,f as Ae,h as nB,k as Ye,l as Wr,n as ni}from"./vendor-BZ7_1l7M.js";/*!
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
  * Copyright (c) 2022 Niklas von Hertzen <https://hertzen.com>
  * Released under MIT License

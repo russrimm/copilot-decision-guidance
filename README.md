@@ -78,6 +78,7 @@ Use this checklist for every feature before merge/deploy:
 
 ✅ **Use Case Assistant** - Interactive discovery and exploration of common Microsoft Copilot use cases with detailed implementation guidance  
 ✅ **Readiness Assessment** - Score identity, data, security, platform, and operating model readiness with blocker detection  
+✅ **Implementation Guide** - Introductory walkthroughs for Microsoft 365 Copilot and Copilot Studio covering licensing, prerequisites, role permissions, step-by-step first-agent delivery, and downloadable PDF/Markdown checklists
 ✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms (integrated in Use Case Assistant)
 
 ### Release Tracking & News
@@ -247,6 +248,7 @@ The application includes the following pages:
 
 - **Use Case Assistant** - [http://localhost:3000/use-cases](http://localhost:3000/use-cases) - Explore common Copilot use cases with implementation guidance
 - **Readiness Assessment** - [http://localhost:3000/readiness](http://localhost:3000/readiness) - Assess deployment blockers and readiness scores
+- **Implementation Guide** - [http://localhost:3000/implementation-guide](http://localhost:3000/implementation-guide) - Guided setup walkthroughs for Microsoft 365 Copilot and Copilot Studio
 
 ### Release Intelligence
 

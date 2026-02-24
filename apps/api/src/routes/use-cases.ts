@@ -6,12 +6,75 @@ import { generateUseCasePPTX, generateMultipleUseCasesPPTX } from '../services/p
 const router = Router();
 
 const DEPARTMENTS = [
+  {
+    id: 'customer-service',
+    label: 'Customer Service',
+    icon: '🎧',
+    topics: [
+      'Self-help',
+      'Support assignment',
+      'Issue diagnosis',
+      'Problem resolution',
+      'Continuous improvement',
+    ],
+  },
   { id: 'operations', label: 'Operations', icon: '🏭' },
   { id: 'engineering', label: 'Engineering', icon: '🔧' },
-  { id: 'finance', label: 'Finance & Accounting', icon: '💰' },
-  { id: 'hr', label: 'Human Resources', icon: '👥' },
-  { id: 'it', label: 'Information Technology', icon: '💻' },
-  { id: 'legal', label: 'Legal & Compliance', icon: '⚖️' },
+  {
+    id: 'finance',
+    label: 'Finance',
+    icon: '💰',
+    topics: [
+      'Quote to cash',
+      'Record to report',
+      'Tax & treasury',
+      'Planning & analysis',
+      'Risk management and compliance',
+      'Procure-to-pay',
+    ],
+  },
+  {
+    id: 'hr',
+    label: 'HR',
+    icon: '👥',
+    topics: [
+      'Employee engagement',
+      'Recruiting',
+      'HR admin & payroll',
+      'Compensation & benefits',
+      'Learning & development',
+      'Talent management',
+      'HR strategy & planning',
+    ],
+  },
+  {
+    id: 'it',
+    label: 'IT',
+    icon: '💻',
+    topics: [
+      'Data management',
+      'Software management & acquisition',
+      'Device management',
+      'IT operations',
+      'Network operations',
+      'Information security',
+      'Change management & user adoption',
+    ],
+  },
+  {
+    id: 'legal',
+    label: 'Legal',
+    icon: '⚖️',
+    topics: [
+      'Regulatory & compliance management',
+      'Contracting',
+      'Risk management',
+      'Litigation',
+      'Consultation',
+      'Intellectual property',
+      'Advisory services',
+    ],
+  },
   { id: 'compliance', label: 'Compliance', icon: '✅' },
   { id: 'supply-chain', label: 'Supply Chain', icon: '📦' },
   { id: 'procurement', label: 'Procurement', icon: '🛒' },
@@ -20,8 +83,33 @@ const DEPARTMENTS = [
   { id: 'production', label: 'Production', icon: '🏗️' },
   { id: 'geosciences', label: 'Geosciences & Exploration', icon: '🌍' },
   { id: 'environmental', label: 'Environmental', icon: '🌱' },
-  { id: 'marketing', label: 'Marketing & Communications', icon: '📢' },
-  { id: 'sales', label: 'Sales', icon: '📈' },
+  {
+    id: 'marketing',
+    label: 'Marketing',
+    icon: '📢',
+    topics: [
+      'Customer insights & strategy',
+      'Demand generation',
+      'Content creation',
+      'Campaign execution',
+      'Predictive analysis',
+      'Personalization',
+      'Sales enablement & recommendation',
+    ],
+  },
+  {
+    id: 'sales',
+    label: 'Sales',
+    icon: '📈',
+    topics: [
+      'Customer self-service',
+      'Lead generation',
+      'Customer engagement',
+      'Negotiations & closing',
+      'Post-sale follow-up & upsell',
+      'Sales analysis & forecasting',
+    ],
+  },
 ];
 
 const DATA_SOURCES = [
@@ -137,6 +225,8 @@ function normalizeToken(input: string): string {
 function normalizeDepartmentId(input: string): string {
   const token = normalizeToken(input);
   const map: Record<string, string> = {
+    'customer-service': 'operations',
+    customerservice: 'operations',
     operations: 'operations',
     engineering: 'engineering',
     finance: 'finance',

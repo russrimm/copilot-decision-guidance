@@ -64,6 +64,7 @@ interface Department {
   id: string;
   label: string;
   icon: string;
+  topics?: string[];
 }
 
 interface DataSource {
@@ -402,7 +403,7 @@ export default function UseCaseAssistant() {
                 <button
                   key={dept.id}
                   onClick={() => toggleDepartment(dept.id)}
-                  className={`p-4 border-2 rounded-lg transition-all text-left ${
+                  className={`p-4 border-2 rounded-lg transition-all text-left h-full ${
                     selectedDepartments.includes(dept.id)
                       ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20'
                       : 'border-gray-200 dark:border-gray-600 hover:border-blue-300'
@@ -412,6 +413,15 @@ export default function UseCaseAssistant() {
                   <h3 className="font-medium text-gray-900 dark:text-white text-sm">
                     {dept.label}
                   </h3>
+                  {dept.topics && dept.topics.length > 0 && (
+                    <ul className="mt-2 space-y-1 text-xs text-gray-600 dark:text-gray-300">
+                      {dept.topics.map((topic) => (
+                        <li key={topic} className="leading-tight">
+                          • {topic}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </button>
               ))}
             </div>

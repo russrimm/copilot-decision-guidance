@@ -602,6 +602,8 @@ function normalizeToken(input: string): string {
 function normalizeDepartment(input: string): string {
   const t = normalizeToken(input);
   const map: Record<string, string> = {
+    'customer-service': 'operations',
+    customerservice: 'operations',
     operations: 'operations',
     engineering: 'engineering',
     finance: 'finance',

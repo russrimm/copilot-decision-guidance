@@ -7,6 +7,89 @@ const COLOR_LIGHT = 'F3F4F6';
 const COLOR_ACCENT = '10B981';
 const COLOR_MUTED = '6B7280';
 
+const DEPARTMENT_TOPIC_SLIDE_DATA: Array<{ department: string; topics: string[] }> = [
+  {
+    department: 'Customer Service',
+    topics: [
+      'Self-help',
+      'Support assignment',
+      'Issue diagnosis',
+      'Problem resolution',
+      'Continuous improvement',
+    ],
+  },
+  {
+    department: 'Sales',
+    topics: [
+      'Customer self-service',
+      'Lead generation',
+      'Customer engagement',
+      'Negotiations & closing',
+      'Post-sale follow-up & upsell',
+      'Sales analysis & forecasting',
+    ],
+  },
+  {
+    department: 'Finance',
+    topics: [
+      'Quote to cash',
+      'Record to report',
+      'Tax & treasury',
+      'Planning & analysis',
+      'Risk management and compliance',
+      'Procure-to-pay',
+    ],
+  },
+  {
+    department: 'Marketing',
+    topics: [
+      'Customer insights & strategy',
+      'Demand generation',
+      'Content creation',
+      'Campaign execution',
+      'Predictive analysis',
+      'Personalization',
+      'Sales enablement & recommendation',
+    ],
+  },
+  {
+    department: 'HR',
+    topics: [
+      'Employee engagement',
+      'Recruiting',
+      'HR admin & payroll',
+      'Compensation & benefits',
+      'Learning & development',
+      'Talent management',
+      'HR strategy & planning',
+    ],
+  },
+  {
+    department: 'Legal',
+    topics: [
+      'Regulatory & compliance management',
+      'Contracting',
+      'Risk management',
+      'Litigation',
+      'Consultation',
+      'Intellectual property',
+      'Advisory services',
+    ],
+  },
+  {
+    department: 'IT',
+    topics: [
+      'Data management',
+      'Software management & acquisition',
+      'Device management',
+      'IT operations',
+      'Network operations',
+      'Information security',
+      'Change management & user adoption',
+    ],
+  },
+];
+
 function bulletize(items: string[], maxItems = 5): string {
   return items
     .slice(0, maxItems)
@@ -38,6 +121,71 @@ function bufferFromPptOutput(output: unknown): Buffer {
     return Buffer.from(new Uint8Array(output));
   }
   return Buffer.from(output as Uint8Array);
+}
+
+function addDepartmentTopicsSlide(prs: PptxGenJS) {
+  const slide = prs.addSlide();
+  slide.addText('Department Use Case Topics', {
+    x: 0.6,
+    y: 0.5,
+    w: 12,
+    h: 0.5,
+    fontSize: 28,
+    bold: true,
+    color: COLOR_DARK,
+  });
+
+  const cardWidth = 2.9;
+  const cardHeight = 2.55;
+  const topRowY = 1.25;
+  const bottomRowY = 4.05;
+  const topRowX = [0.35, 3.45, 6.55, 9.65];
+  const bottomRowX = [1.9, 5.0, 8.1];
+
+  DEPARTMENT_TOPIC_SLIDE_DATA.forEach((entry, index) => {
+    const isTopRow = index < 4;
+    const x = isTopRow ? topRowX[index] : bottomRowX[index - 4];
+    const y = isTopRow ? topRowY : bottomRowY;
+
+    slide.addShape(prs.ShapeType.roundRect, {
+      x,
+      y,
+      w: cardWidth,
+      h: cardHeight,
+      fill: { color: 'F8FAFC' },
+      line: { color: 'D1D5DB', width: 1 },
+    });
+
+    slide.addShape(prs.ShapeType.roundRect, {
+      x: x + 0.18,
+      y: y + 0.16,
+      w: cardWidth - 0.36,
+      h: 0.35,
+      fill: { color: 'DBEAFE' },
+      line: { color: '93C5FD', width: 0.5 },
+    });
+
+    slide.addText(entry.department, {
+      x: x + 0.23,
+      y: y + 0.2,
+      w: cardWidth - 0.46,
+      h: 0.25,
+      fontSize: 11,
+      bold: true,
+      color: COLOR_PRIMARY,
+      align: 'center',
+    });
+
+    slide.addText(bulletize(entry.topics, entry.topics.length), {
+      x: x + 0.2,
+      y: y + 0.62,
+      w: cardWidth - 0.4,
+      h: cardHeight - 0.76,
+      fontSize: 8,
+      color: COLOR_DARK,
+      valign: 'top',
+    });
+  });
 }
 
 export async function generateUseCasePPTX(useCase: UseCase): Promise<Buffer> {
@@ -177,6 +325,8 @@ export async function generateUseCasePPTX(useCase: UseCase): Promise<Buffer> {
     });
     metricY += 0.72;
   });
+
+  addDepartmentTopicsSlide(prs);
 
   const slide3 = prs.addSlide();
   slide3.addText('Architecture Blueprint', {
@@ -677,6 +827,8 @@ export async function generateMultipleUseCasesPPTX(useCases: UseCase[]): Promise
     });
     listY += 0.88;
   });
+
+  addDepartmentTopicsSlide(prs);
 
   useCases.forEach((useCase, index) => {
     const slide = prs.addSlide();

@@ -1,6 +1,8 @@
 # Site Documentation (Playwright Capture)
 
-This document provides full-page visual documentation of the current web application routes, captured with Playwright on **2026-02-22** against the local production preview build.
+This document provides full-page visual documentation of the current web application routes, captured with Playwright on **2026-02-23** against the local production preview build.
+
+All listed route screenshots in this document were refreshed and rebaselined on **2026-02-23**.
 
 ## Capture Scope
 
@@ -42,6 +44,8 @@ This document provides full-page visual documentation of the current web applica
 ### Use Cases (`/use-cases`)
 
 ![Use Cases](site-screenshots/use-cases.png)
+
+_Includes the Departments step to show updated department topic cards._
 
 ### Copilot Studio Release Dates (`/copilot-studio-release-dates`)
 
