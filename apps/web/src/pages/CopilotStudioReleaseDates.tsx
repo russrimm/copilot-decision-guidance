@@ -159,7 +159,7 @@ export default function CopilotStudioReleaseDates() {
         <div className="grid gap-6">
           <div className="card">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              In Public Preview
+              Past Feature Releases
             </h2>
             <MilestoneTable items={data?.upcomingPublicPreview ?? []} />
           </div>
