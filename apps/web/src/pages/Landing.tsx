@@ -261,6 +261,26 @@ export default function Landing() {
         </div>
       </div>
 
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Interactive Mind Map
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-100">
+              Drill down from Copilot Studio top-level topics into deeper sub-topics by clicking each
+              box.
+            </p>
+          </div>
+          <Link
+            to="/copilot-studio-mind-map"
+            className={`${sectionCtaButtonClass} ${ctaButtonToneClass}`}
+          >
+            Open Copilot Studio Map
+          </Link>
+        </div>
+      </div>
+
       <div className="card mb-8">
         <div className="flex items-start justify-between gap-6">
           <div>

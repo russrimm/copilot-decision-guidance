@@ -9,6 +9,7 @@ import FoundryNews from './pages/FoundryNews';
 import ReadinessAssessment from './pages/ReadinessAssessment';
 import ProfileSummary from './pages/ProfileSummary';
 import ImplementationGuide from './pages/ImplementationGuide';
+import CopilotStudioMindMap from './pages/CopilotStudioMindMap';
 import Layout from './components/Layout';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="foundry-news" element={<FoundryNews />} />
             <Route path="readiness" element={<ReadinessAssessment />} />
             <Route path="implementation-guide" element={<ImplementationGuide />} />
+            <Route path="copilot-studio-mind-map" element={<CopilotStudioMindMap />} />
             <Route path="profile-summary" element={<ProfileSummary />} />
             {/* Admin route excluded from production builds via __ENABLE_ADMIN__ flag */}
             {__ENABLE_ADMIN__ && (

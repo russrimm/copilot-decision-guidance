@@ -81,6 +81,12 @@ export default function Layout() {
                   >
                     Implementation Guide
                   </Link>
+                  <Link
+                    to="/copilot-studio-mind-map"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    Mind Maps
+                  </Link>
                   <button
                     type="button"
                     onClick={() => setIsInfographicOpen(true)}
