@@ -167,6 +167,14 @@ export async function getCopilotStudioReleasePlannerData(options?: {
   const upcomingPublicPreview: ReleasePlannerMilestoneItem[] = [];
   const upcomingGA: ReleasePlannerMilestoneItem[] = [];
 
+  // 6 months in milliseconds
+  const sixMonthsMs = 6 * 30 * 24 * 60 * 60 * 1000;
+  const sixMonthsAgoMs = todayUtcMs - sixMonthsMs;
+
+  // 1 year in milliseconds
+  const oneYearMs = 365 * 24 * 60 * 60 * 1000;
+  const oneYearAgoMs = todayUtcMs - oneYearMs;
+
   for (const item of effectiveMatches) {
     const featureName = getFirstStringField(item, ['FeatureName', 'Feature name']);
     const releasePlanId =
@@ -186,14 +194,24 @@ export async function getCopilotStudioReleasePlannerData(options?: {
     const ppDate = parseUsDateToUtc(ppDateStr);
     const gaDate = parseUsDateToUtc(gaDateStr);
 
-    const isCurrentlyInPreviewWithoutGaDate = !!ppDate && ppDate.getTime() <= todayUtcMs && !gaDate;
+    // Include in "In Public Preview" if:
+    // 1. Has preview date in past/today AND no GA date, OR
+    // 2. Has GA date less than 6 months in the past (but not in future)
+    // And exclude anything with a date older than 1 year
+    const hasPreviewWithoutGA = !!ppDate && ppDate.getTime() <= todayUtcMs && !gaDate;
+    const hasRecentGA =
+      gaDate && gaDate.getTime() >= sixMonthsAgoMs && gaDate.getTime() <= todayUtcMs;
 
-    if (isCurrentlyInPreviewWithoutGaDate) {
+    // Use the preview date if available, otherwise use GA date for filtering
+    const primaryDate = ppDate || gaDate;
+    const isWithin1Year = primaryDate && primaryDate.getTime() >= oneYearAgoMs;
+
+    if ((hasPreviewWithoutGA || hasRecentGA) && isWithin1Year) {
       upcomingPublicPreview.push({
-        date: formatDateUtc(ppDate),
+        date: formatDateUtc(ppDate || gaDate!),
         featureName: featureName || '(Unnamed feature)',
         featureUrl,
-        releaseWave: ppWave,
+        releaseWave: ppWave || gaWave,
         releasePlanId,
       });
     }

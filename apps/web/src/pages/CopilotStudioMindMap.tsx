@@ -285,6 +285,15 @@ function midpoint(pointA: { x: number; y: number }, pointB: { x: number; y: numb
   };
 }
 
+function buildLearnSearchUrl(rootTopic: string, nodeTopic: string): string {
+  // Only include root topic if it's different from the node topic (avoid duplication for root node)
+  const query =
+    nodeTopic === rootTopic
+      ? `site:learn.microsoft.com ${nodeTopic}`
+      : `site:learn.microsoft.com ${nodeTopic} ${rootTopic}`;
+  return `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+}
+
 function hasChildren(node: MindMapNode): boolean {
   return Boolean(node.children && node.children.length > 0);
 }
@@ -904,6 +913,12 @@ export default function CopilotStudioMindMap() {
                   }
                 };
 
+                const onHelpClick = (event: ReactMouseEvent<SVGGElement>) => {
+                  event.stopPropagation();
+                  const searchUrl = buildLearnSearchUrl(copilotStudioTree.label, entry.node.label);
+                  window.open(searchUrl, '_blank', 'noopener,noreferrer');
+                };
+
                 return (
                   <g
                     key={entry.id}
@@ -943,6 +958,28 @@ export default function CopilotStudioMindMap() {
                     >
                       {entry.node.label}
                     </text>
+
+                    <g onClick={onHelpClick} className="cursor-pointer">
+                      <circle
+                        cx={nodeWidth - 50}
+                        cy={NODE_HEIGHT / 2}
+                        r={10}
+                        fill="rgba(15, 23, 42, 1)"
+                        stroke={isRoot ? 'rgba(199, 210, 254, 0.8)' : 'rgba(148, 163, 184, 0.75)'}
+                        strokeWidth={1.2}
+                      />
+                      <text
+                        x={nodeWidth - 50}
+                        y={NODE_HEIGHT / 2 + 0.5}
+                        fill={isRoot ? 'rgb(224 231 255)' : 'rgb(226 232 240)'}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fontSize={14}
+                        fontWeight={700}
+                      >
+                        ?
+                      </text>
+                    </g>
 
                     {(expandable || isRoot) && (
                       <g>
