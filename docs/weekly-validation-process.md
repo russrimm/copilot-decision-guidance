@@ -11,6 +11,7 @@ Every **Monday at 9 AM UTC**, a GitHub Action automatically checks official Micr
 - Azure AI Foundry
 - Pricing and licensing information
 - Platform capabilities and features
+- Mind map integrity and Microsoft 365 Copilot link policy compliance
 
 ## Sources Monitored
 
@@ -90,6 +91,15 @@ Checks if documentation needs updates:
 - Roadmap generator use cases
 - CSAM communication templates
 - Copilot instructions
+
+### 4. Mind Map Integrity
+
+The weekly automation validates `apps/web/src/pages/CopilotStudioMindMap.tsx` for:
+
+- Duplicate node IDs across tree definitions
+- Microsoft 365 Copilot link policy compliance (`learnUrl` values must be under `https://learn.microsoft.com/en-us/microsoft-365-copilot`)
+
+If issues are detected, they are appended to the weekly validation report and included in generated issue/PR artifacts.
 
 ## Change Detection
 
@@ -197,6 +207,11 @@ When you receive a validation issue:
    - Push updates to the draft PR
    - Mark PR as ready for review
    - Close the validation issue
+
+7. **Validate Mind Maps**
+   - Run `npm run validate:mindmaps`
+   - Resolve duplicate node IDs and non-compliant Microsoft 365 Copilot links
+   - Re-run validation until clean
 
 ## Manual Trigger
 

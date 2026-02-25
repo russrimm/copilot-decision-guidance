@@ -72,7 +72,7 @@ Use this checklist for every feature before merge/deploy:
 ✅ **Deterministic Scoring** - Transparent, test-covered recommendation engine with weighted platform scores  
 ✅ **Comprehensive Results** - Rationale, next steps, risks, compliance considerations, and verified Microsoft Learn sources  
 ✅ **AI-Powered Personalized Recommendations** - Context-aware recommendations based on survey responses and tenant metrics  
-✅ **Export Functionality** - Download results as JSON, Markdown, or PDF
+✅ **Export Functionality** - Download results as JSON, Markdown, PDF, and Executive Overview PPTX (both include a holistic CxO agentic-business overview); export use-case briefs as PDF/PPTX
 
 ### Planning & Assessment Tools
 
@@ -90,9 +90,29 @@ Use this checklist for every feature before merge/deploy:
 ### Quality & Maintenance
 
 ✅ **Verified Knowledge** - All guidance based on official Microsoft Learn documentation and AI Decision Framework  
-✅ **Automated Content Validation** - Monthly licensing validation and weekly product update tracking  
+✅ **Automated Content Validation** - Weekly product-update + mind map validation, plus monthly licensing validation  
 ✅ **Implementation Guide Monitoring** - Automated monthly checks for updates to the Microsoft Copilot Studio Implementation Guide with in-app notifications  
 ✅ **Self-Hostable** - Customer-cloneable solution with optional Azure integrations
+
+### Update Automation Schedules
+
+- **Weekly (Monday 9 AM UTC):** `.github/workflows/validate-microsoft-updates.yml`
+  - Validates product updates (`scripts/validate-microsoft-updates.ts`)
+  - Validates mind map integrity + M365 link policy (`scripts/validate-mindmaps.ts`)
+  - Produces `validation-report.md` + `validation-results.json`, creates issue/PR when changes are detected
+- **Monthly (1st day, 9 AM UTC):** `.github/workflows/validate-licensing-monthly.yml`
+  - Validates licensing and survey alignment (`scripts/validate-licensing-guide.ts`, `scripts/validate-survey-questions.ts`)
+- **Monthly (implementation guide monitor):** checks Copilot Studio implementation guide updates and surfaces notifications in-app
+
+### Validation Sources
+
+- Microsoft 365 Copilot release notes: https://learn.microsoft.com/en-us/copilot/microsoft-365/release-notes
+- Copilot Studio What's New: https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new
+- Azure AI Foundry docs: https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio
+- Microsoft 365 Roadmap (Copilot filter): https://www.microsoft.com/en-us/microsoft-365/roadmap?filters=Microsoft%20Copilot
+- Power Platform release plan: https://learn.microsoft.com/en-us/power-platform/release-plan/
+- Power Platform pricing: https://www.microsoft.com/en-us/power-platform/products/power-apps/pricing
+- Microsoft Learn Copilot Studio fundamentals: https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-whats-new
 
 ## Scoring Logic Diagram
 

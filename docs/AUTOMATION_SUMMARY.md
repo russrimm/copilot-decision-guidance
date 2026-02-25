@@ -12,20 +12,23 @@ A fully automated system to keep Microsoft Copilot product documentation current
 
 **Functionality:**
 
-- Checks 5+ Microsoft sources weekly
+- Checks official Microsoft sources weekly
 - Compares with current repository data
 - Detects changes in pricing, features, and capabilities
 - Generates detailed markdown and JSON reports
 - Classifies changes by severity (Critical/Major/Minor)
 - Provides confidence scores for each detection
+- Runs dedicated mind map integrity checks (`scripts/validate-mindmaps.ts`)
 
 **Sources Monitored:**
 
+- Microsoft 365 Copilot Release Notes
+- Copilot Studio What's New
+- Azure AI Foundry documentation
 - Microsoft 365 Roadmap
 - Power Platform Release Planner
-- Microsoft Learn - Copilot Studio
 - Power Platform Pricing
-- Microsoft 365 Copilot Documentation
+- Microsoft Learn documentation pages used by the validator
 
 ### 2. GitHub Actions Workflow
 
@@ -36,10 +39,12 @@ A fully automated system to keep Microsoft Copilot product documentation current
 **Process:**
 
 1. Runs validation script
-2. Uploads reports as artifacts (90-day retention)
-3. Creates GitHub issue with findings
-4. Triggers notification system
-5. Creates draft PR with suggested changes
+2. Runs mind map validation script
+3. Aggregates reports into a single weekly result
+4. Uploads reports as artifacts (90-day retention)
+5. Creates GitHub issue with findings
+6. Triggers notification system
+7. Creates draft PR with suggested changes
 
 **Outputs:**
 
@@ -139,7 +144,7 @@ A fully automated system to keep Microsoft Copilot product documentation current
 ```
 Microsoft Sources
     ↓
-Validation Script
+Validation Scripts (Product Updates + Mind Maps)
     ↓
 Reports (MD + JSON)
     ↓
@@ -154,6 +159,14 @@ GitHub Actions
 ```
 
 ## 🎛️ Configuration Options
+
+### Additional Scheduled Automation
+
+- **Monthly Licensing Validation** (`.github/workflows/validate-licensing-monthly.yml`)
+   - Schedule: 1st day of each month at 9 AM UTC
+   - Validates licensing and survey alignment using:
+      - `scripts/validate-licensing-guide.ts`
+      - `scripts/validate-survey-questions.ts`
 
 ### Schedule
 

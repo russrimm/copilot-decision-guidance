@@ -1,5 +1,60 @@
 import type { Recommendation } from '../types';
 
+function normalizeForCompare(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function buildExecutiveOverviewSections(recommendation: Recommendation): {
+  strategicContext?: string;
+  principle: string;
+  benefits: string[];
+  mindsetShifts: string[];
+  managementPriorities: string[];
+} {
+  const recommendationSignals = new Set(
+    [
+      recommendation.summary,
+      ...recommendation.reasons,
+      ...recommendation.nextSteps,
+      ...recommendation.risks,
+      ...(recommendation.complianceConsiderations ?? []),
+      (recommendation as { introduction?: string }).introduction ?? '',
+    ]
+      .map((entry) => normalizeForCompare(entry ?? ''))
+      .filter((entry) => entry.length > 0)
+  );
+
+  const removeOverlap = (items: string[]): string[] =>
+    items.filter((item) => !recommendationSignals.has(normalizeForCompare(item)));
+
+  const strategicContext =
+    (recommendation as { introduction?: string }).introduction || recommendation.summary;
+
+  return {
+    strategicContext,
+    principle:
+      'AI does not replace humans; it amplifies human creativity, judgement, and collaboration.',
+    benefits: removeOverlap([
+      'Accelerates cycle times by delegating repeatable work to agents while teams focus on higher-value decisions.',
+      'Improves decision quality through continuous synthesis across enterprise data, tools, and workflows.',
+      'Strengthens resilience with auditable actions, policy-aligned controls, and measurable outcome tracking.',
+      'Scales expertise by turning high-performing practices into reusable agent-enabled operating patterns.',
+    ]),
+    mindsetShifts: removeOverlap([
+      'Treat agentic systems as collaborators that can perceive, plan, and act within defined boundaries.',
+      'Shift from app operation to orchestration by setting goals, constraints, escalation paths, and success criteria.',
+      'Evolve workforce roles toward agent orchestration, supervision, quality assurance, and exception handling.',
+      'Build organization-wide AI fluency so teams can evaluate and continuously improve agent outputs.',
+    ]),
+    managementPriorities: removeOverlap([
+      'Anchor each deployment to measurable business outcomes rather than automation volume.',
+      'Enforce responsible AI with fairness, transparency, accountability, and clear ownership.',
+      'Implement validation gates, auditability, and human-in-the-loop controls for high-impact actions.',
+      'Define an operating model across product, risk, IT, security, and business teams for build, approval, and monitoring.',
+    ]),
+  };
+}
+
 export function downloadJSON(data: any, filename: string) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -27,6 +82,8 @@ export function generateMarkdownSummary(
     sources,
     scoringResult,
   } = recommendation;
+
+  const executiveOverview = buildExecutiveOverviewSections(recommendation);
 
   // Helper to add inline markdown links
   const addMarkdownLinks = (text: string): string => {
@@ -81,6 +138,38 @@ export function generateMarkdownSummary(
         markdown += `**Comment:** ${qa.comment}\n\n`;
       }
     });
+  }
+
+  markdown += `## Executive Overview (CxO)\n\n`;
+
+  if (executiveOverview.strategicContext) {
+    markdown += `${addMarkdownLinks(executiveOverview.strategicContext)}\n\n`;
+  }
+
+  markdown += `**Principle:** ${addMarkdownLinks(executiveOverview.principle)}\n\n`;
+
+  if (executiveOverview.benefits.length > 0) {
+    markdown += `### Business Benefits\n\n`;
+    executiveOverview.benefits.forEach((item, idx) => {
+      markdown += `${idx + 1}. ${addMarkdownLinks(item)}\n`;
+    });
+    markdown += `\n`;
+  }
+
+  if (executiveOverview.mindsetShifts.length > 0) {
+    markdown += `### Mindset & Operating Shifts\n\n`;
+    executiveOverview.mindsetShifts.forEach((item, idx) => {
+      markdown += `${idx + 1}. ${addMarkdownLinks(item)}\n`;
+    });
+    markdown += `\n`;
+  }
+
+  if (executiveOverview.managementPriorities.length > 0) {
+    markdown += `### Top Management Priorities\n\n`;
+    executiveOverview.managementPriorities.forEach((item, idx) => {
+      markdown += `${idx + 1}. ${addMarkdownLinks(item)}\n`;
+    });
+    markdown += `\n`;
   }
 
   markdown += `## Summary\n\n${addMarkdownLinks(summary)}\n\n`;
@@ -162,6 +251,8 @@ export async function generatePDF(
     sources,
     scoringResult,
   } = recommendation;
+
+  const executiveOverview = buildExecutiveOverviewSections(recommendation);
   const doc = new jsPDF();
 
   let yPosition = 20;
@@ -354,6 +445,55 @@ export async function generatePDF(
     addText((recommendation as any).introduction, 10, false);
     yPosition += 5;
   }
+
+  // Executive Overview (CxO)
+  if (yPosition > 245) {
+    doc.addPage();
+    yPosition = 20;
+  }
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Executive Overview (CxO)', margin, yPosition);
+  yPosition += 8;
+
+  if (executiveOverview.strategicContext) {
+    addText(executiveOverview.strategicContext, 10, false);
+    yPosition += 3;
+  }
+
+  addText(`Principle: ${executiveOverview.principle}`, 10, true);
+  yPosition += 3;
+
+  const addExecutiveSubsection = (title: string, items: string[]) => {
+    if (items.length === 0) {
+      return;
+    }
+
+    if (yPosition > 245) {
+      doc.addPage();
+      yPosition = 20;
+    }
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text(title, margin, yPosition);
+    yPosition += 7;
+
+    items.forEach((item) => {
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      addText(`• ${item}`, 10, false);
+      yPosition += 2;
+    });
+
+    yPosition += 3;
+  };
+
+  addExecutiveSubsection('Business Benefits', executiveOverview.benefits);
+  addExecutiveSubsection('Mindset & Operating Shifts', executiveOverview.mindsetShifts);
+  addExecutiveSubsection('Top Management Priorities', executiveOverview.managementPriorities);
 
   // Summary
   if (yPosition > 250) {

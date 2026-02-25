@@ -292,10 +292,8 @@ function getRelevantUseCasesFromNormalized(verticalUseCases, departments, dataSo
     });
 }
 function scoreUseCaseMatch(useCase, selectedDepartmentIds, selectedDataSourceIds) {
-    const deptOverlap = useCase.normalizedDepartments.filter((dept) => selectedDepartmentIds.has(dept))
-        .length;
-    const sourceOverlap = useCase.normalizedDataSources.filter((source) => selectedDataSourceIds.has(source))
-        .length;
+    const deptOverlap = useCase.normalizedDepartments.filter((dept) => selectedDepartmentIds.has(dept)).length;
+    const sourceOverlap = useCase.normalizedDataSources.filter((source) => selectedDataSourceIds.has(source)).length;
     return deptOverlap * 10 + sourceOverlap * 3;
 }
 function hasDepartmentMatch(useCase, selectedDepartmentIds) {
@@ -326,7 +324,8 @@ function ensureDepartmentCoverage(verticalUseCases, selectedDepartmentsRaw, sele
             .sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
             scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
         const chosen = exactDepartmentMatches[0] ?? rankedVerticalDefaults[0];
-        if (chosen && !guaranteedMatches.some((existing) => existing.useCase.id === chosen.useCase.id)) {
+        if (chosen &&
+            !guaranteedMatches.some((existing) => existing.useCase.id === chosen.useCase.id)) {
             guaranteedMatches.push(chosen);
         }
     }

@@ -60,6 +60,7 @@ npm run validate:licensing
 - Checks Azure AI Foundry updates
 - Monitors Microsoft 365 Roadmap
 - Validates decision model questions remain relevant
+- Validates mind map integrity and Microsoft 365 Copilot link policy
 
 **Manual steps (if changes detected):**
 
@@ -67,14 +68,24 @@ npm run validate:licensing
 2. Update questionnaire if new features affect decision criteria
 3. Update decision-model.v1.json weights if needed
 4. Update copilot-instructions.md with new capabilities
+5. Run mind map validator and resolve any violations
 
 **How to run manually:**
 
 ```bash
 npm run validate
+npm run validate:mindmaps
 ```
 
 **Workflow:** `.github/workflows/validate-microsoft-updates.yml`
+
+**Primary source links:**
+
+- https://learn.microsoft.com/en-us/copilot/microsoft-365/release-notes
+- https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new
+- https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio
+- https://www.microsoft.com/en-us/microsoft-365/roadmap?filters=Microsoft%20Copilot
+- https://learn.microsoft.com/en-us/power-platform/release-plan/
 
 ---
 

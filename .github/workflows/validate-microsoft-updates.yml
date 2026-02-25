@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      has-changes: ${{ steps.validation.outputs.has-changes }}
+      has-changes: ${{ steps.aggregate.outputs.has-changes }}
       report-path: ${{ steps.validation.outputs.report-path }}
 
     steps:
@@ -56,14 +56,18 @@ jobs:
         id: validation
         continue-on-error: true
         run: |
+          set +e
           echo "Running Microsoft updates validation..."
           ts-node scripts/validate-microsoft-updates.ts
+          VALIDATION_EXIT_CODE=$?
+
+          echo "validation-exit-code=$VALIDATION_EXIT_CODE" >> $GITHUB_OUTPUT
 
           # Check if validation detected changes (exit code 1 = changes detected)
-          if [ $? -eq 1 ]; then
+          if [ $VALIDATION_EXIT_CODE -eq 1 ]; then
             echo "has-changes=true" >> $GITHUB_OUTPUT
             echo "✅ Validation complete - changes detected"
-          elif [ $? -eq 0 ]; then
+          elif [ $VALIDATION_EXIT_CODE -eq 0 ]; then
             echo "has-changes=false" >> $GITHUB_OUTPUT
             echo "✅ Validation complete - no changes detected"
           else
@@ -74,8 +78,59 @@ jobs:
 
           echo "report-path=validation-report.md" >> $GITHUB_OUTPUT
 
+      - name: Run mind map validation script
+        id: mindmap-validation
+        continue-on-error: true
+        run: |
+          set +e
+          echo "Running mind map validation..."
+          ts-node scripts/validate-mindmaps.ts
+          MINDMAP_EXIT_CODE=$?
+
+          echo "mindmap-exit-code=$MINDMAP_EXIT_CODE" >> $GITHUB_OUTPUT
+
+          if [ $MINDMAP_EXIT_CODE -eq 1 ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Mind map validation detected required updates"
+          elif [ $MINDMAP_EXIT_CODE -eq 0 ]; then
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "✅ Mind map validation passed"
+          else
+            echo "has-changes=error" >> $GITHUB_OUTPUT
+            echo "❌ Mind map validation failed with error"
+            exit 1
+          fi
+
+      - name: Aggregate validation outputs
+        id: aggregate
+        run: |
+          CORE_STATUS="${{ steps.validation.outputs.has-changes }}"
+          MINDMAP_STATUS="${{ steps.mindmap-validation.outputs.has-changes }}"
+
+          if [ "$CORE_STATUS" = "error" ] || [ "$MINDMAP_STATUS" = "error" ]; then
+            echo "❌ One or more validation scripts failed"
+            exit 1
+          fi
+
+          if [ "$CORE_STATUS" = "true" ] || [ "$MINDMAP_STATUS" = "true" ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+          # Append mind map report to main weekly report
+          if [ -f "mindmap-validation-report.md" ]; then
+            printf "\n\n---\n\n" >> validation-report.md
+            cat mindmap-validation-report.md >> validation-report.md
+          fi
+
+          # Merge mind map JSON result into validation-results.json
+          if [ -f "mindmap-validation-results.json" ]; then
+            node -e "const fs=require('fs'); const mainPath='validation-results.json'; const mindPath='mindmap-validation-results.json'; const main=JSON.parse(fs.readFileSync(mainPath,'utf8')); const mind=JSON.parse(fs.readFileSync(mindPath,'utf8')); main.mindMapValidation=mind; main.hasChanges=Boolean(main.hasChanges||mind.hasChanges); fs.writeFileSync(mainPath, JSON.stringify(main,null,2));"
+          fi
+
       - name: Read validation results
-        if: steps.validation.outputs.has-changes == 'true' || github.event.inputs.force_notification == 'true'
+        if: steps.aggregate.outputs.has-changes == 'true' || github.event.inputs.force_notification == 'true'
         id: read-results
         run: |
           # Read the JSON results
@@ -91,7 +146,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Issue for Review
-        if: steps.validation.outputs.has-changes == 'true'
+        if: steps.aggregate.outputs.has-changes == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -133,6 +188,14 @@ jobs:
       - name: Regenerate validation report
         run: |
           ts-node scripts/validate-microsoft-updates.ts || true
+          ts-node scripts/validate-mindmaps.ts || true
+          if [ -f "mindmap-validation-report.md" ]; then
+            printf "\n\n---\n\n" >> validation-report.md
+            cat mindmap-validation-report.md >> validation-report.md
+          fi
+          if [ -f "mindmap-validation-results.json" ]; then
+            node -e "const fs=require('fs'); const mainPath='validation-results.json'; const mindPath='mindmap-validation-results.json'; const main=JSON.parse(fs.readFileSync(mainPath,'utf8')); const mind=JSON.parse(fs.readFileSync(mindPath,'utf8')); main.mindMapValidation=mind; main.hasChanges=Boolean(main.hasChanges||mind.hasChanges); fs.writeFileSync(mainPath, JSON.stringify(main,null,2));"
+          fi
 
       - name: Trigger Power Automate Flow
         id: trigger-flow
@@ -227,6 +290,14 @@ jobs:
       - name: Regenerate validation report
         run: |
           ts-node scripts/validate-microsoft-updates.ts || true
+          ts-node scripts/validate-mindmaps.ts || true
+          if [ -f "mindmap-validation-report.md" ]; then
+            printf "\n\n---\n\n" >> validation-report.md
+            cat mindmap-validation-report.md >> validation-report.md
+          fi
+          if [ -f "mindmap-validation-results.json" ]; then
+            node -e "const fs=require('fs'); const mainPath='validation-results.json'; const mindPath='mindmap-validation-results.json'; const main=JSON.parse(fs.readFileSync(mainPath,'utf8')); const mind=JSON.parse(fs.readFileSync(mindPath,'utf8')); main.mindMapValidation=mind; main.hasChanges=Boolean(main.hasChanges||mind.hasChanges); fs.writeFileSync(mainPath, JSON.stringify(main,null,2));"
+          fi
 
       - name: Create update branch
         run: |

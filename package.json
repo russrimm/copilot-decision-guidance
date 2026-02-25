@@ -29,6 +29,7 @@
     "test": "npm run test --workspaces --if-present",
     "test:prod": "node scripts/test-production.js",
     "validate": "ts-node scripts/validate-microsoft-updates.ts",
+    "validate:mindmaps": "ts-node scripts/validate-mindmaps.ts",
     "validate:watch": "nodemon --watch scripts --exec npm run validate",
     "validate:licensing": "ts-node scripts/validate-licensing-guide.ts",
     "validate:survey": "ts-node scripts/validate-survey-questions.ts",

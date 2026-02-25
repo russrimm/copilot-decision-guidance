@@ -281,6 +281,62 @@ function addBullets(
   });
 }
 
+function normalizeForCompare(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function buildExecutiveOverviewContent(input: ExecutiveOverviewPptxInput): {
+  strategicContext: string;
+  principle: string;
+  benefits: string[];
+  mindsetShifts: string[];
+  priorities: string[];
+} {
+  const referenceSignals = new Set(
+    [
+      input.recommendation.summary ?? '',
+      ...(input.recommendation.reasons ?? []),
+      ...(input.recommendation.nextSteps ?? []),
+      input.aiRecommendation?.summary ?? '',
+      input.aiRecommendation?.strategicGuidance ?? '',
+      ...(input.aiRecommendation?.nextSteps ?? []),
+    ]
+      .map((entry) => normalizeForCompare(entry))
+      .filter((entry) => entry.length > 0)
+  );
+
+  const removeOverlap = (items: string[]) =>
+    items.filter((item) => !referenceSignals.has(normalizeForCompare(item)));
+
+  return {
+    strategicContext:
+      input.aiRecommendation?.strategicGuidance ||
+      input.aiRecommendation?.summary ||
+      input.recommendation.summary ||
+      'Agentic AI changes how work gets done by shifting teams from task execution to outcome ownership.',
+    principle:
+      'AI does not replace humans; it amplifies human creativity, judgement, and collaboration.',
+    benefits: removeOverlap([
+      'Accelerate cycle times by delegating repeatable work to agents and focusing teams on strategic outcomes.',
+      'Improve decision quality by synthesizing signals from enterprise systems, workflows, and domain expertise.',
+      'Increase resilience with auditable execution, policy-aligned controls, and measurable value tracking.',
+      'Scale institutional knowledge by turning high-performing practices into reusable agent-enabled patterns.',
+    ]),
+    mindsetShifts: removeOverlap([
+      'Treat agents as collaborators that perceive, plan, and act within governance boundaries.',
+      'Shift from app operation to orchestration by setting goals, constraints, escalation paths, and quality thresholds.',
+      'Evolve workforce capabilities toward agent orchestration, supervision, and continuous quality management.',
+      'Build AI fluency so teams can confidently validate, refine, and integrate agent outputs.',
+    ]),
+    priorities: removeOverlap([
+      'Prioritize measurable business outcomes over automation volume.',
+      'Enforce responsible AI with fairness, transparency, accountability, and explicit ownership.',
+      'Apply validation gates, auditability, and human-in-the-loop control for high-impact decisions and actions.',
+      'Define a cross-functional operating model spanning product, risk, IT, security, and business leadership.',
+    ]),
+  };
+}
+
 export async function generateExecutiveOverviewPPTX(
   input: ExecutiveOverviewPptxInput
 ): Promise<Buffer> {
@@ -304,6 +360,7 @@ export async function generateExecutiveOverviewPPTX(
   const conf = input.scoringResult.confidenceLevel;
   const timestampLabel = new Date(input.timestamp).toLocaleString('en-US');
   const deploy = deploymentOverview(recType);
+  const executiveOverview = buildExecutiveOverviewContent(input);
 
   // Slide 1: Title
   const s1 = prs.addSlide();
@@ -425,6 +482,93 @@ export async function generateExecutiveOverviewPPTX(
       fit: 'shrink',
     });
   }
+
+  // CxO Strategic Overview
+  const sCxO = prs.addSlide();
+  addTitle(sCxO, 'Executive Overview (CxO)');
+
+  sCxO.addText('Strategic context', {
+    x: 0.6,
+    y: 1.2,
+    w: 8.8,
+    h: 0.35,
+    fontSize: 12,
+    bold: true,
+    color: COLOR_MUTED,
+  });
+
+  sCxO.addText(executiveOverview.strategicContext, {
+    x: 0.6,
+    y: 1.5,
+    w: 8.8,
+    h: 0.95,
+    fontSize: 12,
+    color: COLOR_DARK,
+    valign: 'top',
+    fit: 'shrink',
+  });
+
+  sCxO.addText(`Principle: ${executiveOverview.principle}`, {
+    x: 0.6,
+    y: 2.55,
+    w: 8.8,
+    h: 0.5,
+    fontSize: 11,
+    bold: true,
+    color: COLOR_DARK,
+    fit: 'shrink',
+  });
+
+  sCxO.addText('Business benefits', {
+    x: 0.6,
+    y: 3.2,
+    w: 2.65,
+    h: 0.3,
+    fontSize: 11,
+    bold: true,
+    color: COLOR_MUTED,
+  });
+  addBullets(sCxO, executiveOverview.benefits.slice(0, 4), {
+    x: 0.6,
+    y: 3.5,
+    w: 2.75,
+    h: 3.5,
+    fontSize: 10,
+  });
+
+  sCxO.addText('Mindset & operating shifts', {
+    x: 3.55,
+    y: 3.2,
+    w: 2.8,
+    h: 0.3,
+    fontSize: 11,
+    bold: true,
+    color: COLOR_MUTED,
+  });
+  addBullets(sCxO, executiveOverview.mindsetShifts.slice(0, 4), {
+    x: 3.55,
+    y: 3.5,
+    w: 2.85,
+    h: 3.5,
+    fontSize: 10,
+  });
+
+  sCxO.addText('Top management priorities', {
+    x: 6.55,
+    y: 3.2,
+    w: 2.8,
+    h: 0.3,
+    fontSize: 11,
+    bold: true,
+    color: COLOR_MUTED,
+  });
+  addBullets(sCxO, executiveOverview.priorities.slice(0, 4), {
+    x: 6.55,
+    y: 3.5,
+    w: 2.85,
+    h: 3.5,
+    fontSize: 10,
+  });
 
   // Deployment Overview
   const s3 = prs.addSlide();
