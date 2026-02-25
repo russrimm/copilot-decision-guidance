@@ -39,12 +39,14 @@ const ZOOM_STEP = 0.1;
 const copilotStudioTree: MindMapNode = {
   id: 'copilot-studio',
   label: 'Copilot Studio',
-  learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
+  learnUrl:
+    'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
   children: [
     {
       id: 'build-publish',
       label: 'Build & Publish',
-      learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-create-first-agent',
+      learnUrl:
+        'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-create-first-agent',
       children: [
         {
           id: 'agent-authoring',
@@ -54,12 +56,14 @@ const copilotStudioTree: MindMapNode = {
             {
               id: 'visual-canvas',
               label: 'Visual Canvas & Low-code Design',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
             },
             {
               id: 'templates',
               label: 'Templates & Starter Experiences',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-templates',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-templates',
             },
             {
               id: 'real-time-testing',
@@ -71,44 +75,52 @@ const copilotStudioTree: MindMapNode = {
         {
           id: 'topics-conversation',
           label: 'Topics & Conversation Design',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
           children: [
             {
               id: 'specific-topics',
               label: 'Specific/Curated Topics',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
             },
             {
               id: 'multilingual-agents',
               label: 'Multilingual Agents',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-language-support',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-language-support',
             },
             {
               id: 'rich-responses',
               label: 'Rich & Dynamic Responses',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-message',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-message',
             },
           ],
         },
         {
           id: 'publish-channels',
           label: 'Publish to Channels',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
           children: [
             {
               id: 'm365-copilot-channel',
               label: 'Microsoft 365 Copilot',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
             },
             {
               id: 'teams-channel',
               label: 'Microsoft Teams',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
             },
             {
               id: 'custom-channel-runtime',
               label: 'Web/Custom Channels',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
             },
           ],
         },
@@ -122,34 +134,40 @@ const copilotStudioTree: MindMapNode = {
         {
           id: 'language-understanding',
           label: 'Language Understanding',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
           children: [
             {
               id: 'classic-nlu',
               label: 'Classic NLU',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
             },
             {
               id: 'builtin-nlu',
               label: 'Built-in NLU',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
             },
             {
               id: 'byo-nlu',
               label: 'Bring-your-own NLU',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
             },
           ],
         },
         {
           id: 'dialog-management',
           label: 'Dialog Management',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
           children: [
             {
               id: 'multi-turn',
               label: 'Multi-turn Conversations',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
             },
             {
               id: 'inputs-outputs',
@@ -171,17 +189,20 @@ const copilotStudioTree: MindMapNode = {
             {
               id: 'generative-orch',
               label: 'Generative Orchestration',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
             },
             {
               id: 'autonomous-triggers',
               label: 'Autonomous Triggers',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/guidance/autonomous-agents',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/guidance/autonomous-agents',
             },
             {
               id: 'system-triggers',
               label: 'System-driven Triggers',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-triggers-about',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-triggers-about',
             },
           ],
         },
@@ -200,39 +221,46 @@ const copilotStudioTree: MindMapNode = {
             {
               id: 'public-websites',
               label: 'Public Websites',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
             },
             {
               id: 'dataverse-documents',
               label: 'Dataverse Documents',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
             },
             {
               id: 'sharepoint-knowledge',
               label: 'SharePoint Knowledge',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-unstructured-data',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-unstructured-data',
             },
           ],
         },
         {
           id: 'enterprise-grounding',
           label: 'Enterprise Grounding',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-real-time-connectors',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-real-time-connectors',
           children: [
             {
               id: 'graph-grounding',
               label: 'Microsoft Graph Grounding',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
             },
             {
               id: 'connector-grounding',
               label: 'Enterprise Connectors',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-real-time-connectors',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-real-time-connectors',
             },
             {
               id: 'azure-ai-search',
               label: 'Azure AI Search Grounding',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-azure-ai-search',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-azure-ai-search',
             },
           ],
         },
@@ -249,7 +277,8 @@ const copilotStudioTree: MindMapNode = {
             {
               id: 'content-moderation',
               label: 'Content Moderation Levels',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio#content-moderation',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio#content-moderation',
             },
             {
               id: 'citations-behavior',
@@ -300,19 +329,22 @@ const copilotStudioTree: MindMapNode = {
             {
               id: 'generative-actions',
               label: 'Generative Actions',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
             },
             {
               id: 'long-running-tasks',
               label: 'Long-running Tasks',
-              learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/ux-custom-engine-agent#asynchronous-patterns',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/ux-custom-engine-agent#asynchronous-patterns',
             },
           ],
         },
         {
           id: 'pro-dev-extensibility',
           label: 'Pro-dev Extensibility',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/guidance/extend-copilot-studio',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/guidance/extend-copilot-studio',
           children: [
             {
               id: 'byom',
@@ -323,12 +355,14 @@ const copilotStudioTree: MindMapNode = {
             {
               id: 'custom-knowledge',
               label: 'Knowledge Base Extension',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/nlu-generative-answers-custom-data',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/nlu-generative-answers-custom-data',
             },
             {
               id: 'custom-analytics',
               label: 'Custom Analytics Integration',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/guidance/custom-analytics-strategy',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-copilot-studio/guidance/custom-analytics-strategy',
             },
           ],
         },
@@ -342,7 +376,8 @@ const copilotStudioTree: MindMapNode = {
         {
           id: 'data-policy-controls',
           label: 'Data Policy Controls (DLP)',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/admin-data-loss-prevention',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/admin-data-loss-prevention',
           children: [
             { id: 'auth-governance', label: 'Maker/User Authentication Controls' },
             { id: 'knowledge-governance', label: 'Knowledge Source Governance' },
@@ -362,7 +397,8 @@ const copilotStudioTree: MindMapNode = {
         {
           id: 'audit-compliance',
           label: 'Audit & Compliance',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/administer-copilot-studio',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/administer-copilot-studio',
           children: [
             { id: 'purview-logs', label: 'Microsoft Purview Audit Logs' },
             { id: 'sentinel-logs', label: 'Microsoft Sentinel Monitoring' },
@@ -379,7 +415,8 @@ const copilotStudioTree: MindMapNode = {
         {
           id: 'solution-model',
           label: 'Solution Model',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-export-import-bots',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/advanced-export-import-bots',
           children: [
             { id: 'agent-in-solution', label: 'Agents in Power Platform Solutions' },
             { id: 'custom-solutions', label: 'Custom Solutions' },
@@ -436,7 +473,8 @@ const copilotStudioTree: MindMapNode = {
         {
           id: 'platform-services',
           label: 'Connected Platform Services',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
           children: [
             { id: 'entra-id', label: 'Microsoft Entra ID' },
             { id: 'azure-monitor-storage', label: 'Azure Monitor / Storage' },
@@ -485,17 +523,20 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-chat',
           label: 'Copilot Chat & Business Chat',
-          learnUrl: 'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
+          learnUrl:
+            'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
           children: [
             {
               id: 'm365-chat-copilot',
               label: 'Copilot Chat',
-              learnUrl: 'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
+              learnUrl:
+                'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
             },
             {
               id: 'm365-chat-business',
               label: 'Business Chat',
-              learnUrl: 'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
+              learnUrl:
+                'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
             },
           ],
         },
@@ -528,7 +569,8 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-graph-grounding',
           label: 'Microsoft Graph Grounding',
-          learnUrl: 'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture',
+          learnUrl:
+            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture',
           children: [
             {
               id: 'm365-graph-permissions',
@@ -587,7 +629,8 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-connectors',
           label: 'Microsoft 365 Copilot Connectors',
-          learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-copilot-connector',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-copilot-connector',
           children: [
             {
               id: 'm365-connectors-config',
@@ -611,17 +654,20 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-copilot-apis',
           label: 'Copilot APIs (Chat, Retrieval)',
-          learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
           children: [
             {
               id: 'm365-copilot-apis-chat',
               label: 'Chat API',
-              learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
             },
             {
               id: 'm365-copilot-apis-retrieval',
               label: 'Retrieval API',
-              learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
+              learnUrl:
+                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
             },
           ],
         },
@@ -662,7 +708,8 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-plugins-actions',
           label: 'Plugins & Actions',
-          learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-business-applications',
+          learnUrl:
+            'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-business-applications',
           children: [
             {
               id: 'm365-plugins',
@@ -770,7 +817,8 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-tenant-readiness',
           label: 'Tenant Readiness & Prereqs',
-          learnUrl: 'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-setup#readiness-activities',
+          learnUrl:
+            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-setup#readiness-activities',
           children: [
             {
               id: 'm365-tenant-prereqs',
@@ -789,7 +837,8 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-copilot-control-system',
           label: 'Copilot Control System',
-          learnUrl: 'https://learn.microsoft.com/copilot/microsoft-365/copilot-control-system/management-controls',
+          learnUrl:
+            'https://learn.microsoft.com/copilot/microsoft-365/copilot-control-system/management-controls',
           children: [
             {
               id: 'm365-control-govern',
@@ -825,7 +874,8 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-data-governance',
           label: 'Data Governance',
-          learnUrl: 'https://learn.microsoft.com/sharepoint/get-ready-copilot-sharepoint-advanced-management',
+          learnUrl:
+            'https://learn.microsoft.com/sharepoint/get-ready-copilot-sharepoint-advanced-management',
           children: [
             {
               id: 'm365-data-access',
@@ -890,17 +940,20 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-change-management',
           label: 'Change Management',
-          learnUrl: 'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
+          learnUrl:
+            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
           children: [
             {
               id: 'm365-change-training',
               label: 'Training & Enablement',
-              learnUrl: 'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
+              learnUrl:
+                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
             },
             {
               id: 'm365-change-communications',
               label: 'Comms & Champions',
-              learnUrl: 'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
+              learnUrl:
+                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
             },
           ],
         },
@@ -912,12 +965,14 @@ const m365CopilotTree: MindMapNode = {
             {
               id: 'm365-feedback-insights',
               label: 'Feedback Insights',
-              learnUrl: 'https://learn.microsoft.com/viva/insights/org-team-insights/copilot-dashboard',
+              learnUrl:
+                'https://learn.microsoft.com/viva/insights/org-team-insights/copilot-dashboard',
             },
             {
               id: 'm365-feedback-quality',
               label: 'Quality Signals',
-              learnUrl: 'https://learn.microsoft.com/viva/insights/org-team-insights/copilot-dashboard',
+              learnUrl:
+                'https://learn.microsoft.com/viva/insights/org-team-insights/copilot-dashboard',
             },
           ],
         },
@@ -933,12 +988,14 @@ const microsoftFoundryTree: MindMapNode = {
     {
       id: 'foundry-model-catalog',
       label: 'Model Catalog & Selection',
-      learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
+      learnUrl:
+        'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
       children: [
         {
           id: 'foundry-foundation-models',
           label: 'Foundation Models',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
           children: [
             {
               id: 'foundry-model-catalog-detail',
@@ -957,7 +1014,8 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-open-models',
           label: 'Open & Partner Models',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
           children: [
             {
               id: 'foundry-model-providers',
@@ -976,7 +1034,8 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-model-evaluation',
           label: 'Model Evaluation',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
           children: [
             {
               id: 'foundry-compare-models',
@@ -1001,51 +1060,60 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-prompt-flow',
           label: 'Prompt Flow',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
           children: [
             {
               id: 'foundry-prompt-flow-variants',
               label: 'Prompt Variants',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
             },
             {
               id: 'foundry-prompt-flow-evaluation',
               label: 'Built-in Evaluation',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
             },
           ],
         },
         {
           id: 'foundry-tool-calling',
           label: 'Tool/Function Calling',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
           children: [
             {
               id: 'foundry-tools-llm',
               label: 'LLM Tools',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
             },
             {
               id: 'foundry-tools-python',
               label: 'Python Tools',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
             },
           ],
         },
         {
           id: 'foundry-agentic-workflows',
           label: 'Agentic Workflows',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
           children: [
             {
               id: 'foundry-flow-collaboration',
               label: 'Collaboration',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
             },
             {
               id: 'foundry-flow-deployment',
               label: 'Flow Deployment',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
             },
           ],
         },
@@ -1058,24 +1126,28 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-vector-search',
           label: 'Vector Search',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
           children: [
             {
               id: 'foundry-vector-index',
               label: 'Vector Indexes',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
             },
             {
               id: 'foundry-vector-prereqs',
               label: 'Azure AI Search Prereqs',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
             },
           ],
         },
         {
           id: 'foundry-rag-pipelines',
           label: 'RAG Pipelines',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic',
           children: [
             {
               id: 'foundry-rag-retrieve',
@@ -1094,7 +1166,8 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-data-connectors',
           label: 'Indexes & Data Sources',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic',
           children: [
             {
               id: 'foundry-data-index-asset',
@@ -1135,7 +1208,8 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-evaluations',
           label: 'Evaluate & Red-team',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
           children: [
             {
               id: 'foundry-discover-risks',
@@ -1154,7 +1228,8 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-policy-controls',
           label: 'Governance Controls',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
           children: [
             {
               id: 'foundry-govern-monitor',
@@ -1199,29 +1274,34 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-scaling-cost',
           label: 'Quota & Capacity',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
           children: [
             {
               id: 'foundry-quota-requests',
               label: 'Quota Requests',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
             },
             {
               id: 'foundry-quota-monitor',
               label: 'Usage Monitoring',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
             },
           ],
         },
         {
           id: 'foundry-observability',
           label: 'Observability & Monitoring',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/how-to/monitor-applications?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/how-to/monitor-applications?view=foundry-classic',
           children: [
             {
               id: 'foundry-observability-insights',
               label: 'App Insights',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/how-to/monitor-applications?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/how-to/monitor-applications?view=foundry-classic',
             },
             {
               id: 'foundry-continuous-eval',
@@ -1240,7 +1320,8 @@ const microsoftFoundryTree: MindMapNode = {
         {
           id: 'foundry-sdks',
           label: 'SDKs & APIs',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/quickstarts/hub-get-started-code?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/quickstarts/hub-get-started-code?view=foundry-classic',
           children: [
             {
               id: 'foundry-quickstart',
@@ -1251,14 +1332,16 @@ const microsoftFoundryTree: MindMapNode = {
             {
               id: 'foundry-project-setup',
               label: 'Project Setup',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/what-is-foundry?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/what-is-foundry?view=foundry-classic',
             },
           ],
         },
         {
           id: 'foundry-cicd',
           label: 'Projects & Resources',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/what-is-foundry?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/what-is-foundry?view=foundry-classic',
           children: [
             {
               id: 'foundry-project-types',
@@ -1269,14 +1352,16 @@ const microsoftFoundryTree: MindMapNode = {
             {
               id: 'foundry-hub-resources',
               label: 'Hub Resources',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/ai-resources?view=foundry-classic',
+              learnUrl:
+                'https://learn.microsoft.com/azure/ai-foundry/concepts/ai-resources?view=foundry-classic',
             },
           ],
         },
         {
           id: 'foundry-identity',
           label: 'Identity & Access',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-foundry/concepts/ai-resources?view=foundry-classic',
+          learnUrl:
+            'https://learn.microsoft.com/azure/ai-foundry/concepts/ai-resources?view=foundry-classic',
           children: [
             {
               id: 'foundry-hub-security',
@@ -2103,7 +2188,11 @@ export default function CopilotStudioMindMap() {
                       dominantBaseline="middle"
                     >
                       {labelLines.map((line, index) => (
-                        <tspan key={line + index} x={TEXT_PADDING_X} y={textStartY + index * lineHeight}>
+                        <tspan
+                          key={line + index}
+                          x={TEXT_PADDING_X}
+                          y={textStartY + index * lineHeight}
+                        >
                           {line}
                         </tspan>
                       ))}
