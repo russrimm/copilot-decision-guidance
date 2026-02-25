@@ -461,7 +461,11 @@ router.post('/generate', (req: Request, res: Response) => {
         .map((source) => normalizeDataSourceId(source))
     );
 
-    const guaranteedDepartmentMatches = ensureDepartmentCoverage(verticalUseCases, departments, dataSources);
+    const guaranteedDepartmentMatches = ensureDepartmentCoverage(
+      verticalUseCases,
+      departments,
+      dataSources
+    );
 
     let effectiveCriteria = { ...selectedCriteria };
     let useCases = getRelevantUseCases(

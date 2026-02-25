@@ -529,29 +529,34 @@ const m365CopilotTree: MindMapNode = {
             {
               id: 'm365-chat-copilot',
               label: 'Copilot Chat',
-              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
             },
             {
               id: 'm365-chat-business',
               label: 'Business Chat',
-              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
             },
           ],
         },
         {
           id: 'm365-agents',
           label: 'Agents (Researcher, Analyst)',
-          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
           children: [
             {
               id: 'm365-agents-researcher',
               label: 'Researcher Agent',
-              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
             },
             {
               id: 'm365-agents-analyst',
               label: 'Analyst Agent',
-              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
             },
           ],
         },
@@ -945,7 +950,8 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-feedback',
           label: 'User Feedback & Quality',
-          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
           children: [
             {
               id: 'm365-feedback-insights',
