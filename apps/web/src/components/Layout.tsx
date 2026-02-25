@@ -27,7 +27,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-      <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors">
+      <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-sm transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <Link to="/" className="flex items-center space-x-2">
@@ -82,7 +82,7 @@ export default function Layout() {
                     Implementation Guide
                   </Link>
                   <Link
-                    to="/copilot-studio-mind-map"
+                    to="/mind-maps"
                     className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
                   >
                     Mind Maps

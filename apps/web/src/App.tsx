@@ -27,7 +27,8 @@ function App() {
             <Route path="foundry-news" element={<FoundryNews />} />
             <Route path="readiness" element={<ReadinessAssessment />} />
             <Route path="implementation-guide" element={<ImplementationGuide />} />
-            <Route path="copilot-studio-mind-map" element={<CopilotStudioMindMap />} />
+            <Route path="mind-maps" element={<CopilotStudioMindMap />} />
+            <Route path="copilot-studio-mind-map" element={<Navigate to="/mind-maps" replace />} />
             <Route path="profile-summary" element={<ProfileSummary />} />
             {/* Admin route excluded from production builds via __ENABLE_ADMIN__ flag */}
             {__ENABLE_ADMIN__ && (

@@ -27,6 +27,7 @@ app.use(express.json());
 // Dynamic import of decision engine (handles TypeScript via package exports)
 let decisionModel, calculateRecommendation, generateRecommendation;
 let getCopilotStudioReleasePlannerData;
+let getFoundryNews;
 let useCasesRouter;
 let generateExecutiveOverviewPPTX;
 let azureCredential = null;
@@ -407,6 +408,35 @@ async function loadReleasePlannerService() {
   console.log(`[STARTUP] ✅ Release planner service loaded from: ${loadedFrom}`);
 }
 
+async function loadFoundryNewsService() {
+  const importCandidates = ['./apps/api/dist/services/foundry-news.js'];
+
+  let serviceModule = null;
+  let loadedFrom = null;
+  let lastError = null;
+
+  for (const candidate of importCandidates) {
+    try {
+      console.log(`[STARTUP] Loading Foundry news service from ${candidate}`);
+      serviceModule = await import(candidate);
+      loadedFrom = candidate;
+      break;
+    } catch (error) {
+      lastError = error;
+      console.warn(
+        `[STARTUP] Unable to load Foundry news service from ${candidate}: ${error.code || error.message}`
+      );
+    }
+  }
+
+  if (!serviceModule?.getFoundryNews) {
+    throw lastError || new Error('No Foundry news service import candidate succeeded');
+  }
+
+  getFoundryNews = serviceModule.getFoundryNews;
+  console.log(`[STARTUP] ✅ Foundry news service loaded from: ${loadedFrom}`);
+}
+
 async function loadUseCasesRouter() {
   const importCandidates = ['./apps/api/dist/routes/use-cases.js'];
 
@@ -500,6 +530,7 @@ app.get('/api', (req, res) => {
       '/api/readiness/model',
       '/api/readiness/assess',
       '/api/release-planner/copilot-studio',
+      '/api/foundry/news',
     ],
   });
 });
@@ -694,6 +725,30 @@ app.get('/api/release-planner/copilot-studio', async (req, res) => {
     res.status(502).json({
       error: 'Bad Gateway',
       message: error instanceof Error ? error.message : 'Failed to fetch release planner data',
+    });
+  }
+});
+
+// Microsoft Foundry News Feed
+app.get('/api/foundry/news', async (req, res) => {
+  try {
+    if (typeof getFoundryNews !== 'function') {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Foundry news service is not loaded on this deployment instance',
+      });
+    }
+
+    const maxItemsRaw = Number(req.query.maxItems);
+    const maxItems = Number.isFinite(maxItemsRaw) ? Math.max(1, Math.min(50, maxItemsRaw)) : 15;
+
+    const data = await getFoundryNews({ maxItems });
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching Microsoft Foundry news feed:', error);
+    res.status(502).json({
+      error: 'Bad Gateway',
+      message: error instanceof Error ? error.message : 'Failed to fetch Foundry news feed',
     });
   }
 });
@@ -959,6 +1014,7 @@ process.on('unhandledRejection', (reason, promise) => {
 Promise.all([
   loadDecisionEngine(),
   loadReleasePlannerService(),
+  loadFoundryNewsService(),
   loadUseCasesRouter(),
   loadExecutiveOverviewPptxService(),
 ])

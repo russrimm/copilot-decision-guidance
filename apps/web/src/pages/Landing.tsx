@@ -268,15 +268,15 @@ export default function Landing() {
               Interactive Mind Map
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-100">
-              Drill down from Copilot Studio top-level topics into deeper sub-topics by clicking
-              each box.
+              Drill down across Microsoft 365 Copilot, Copilot Studio, and Microsoft Foundry topics
+              into deeper sub-topics by clicking each box.
             </p>
           </div>
           <Link
             to="/copilot-studio-mind-map"
             className={`${sectionCtaButtonClass} ${ctaButtonToneClass}`}
           >
-            Open Copilot Studio Map
+            Open Product Mind Maps
           </Link>
         </div>
       </div>
