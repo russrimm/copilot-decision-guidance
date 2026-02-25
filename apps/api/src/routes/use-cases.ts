@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { getRelevantUseCases, useCaseDatabase, type UseCase } from '../data/use-cases.js';
+import { useCaseDatabase, type UseCase } from '../data/use-cases.js';
 import { generateUseCasePDF, generateMultipleUseCasesPDF } from '../services/pdf-generator.js';
 import { generateUseCasePPTX, generateMultipleUseCasesPPTX } from '../services/pptx-generator.js';
 
@@ -286,34 +286,72 @@ function normalizeDataSourceId(input: string): string {
   return map[token] ?? token;
 }
 
+type NormalizedUseCase = {
+  useCase: UseCase;
+  normalizedDepartments: string[];
+  normalizedDataSources: string[];
+};
+
+const NORMALIZED_USE_CASES: NormalizedUseCase[] = useCaseDatabase.map((useCase) => ({
+  useCase,
+  normalizedDepartments: useCase.departments.map(normalizeDepartmentId),
+  normalizedDataSources: useCase.dataSources.map(normalizeDataSourceId),
+}));
+
+function getVerticalUseCases(vertical: 'oil' | 'gas' | 'energy' | 'all'): NormalizedUseCase[] {
+  if (vertical === 'all') {
+    return NORMALIZED_USE_CASES;
+  }
+
+  return NORMALIZED_USE_CASES.filter((entry) => entry.useCase.vertical === vertical);
+}
+
+function getRelevantUseCasesFromNormalized(
+  verticalUseCases: NormalizedUseCase[],
+  departments: string[],
+  dataSources: string[]
+): NormalizedUseCase[] {
+  const requestedDeptIds = new Set(departments.map(normalizeDepartmentId));
+  const requestedSourceIds = new Set(dataSources.map(normalizeDataSourceId));
+
+  return verticalUseCases.filter((entry) => {
+    const deptMatch =
+      requestedDeptIds.size === 0 ||
+      entry.normalizedDepartments.some((dept) => requestedDeptIds.has(dept));
+    const dataMatch =
+      requestedSourceIds.size === 0 ||
+      entry.normalizedDataSources.some((source) => requestedSourceIds.has(source));
+
+    return deptMatch && dataMatch;
+  });
+}
+
 function scoreUseCaseMatch(
-  useCase: UseCase,
+  useCase: NormalizedUseCase,
   selectedDepartmentIds: Set<string>,
   selectedDataSourceIds: Set<string>
 ): number {
-  const deptIds = useCase.departments.map(normalizeDepartmentId);
-  const sourceIds = useCase.dataSources.map(normalizeDataSourceId);
-
-  const deptOverlap = deptIds.filter((dept) => selectedDepartmentIds.has(dept)).length;
-  const sourceOverlap = sourceIds.filter((source) => selectedDataSourceIds.has(source)).length;
+  const deptOverlap = useCase.normalizedDepartments.filter((dept) => selectedDepartmentIds.has(dept))
+    .length;
+  const sourceOverlap = useCase.normalizedDataSources.filter((source) => selectedDataSourceIds.has(source))
+    .length;
 
   return deptOverlap * 10 + sourceOverlap * 3;
 }
 
-function hasDepartmentMatch(useCase: UseCase, selectedDepartmentIds: Set<string>): boolean {
+function hasDepartmentMatch(useCase: NormalizedUseCase, selectedDepartmentIds: Set<string>): boolean {
   if (selectedDepartmentIds.size === 0) {
     return true;
   }
 
-  const deptIds = useCase.departments.map(normalizeDepartmentId);
-  return deptIds.some((dept) => selectedDepartmentIds.has(dept));
+  return useCase.normalizedDepartments.some((dept) => selectedDepartmentIds.has(dept));
 }
 
 function ensureDepartmentCoverage(
-  verticalUseCases: UseCase[],
+  verticalUseCases: NormalizedUseCase[],
   selectedDepartmentsRaw: unknown,
   selectedDataSourcesRaw: unknown
-): UseCase[] {
+): NormalizedUseCase[] {
   if (!Array.isArray(selectedDepartmentsRaw) || selectedDepartmentsRaw.length === 0) {
     return [];
   }
@@ -340,11 +378,11 @@ function ensureDepartmentCoverage(
       scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds)
   );
 
-  const guaranteedMatches: UseCase[] = [];
+  const guaranteedMatches: NormalizedUseCase[] = [];
 
   for (const departmentId of selectedDepartmentIds) {
     const exactDepartmentMatches = verticalUseCases
-      .filter((useCase) => useCase.departments.map(normalizeDepartmentId).includes(departmentId))
+      .filter((useCase) => useCase.normalizedDepartments.includes(departmentId))
       .sort(
         (a, b) =>
           scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
@@ -352,7 +390,7 @@ function ensureDepartmentCoverage(
       );
 
     const chosen = exactDepartmentMatches[0] ?? rankedVerticalDefaults[0];
-    if (chosen && !guaranteedMatches.some((existing) => existing.id === chosen.id)) {
+    if (chosen && !guaranteedMatches.some((existing) => existing.useCase.id === chosen.useCase.id)) {
       guaranteedMatches.push(chosen);
     }
   }
@@ -361,12 +399,12 @@ function ensureDepartmentCoverage(
 }
 
 function ensureMinimumRecommendations(
-  selectedUseCases: UseCase[],
-  verticalUseCases: UseCase[],
+  selectedUseCases: NormalizedUseCase[],
+  verticalUseCases: NormalizedUseCase[],
   selectedDepartmentIds: Set<string>,
   selectedDataSourceIds: Set<string>,
   minimumCount = 3
-): UseCase[] {
+): NormalizedUseCase[] {
   if (selectedUseCases.length >= minimumCount) {
     return selectedUseCases;
   }
@@ -383,7 +421,7 @@ function ensureMinimumRecommendations(
       continue;
     }
 
-    if (!result.some((item) => item.id === candidate.id)) {
+    if (!result.some((item) => item.useCase.id === candidate.useCase.id)) {
       result.push(candidate);
     }
     if (result.length >= minimumCount) {
@@ -395,10 +433,10 @@ function ensureMinimumRecommendations(
 }
 
 function getIndustryFallbackUseCase(
-  verticalUseCases: UseCase[],
+  verticalUseCases: NormalizedUseCase[],
   selectedDepartmentIds: Set<string>,
   selectedDataSourceIds: Set<string>
-): UseCase | null {
+): NormalizedUseCase | null {
   if (verticalUseCases.length === 0) {
     return null;
   }
@@ -449,7 +487,7 @@ router.post('/generate', (req: Request, res: Response) => {
     };
 
     const resolvedVertical = resolveVerticalForCatalog(vertical);
-    const verticalUseCases = useCaseDatabase.filter((entry) => entry.vertical === resolvedVertical);
+    const verticalUseCases = getVerticalUseCases(resolvedVertical);
     const selectedDepartmentIds = new Set(
       (Array.isArray(departments) ? departments : [])
         .filter((value): value is string => typeof value === 'string')
@@ -468,8 +506,8 @@ router.post('/generate', (req: Request, res: Response) => {
     );
 
     let effectiveCriteria = { ...selectedCriteria };
-    let useCases = getRelevantUseCases(
-      resolvedVertical,
+    let useCases = getRelevantUseCasesFromNormalized(
+      verticalUseCases,
       effectiveCriteria.departments,
       effectiveCriteria.dataSources
     );
@@ -477,15 +515,18 @@ router.post('/generate', (req: Request, res: Response) => {
     // Keep department alignment strict; only relax data source filters when needed.
     if (useCases.length === 0 && effectiveCriteria.dataSources.length > 0) {
       effectiveCriteria = { ...effectiveCriteria, dataSources: [] };
-      useCases = getRelevantUseCases(
-        resolvedVertical,
+      useCases = getRelevantUseCasesFromNormalized(
+        verticalUseCases,
         effectiveCriteria.departments,
         effectiveCriteria.dataSources
       );
     }
 
     const mergedUseCases = [...useCases, ...guaranteedDepartmentMatches]
-      .filter((useCase, index, all) => all.findIndex((entry) => entry.id === useCase.id) === index)
+      .filter(
+        (useCase, index, all) =>
+          all.findIndex((entry) => entry.useCase.id === useCase.useCase.id) === index
+      )
       .filter((useCase) => hasDepartmentMatch(useCase, selectedDepartmentIds))
       .sort(
         (a, b) =>
@@ -516,12 +557,12 @@ router.post('/generate', (req: Request, res: Response) => {
     }
 
     res.json({
-      useCases: recommendedUseCases,
+      useCases: recommendedUseCases.map((entry) => entry.useCase),
       selectedCriteria,
       resolvedVertical,
       effectiveCriteria,
       totalCount: recommendedUseCases.length,
-      guaranteedDepartmentCoverage: guaranteedDepartmentMatches.map((entry) => entry.id),
+      guaranteedDepartmentCoverage: guaranteedDepartmentMatches.map((entry) => entry.useCase.id),
       industryFallbackApplied,
     });
   } catch (error) {
