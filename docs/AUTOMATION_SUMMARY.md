@@ -163,10 +163,10 @@ GitHub Actions
 ### Additional Scheduled Automation
 
 - **Monthly Licensing Validation** (`.github/workflows/validate-licensing-monthly.yml`)
-   - Schedule: 1st day of each month at 9 AM UTC
-   - Validates licensing and survey alignment using:
-      - `scripts/validate-licensing-guide.ts`
-      - `scripts/validate-survey-questions.ts`
+  - Schedule: 1st day of each month at 9 AM UTC
+  - Validates licensing and survey alignment using:
+    - `scripts/validate-licensing-guide.ts`
+    - `scripts/validate-survey-questions.ts`
 
 ### Schedule
 

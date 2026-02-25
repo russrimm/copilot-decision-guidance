@@ -1,7 +1,10 @@
 import type { Recommendation } from '../types';
 
 function normalizeForCompare(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
 }
 
 function buildExecutiveOverviewSections(recommendation: Recommendation): {

@@ -78,7 +78,9 @@ function buildReport(result: MindMapValidationResult): string {
   lines.push('');
   lines.push('## Required Action');
   lines.push('');
-  lines.push('1. Update `apps/web/src/pages/CopilotStudioMindMap.tsx` to resolve all issues listed above.');
+  lines.push(
+    '1. Update `apps/web/src/pages/CopilotStudioMindMap.tsx` to resolve all issues listed above.'
+  );
   lines.push('2. Re-run `ts-node scripts/validate-mindmaps.ts` until the report is clean.');
   lines.push('');
 
@@ -94,7 +96,8 @@ function validateMindMaps(): MindMapValidationResult {
       category: 'file',
       severity: 'critical',
       message: 'Mind map source file was not found.',
-      suggestion: 'Restore apps/web/src/pages/CopilotStudioMindMap.tsx before running weekly validation.',
+      suggestion:
+        'Restore apps/web/src/pages/CopilotStudioMindMap.tsx before running weekly validation.',
     });
 
     return {
@@ -141,7 +144,11 @@ function validateMindMaps(): MindMapValidationResult {
     }
   }
 
-  const m365Section = extractSection(content, 'const m365CopilotTree', 'const microsoftFoundryTree');
+  const m365Section = extractSection(
+    content,
+    'const m365CopilotTree',
+    'const microsoftFoundryTree'
+  );
   if (!m365Section) {
     issues.push({
       category: 'structure',
