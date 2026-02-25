@@ -1,4 +1,5 @@
-import PptxGenJS from 'pptxgenjs';
+import PptxGenJSImport from 'pptxgenjs';
+import type PptxGenJS from 'pptxgenjs';
 import type { UseCase } from '../data/use-cases.js';
 
 const COLOR_PRIMARY = '2563EB';
@@ -188,8 +189,23 @@ function addDepartmentTopicsSlide(prs: PptxGenJS) {
   });
 }
 
+function createPptxPresentation(): PptxGenJS {
+  const PptxGenJSCtor =
+    typeof PptxGenJSImport === 'function'
+      ? PptxGenJSImport
+      : ((PptxGenJSImport as unknown as { default?: unknown }).default as
+          | (new () => PptxGenJS)
+          | undefined);
+
+  if (typeof PptxGenJSCtor !== 'function') {
+    throw new Error('Unable to resolve pptxgenjs constructor');
+  }
+
+  return new PptxGenJSCtor();
+}
+
 export async function generateUseCasePPTX(useCase: UseCase): Promise<Buffer> {
-  const prs = new PptxGenJS();
+  const prs = createPptxPresentation();
   prs.layout = 'LAYOUT_WIDE';
 
   const phaseDuration = Math.max(1, Math.round(useCase.implementation.estimatedTimelineWeeks / 3));
@@ -721,7 +737,7 @@ export async function generateUseCasePPTX(useCase: UseCase): Promise<Buffer> {
 }
 
 export async function generateMultipleUseCasesPPTX(useCases: UseCase[]): Promise<Buffer> {
-  const prs = new PptxGenJS();
+  const prs = createPptxPresentation();
   prs.layout = 'LAYOUT_WIDE';
 
   const slide1 = prs.addSlide();

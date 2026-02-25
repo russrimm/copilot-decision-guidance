@@ -498,25 +498,25 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-apps',
           label: 'Word, Excel, PowerPoint, Outlook, Teams',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
           children: [
             {
               id: 'm365-apps-word',
               label: 'Word & PowerPoint',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
             },
             {
               id: 'm365-apps-excel',
               label: 'Excel & Outlook',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
             },
             {
               id: 'm365-apps-teams',
               label: 'Teams',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
             },
           ],
         },
@@ -524,39 +524,34 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-chat',
           label: 'Copilot Chat & Business Chat',
           learnUrl:
-            'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
           children: [
             {
               id: 'm365-chat-copilot',
               label: 'Copilot Chat',
-              learnUrl:
-                'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
             },
             {
               id: 'm365-chat-business',
               label: 'Business Chat',
-              learnUrl:
-                'https://learn.microsoft.com/copilot/overview#microsoft-365-copilot-chat-copilot-chat',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
             },
           ],
         },
         {
           id: 'm365-agents',
           label: 'Agents (Researcher, Analyst)',
-          learnUrl:
-            'https://learn.microsoft.com/microsoft-365/admin/manage/manage-copilot-agents-integrated-apps?view=o365-worldwide',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
           children: [
             {
               id: 'm365-agents-researcher',
               label: 'Researcher Agent',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-365/admin/manage/manage-copilot-agents-integrated-apps?view=o365-worldwide',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
             },
             {
               id: 'm365-agents-analyst',
               label: 'Analyst Agent',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-365/admin/manage/manage-copilot-agents-integrated-apps?view=o365-worldwide',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
             },
           ],
         },
@@ -570,19 +565,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-graph-grounding',
           label: 'Microsoft Graph Grounding',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture',
           children: [
             {
               id: 'm365-graph-permissions',
               label: 'Permissions & Access',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture',
             },
             {
               id: 'm365-graph-sources',
               label: 'Grounding Sources',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture',
             },
           ],
         },
@@ -590,19 +585,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-sharepoint-onedrive',
           label: 'SharePoint & OneDrive',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-minimum-requirements-data-compliance',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-minimum-requirements-data-compliance',
           children: [
             {
               id: 'm365-sharepoint',
               label: 'SharePoint',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-minimum-requirements-data-compliance',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-minimum-requirements-data-compliance',
             },
             {
               id: 'm365-onedrive',
               label: 'OneDrive',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-minimum-requirements-data-compliance',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-minimum-requirements-data-compliance',
             },
           ],
         },
@@ -610,19 +605,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-mail-calendar-teams',
           label: 'Mail, Calendar & Teams',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
           children: [
             {
               id: 'm365-mail-calendar',
               label: 'Mail & Calendar',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
             },
             {
               id: 'm365-teams-collab',
               label: 'Teams Collaboration',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
             },
           ],
         },
@@ -630,18 +625,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-connectors',
           label: 'Microsoft 365 Copilot Connectors',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-copilot-connector',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
           children: [
             {
               id: 'm365-connectors-config',
               label: 'Connector Setup',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-copilot-connector',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
             },
             {
               id: 'm365-connectors-graph',
               label: 'Graph Connectors',
-              learnUrl: 'https://learn.microsoft.com/microsoftsearch/connectors-overview',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
             },
           ],
         },
@@ -655,53 +651,36 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-copilot-apis',
           label: 'Copilot APIs (Chat, Retrieval)',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/copilot-apis-overview',
           children: [
             {
               id: 'm365-copilot-apis-chat',
               label: 'Chat API',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/copilot-apis-overview',
             },
             {
               id: 'm365-copilot-apis-retrieval',
               label: 'Retrieval API',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/copilot-apis-overview',
-            },
-          ],
-        },
-        {
-          id: 'm365-graph-apis',
-          label: 'Microsoft Graph APIs',
-          learnUrl: 'https://learn.microsoft.com/graph/overview',
-          children: [
-            {
-              id: 'm365-graph-auth',
-              label: 'Auth & Permissions',
-              learnUrl: 'https://learn.microsoft.com/graph/overview',
-            },
-            {
-              id: 'm365-graph-data',
-              label: 'People, Mail, Files',
-              learnUrl: 'https://learn.microsoft.com/graph/overview',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/copilot-apis-overview',
             },
           ],
         },
         {
           id: 'm365-copilot-studio-ext',
           label: 'Copilot Studio Extensions',
-          learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/',
           children: [
             {
               id: 'm365-copilot-studio-actions',
               label: 'Actions',
-              learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/',
             },
             {
               id: 'm365-copilot-studio-connectors',
               label: 'Connectors',
-              learnUrl: 'https://learn.microsoft.com/microsoft-365-copilot/extensibility/',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/',
             },
           ],
         },
@@ -709,19 +688,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-plugins-actions',
           label: 'Plugins & Actions',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-business-applications',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-business-applications',
           children: [
             {
               id: 'm365-plugins',
               label: 'Plugins',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-business-applications',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-business-applications',
             },
             {
               id: 'm365-actions',
               label: 'Actions',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/overview-business-applications',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-business-applications',
             },
           ],
         },
@@ -734,17 +713,20 @@ const m365CopilotTree: MindMapNode = {
         {
           id: 'm365-purview-dlp',
           label: 'Microsoft Purview & DLP',
-          learnUrl: 'https://learn.microsoft.com/purview/ai-m365-copilot',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
           children: [
             {
               id: 'm365-purview-controls',
               label: 'Purview Controls',
-              learnUrl: 'https://learn.microsoft.com/purview/ai-m365-copilot',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
             },
             {
               id: 'm365-dlp-policies',
               label: 'DLP Policies',
-              learnUrl: 'https://learn.microsoft.com/purview/ai-m365-copilot',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
             },
           ],
         },
@@ -752,19 +734,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-sensitivity-irm',
           label: 'Sensitivity Labels & IRM',
           learnUrl:
-            'https://learn.microsoft.com/purview/sensitivity-labels#sensitivity-labels-for-microsoft-365-copilot-and-microsoft-365-copilot-chat',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
           children: [
             {
               id: 'm365-sensitivity-labels',
               label: 'Sensitivity Labels',
               learnUrl:
-                'https://learn.microsoft.com/purview/sensitivity-labels#sensitivity-labels-for-microsoft-365-copilot-and-microsoft-365-copilot-chat',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
             },
             {
               id: 'm365-irm',
               label: 'Information Rights Mgmt',
               learnUrl:
-                'https://learn.microsoft.com/purview/sensitivity-labels#sensitivity-labels-for-microsoft-365-copilot-and-microsoft-365-copilot-chat',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
             },
           ],
         },
@@ -772,19 +754,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-audit-ediscovery',
           label: 'Audit, eDiscovery & Retention',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
           children: [
             {
               id: 'm365-audit',
               label: 'Audit',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
             },
             {
               id: 'm365-ediscovery',
               label: 'eDiscovery & Retention',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
             },
           ],
         },
@@ -792,19 +774,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-conditional-access',
           label: 'Conditional Access & Entra ID',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
           children: [
             {
               id: 'm365-conditional-access-policies',
               label: 'Conditional Access',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
             },
             {
               id: 'm365-mfa',
               label: 'MFA',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
             },
           ],
         },
@@ -818,19 +800,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-tenant-readiness',
           label: 'Tenant Readiness & Prereqs',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-setup#readiness-activities',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-setup#readiness-activities',
           children: [
             {
               id: 'm365-tenant-prereqs',
               label: 'Prerequisites',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-setup#readiness-activities',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-setup#readiness-activities',
             },
             {
               id: 'm365-tenant-licensing',
               label: 'Licensing',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-setup#readiness-activities',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-setup#readiness-activities',
             },
           ],
         },
@@ -838,36 +820,39 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-copilot-control-system',
           label: 'Copilot Control System',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/copilot-control-system/management-controls',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/management-controls',
           children: [
             {
               id: 'm365-control-govern',
               label: 'Governance Controls',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/copilot-control-system/management-controls',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/management-controls',
             },
             {
               id: 'm365-control-data',
               label: 'Data Controls',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/copilot-control-system/management-controls',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/management-controls',
             },
           ],
         },
         {
           id: 'm365-connectors-admin',
           label: 'Manage Connectors & Agents',
-          learnUrl: 'https://learn.microsoft.com/microsoftsearch/connectors-overview',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
           children: [
             {
               id: 'm365-connectors-admin-connectors',
               label: 'Connectors',
-              learnUrl: 'https://learn.microsoft.com/microsoftsearch/connectors-overview',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
             },
             {
               id: 'm365-connectors-admin-agents',
               label: 'Agents',
-              learnUrl: 'https://learn.microsoft.com/microsoftsearch/connectors-overview',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
             },
           ],
         },
@@ -875,19 +860,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-data-governance',
           label: 'Data Governance',
           learnUrl:
-            'https://learn.microsoft.com/sharepoint/get-ready-copilot-sharepoint-advanced-management',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
           children: [
             {
               id: 'm365-data-access',
               label: 'Access & Permissions',
               learnUrl:
-                'https://learn.microsoft.com/sharepoint/get-ready-copilot-sharepoint-advanced-management',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
             },
             {
               id: 'm365-data-lifecycle',
               label: 'Lifecycle Policies',
               learnUrl:
-                'https://learn.microsoft.com/sharepoint/get-ready-copilot-sharepoint-advanced-management',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
             },
           ],
         },
@@ -901,19 +886,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-usage-analytics',
           label: 'Copilot Analytics',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
           children: [
             {
               id: 'm365-analytics-viva',
               label: 'Viva Insights',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
             },
             {
               id: 'm365-analytics-summary',
               label: 'Adoption Summary',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
             },
           ],
         },
@@ -921,19 +906,19 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-usage-reports',
           label: 'Usage Reports & Insights',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-usage?view=o365-worldwide',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
           children: [
             {
               id: 'm365-usage-reporting',
               label: 'Usage Reporting',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-usage?view=o365-worldwide',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
             },
             {
               id: 'm365-usage-adoption',
               label: 'Adoption Insights',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-usage?view=o365-worldwide',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
             },
           ],
         },
@@ -941,38 +926,38 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-change-management',
           label: 'Change Management',
           learnUrl:
-            'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-enablement-resources',
           children: [
             {
               id: 'm365-change-training',
               label: 'Training & Enablement',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-enablement-resources',
             },
             {
               id: 'm365-change-communications',
               label: 'Comms & Champions',
               learnUrl:
-                'https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-enablement-resources',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-enablement-resources',
             },
           ],
         },
         {
           id: 'm365-feedback',
           label: 'User Feedback & Quality',
-          learnUrl: 'https://learn.microsoft.com/viva/insights/org-team-insights/copilot-dashboard',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
           children: [
             {
               id: 'm365-feedback-insights',
               label: 'Feedback Insights',
               learnUrl:
-                'https://learn.microsoft.com/viva/insights/org-team-insights/copilot-dashboard',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
             },
             {
               id: 'm365-feedback-quality',
               label: 'Quality Signals',
               learnUrl:
-                'https://learn.microsoft.com/viva/insights/org-team-insights/copilot-dashboard',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
             },
           ],
         },

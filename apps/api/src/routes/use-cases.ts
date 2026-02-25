@@ -300,6 +300,15 @@ function scoreUseCaseMatch(
   return deptOverlap * 10 + sourceOverlap * 3;
 }
 
+function hasDepartmentMatch(useCase: UseCase, selectedDepartmentIds: Set<string>): boolean {
+  if (selectedDepartmentIds.size === 0) {
+    return true;
+  }
+
+  const deptIds = useCase.departments.map(normalizeDepartmentId);
+  return deptIds.some((dept) => selectedDepartmentIds.has(dept));
+}
+
 function ensureDepartmentCoverage(
   verticalUseCases: UseCase[],
   selectedDepartmentsRaw: unknown,
@@ -370,6 +379,10 @@ function ensureMinimumRecommendations(
   );
 
   for (const candidate of rankedDefaults) {
+    if (!hasDepartmentMatch(candidate, selectedDepartmentIds)) {
+      continue;
+    }
+
     if (!result.some((item) => item.id === candidate.id)) {
       result.push(candidate);
     }
@@ -379,6 +392,24 @@ function ensureMinimumRecommendations(
   }
 
   return result;
+}
+
+function getIndustryFallbackUseCase(
+  verticalUseCases: UseCase[],
+  selectedDepartmentIds: Set<string>,
+  selectedDataSourceIds: Set<string>
+): UseCase | null {
+  if (verticalUseCases.length === 0) {
+    return null;
+  }
+
+  const ranked = [...verticalUseCases].sort(
+    (a, b) =>
+      scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
+      scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds)
+  );
+
+  return ranked[0] ?? null;
 }
 
 // Get all verticals available
@@ -419,47 +450,6 @@ router.post('/generate', (req: Request, res: Response) => {
 
     const resolvedVertical = resolveVerticalForCatalog(vertical);
     const verticalUseCases = useCaseDatabase.filter((entry) => entry.vertical === resolvedVertical);
-    const guaranteedDepartmentMatches = ensureDepartmentCoverage(
-      verticalUseCases,
-      departments,
-      dataSources
-    );
-
-    let effectiveCriteria = { ...selectedCriteria };
-    let useCases = getRelevantUseCases(
-      resolvedVertical,
-      effectiveCriteria.departments,
-      effectiveCriteria.dataSources
-    );
-
-    // If filters are too restrictive (or mismatched), progressively relax them.
-    if (useCases.length === 0 && effectiveCriteria.departments.length > 0) {
-      effectiveCriteria = { ...effectiveCriteria, departments: [] };
-      useCases = getRelevantUseCases(
-        resolvedVertical,
-        effectiveCriteria.departments,
-        effectiveCriteria.dataSources
-      );
-    }
-
-    if (useCases.length === 0 && effectiveCriteria.dataSources.length > 0) {
-      effectiveCriteria = { ...effectiveCriteria, dataSources: [] };
-      useCases = getRelevantUseCases(
-        resolvedVertical,
-        effectiveCriteria.departments,
-        effectiveCriteria.dataSources
-      );
-    }
-
-    if (useCases.length === 0) {
-      effectiveCriteria = { ...effectiveCriteria, departments: [], dataSources: [] };
-      useCases = getRelevantUseCases(
-        resolvedVertical,
-        effectiveCriteria.departments,
-        effectiveCriteria.dataSources
-      );
-    }
-
     const selectedDepartmentIds = new Set(
       (Array.isArray(departments) ? departments : [])
         .filter((value): value is string => typeof value === 'string')
@@ -471,21 +461,55 @@ router.post('/generate', (req: Request, res: Response) => {
         .map((source) => normalizeDataSourceId(source))
     );
 
+    const guaranteedDepartmentMatches = ensureDepartmentCoverage(verticalUseCases, departments, dataSources);
+
+    let effectiveCriteria = { ...selectedCriteria };
+    let useCases = getRelevantUseCases(
+      resolvedVertical,
+      effectiveCriteria.departments,
+      effectiveCriteria.dataSources
+    );
+
+    // Keep department alignment strict; only relax data source filters when needed.
+    if (useCases.length === 0 && effectiveCriteria.dataSources.length > 0) {
+      effectiveCriteria = { ...effectiveCriteria, dataSources: [] };
+      useCases = getRelevantUseCases(
+        resolvedVertical,
+        effectiveCriteria.departments,
+        effectiveCriteria.dataSources
+      );
+    }
+
     const mergedUseCases = [...useCases, ...guaranteedDepartmentMatches]
       .filter((useCase, index, all) => all.findIndex((entry) => entry.id === useCase.id) === index)
+      .filter((useCase) => hasDepartmentMatch(useCase, selectedDepartmentIds))
       .sort(
         (a, b) =>
           scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
           scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds)
       );
 
-    const recommendedUseCases = ensureMinimumRecommendations(
+    let recommendedUseCases = ensureMinimumRecommendations(
       mergedUseCases,
       verticalUseCases,
       selectedDepartmentIds,
       selectedDataSourceIds,
       3
     );
+
+    let industryFallbackApplied = false;
+    if (recommendedUseCases.length === 0) {
+      const fallbackUseCase = getIndustryFallbackUseCase(
+        verticalUseCases,
+        selectedDepartmentIds,
+        selectedDataSourceIds
+      );
+
+      if (fallbackUseCase) {
+        recommendedUseCases = [fallbackUseCase];
+        industryFallbackApplied = true;
+      }
+    }
 
     res.json({
       useCases: recommendedUseCases,
@@ -494,6 +518,7 @@ router.post('/generate', (req: Request, res: Response) => {
       effectiveCriteria,
       totalCount: recommendedUseCases.length,
       guaranteedDepartmentCoverage: guaranteedDepartmentMatches.map((entry) => entry.id),
+      industryFallbackApplied,
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to generate use cases' });

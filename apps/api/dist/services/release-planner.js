@@ -112,6 +112,12 @@ export async function getCopilotStudioReleasePlannerData(options) {
     const effectiveMatches = matches.length > 0 ? matches : results;
     const upcomingPublicPreview = [];
     const upcomingGA = [];
+    // 6 months in milliseconds
+    const sixMonthsMs = 6 * 30 * 24 * 60 * 60 * 1000;
+    const sixMonthsAgoMs = todayUtcMs - sixMonthsMs;
+    // 1 year in milliseconds
+    const oneYearMs = 365 * 24 * 60 * 60 * 1000;
+    const oneYearAgoMs = todayUtcMs - oneYearMs;
     for (const item of effectiveMatches) {
         const featureName = getFirstStringField(item, ['FeatureName', 'Feature name']);
         const releasePlanId = getFirstStringField(item, ['ReleasePlanID', 'Release Plan ID']) || undefined;
@@ -123,16 +129,25 @@ export async function getCopilotStudioReleasePlannerData(options) {
         const articlePathRaw = getFirstStringField(item, ['ArticlePath']);
         const featureUrl = toAbsoluteLearnUrl(docsUrlRaw) || toAbsoluteReleasePlansUrl(articlePathRaw);
         const ppDate = parseUsDateToUtc(ppDateStr);
-        if (ppDate && ppDate.getTime() >= todayUtcMs) {
+        const gaDate = parseUsDateToUtc(gaDateStr);
+        // Include in "In Public Preview" if:
+        // 1. Has preview date in past/today AND no GA date, OR
+        // 2. Has GA date less than 6 months in the past (but not in future)
+        // And exclude anything with a date older than 1 year
+        const hasPreviewWithoutGA = !!ppDate && ppDate.getTime() <= todayUtcMs && !gaDate;
+        const hasRecentGA = gaDate && gaDate.getTime() >= sixMonthsAgoMs && gaDate.getTime() <= todayUtcMs;
+        // Use the preview date if available, otherwise use GA date for filtering
+        const primaryDate = ppDate || gaDate;
+        const isWithin1Year = primaryDate && primaryDate.getTime() >= oneYearAgoMs;
+        if ((hasPreviewWithoutGA || hasRecentGA) && isWithin1Year) {
             upcomingPublicPreview.push({
-                date: formatDateUtc(ppDate),
+                date: formatDateUtc(ppDate || gaDate),
                 featureName: featureName || '(Unnamed feature)',
                 featureUrl,
-                releaseWave: ppWave,
+                releaseWave: ppWave || gaWave,
                 releasePlanId,
             });
         }
-        const gaDate = parseUsDateToUtc(gaDateStr);
         if (gaDate && gaDate.getTime() >= todayUtcMs) {
             upcomingGA.push({
                 date: formatDateUtc(gaDate),

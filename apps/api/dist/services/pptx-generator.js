@@ -1,4 +1,4 @@
-import PptxGenJS from 'pptxgenjs';
+import PptxGenJSImport from 'pptxgenjs';
 const COLOR_PRIMARY = '2563EB';
 const COLOR_DARK = '1F2937';
 const COLOR_LIGHT = 'F3F4F6';
@@ -174,8 +174,17 @@ function addDepartmentTopicsSlide(prs) {
         });
     });
 }
+function createPptxPresentation() {
+    const PptxGenJSCtor = typeof PptxGenJSImport === 'function'
+        ? PptxGenJSImport
+        : PptxGenJSImport.default;
+    if (typeof PptxGenJSCtor !== 'function') {
+        throw new Error('Unable to resolve pptxgenjs constructor');
+    }
+    return new PptxGenJSCtor();
+}
 export async function generateUseCasePPTX(useCase) {
-    const prs = new PptxGenJS();
+    const prs = createPptxPresentation();
     prs.layout = 'LAYOUT_WIDE';
     const phaseDuration = Math.max(1, Math.round(useCase.implementation.estimatedTimelineWeeks / 3));
     const roi = useCase.roi;
@@ -667,7 +676,7 @@ export async function generateUseCasePPTX(useCase) {
     return bufferFromPptOutput(output);
 }
 export async function generateMultipleUseCasesPPTX(useCases) {
-    const prs = new PptxGenJS();
+    const prs = createPptxPresentation();
     prs.layout = 'LAYOUT_WIDE';
     const slide1 = prs.addSlide();
     slide1.background = { color: COLOR_PRIMARY };
