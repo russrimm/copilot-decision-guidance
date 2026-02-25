@@ -28,6 +28,7 @@ app.use(express.json());
 let decisionModel, calculateRecommendation, generateRecommendation;
 let getCopilotStudioReleasePlannerData;
 let useCasesRouter;
+let generateExecutiveOverviewPPTX;
 let azureCredential = null;
 
 function getOpenAIChatCompletionsUrl() {
@@ -435,6 +436,35 @@ async function loadUseCasesRouter() {
   console.log(`[STARTUP] ✅ Use-cases router loaded from: ${loadedFrom}`);
 }
 
+async function loadExecutiveOverviewPptxService() {
+  const importCandidates = ['./apps/api/dist/services/executive-overview-pptx.js'];
+
+  let serviceModule = null;
+  let loadedFrom = null;
+  let lastError = null;
+
+  for (const candidate of importCandidates) {
+    try {
+      console.log(`[STARTUP] Loading executive overview PPTX service from ${candidate}`);
+      serviceModule = await import(candidate);
+      loadedFrom = candidate;
+      break;
+    } catch (error) {
+      lastError = error;
+      console.warn(
+        `[STARTUP] Unable to load executive overview PPTX service from ${candidate}: ${error.code || error.message}`
+      );
+    }
+  }
+
+  if (!serviceModule?.generateExecutiveOverviewPPTX) {
+    throw lastError || new Error('No executive overview PPTX service import candidate succeeded');
+  }
+
+  generateExecutiveOverviewPPTX = serviceModule.generateExecutiveOverviewPPTX;
+  console.log(`[STARTUP] ✅ Executive overview PPTX service loaded from: ${loadedFrom}`);
+}
+
 // API Routes
 
 // Health check - Azure uses this to verify app is running
@@ -463,6 +493,7 @@ app.get('/api', (req, res) => {
       '/api/model',
       '/api/score',
       '/api/sources',
+      '/api/export/executive-overview/pptx',
       '/api/use-cases/verticals',
       '/api/use-cases/departments',
       '/api/use-cases/data-sources',
@@ -852,6 +883,48 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
   }
 });
 
+// Export Executive Overview as PPTX
+app.post('/api/export/executive-overview/pptx', async (req, res) => {
+  try {
+    if (typeof generateExecutiveOverviewPPTX !== 'function') {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Executive overview PPTX service is not loaded on this deployment instance',
+      });
+    }
+
+    const { timestamp, scoringResult, recommendation, qaData, aiRecommendation } = req.body;
+
+    if (!timestamp || !scoringResult || !recommendation || !Array.isArray(qaData)) {
+      return res.status(400).json({
+        error: 'Invalid request',
+        message: 'timestamp, scoringResult, recommendation, and qaData[] are required',
+      });
+    }
+
+    const pptxBuffer = await generateExecutiveOverviewPPTX({
+      timestamp,
+      scoringResult,
+      recommendation,
+      qaData,
+      aiRecommendation,
+    });
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    );
+    res.setHeader('Content-Disposition', 'attachment; filename="executive-overview.pptx"');
+    res.send(pptxBuffer);
+  } catch (error) {
+    console.error('Executive overview PPTX generation error:', error);
+    res.status(500).json({
+      error: 'Failed to generate PowerPoint',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
 // Ensure unknown API routes return JSON (never SPA HTML)
 app.use('/api/*', (req, res) => {
   res.status(404).json({
@@ -883,7 +956,12 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Start server after loading decision engine
-Promise.all([loadDecisionEngine(), loadReleasePlannerService(), loadUseCasesRouter()])
+Promise.all([
+  loadDecisionEngine(),
+  loadReleasePlannerService(),
+  loadUseCasesRouter(),
+  loadExecutiveOverviewPptxService(),
+])
   .then(() => {
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);

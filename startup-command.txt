@@ -1,1 +1,1 @@
-node server-production.js
+node server-production.mjs
