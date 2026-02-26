@@ -942,12 +942,13 @@ Every **Monday at 9 AM UTC**, a GitHub Action automatically:
    - [M365 Copilot Enablement Resources](https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-enablement-resources) (Primary Source)
    - [Microsoft 365 Copilot Release Notes](https://learn.microsoft.com/en-us/copilot/microsoft-365/release-notes) (Official)
    - [Copilot Studio What's New](https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new) (Official)
-  - [Copilot and Agents Spotlight (Training)](https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/) (Official Training)
-   - [Azure AI Foundry Documentation](https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio)
-   - Microsoft 365 Roadmap (Copilot filter)
-   - Power Platform Release Planner
-   - Microsoft Learn documentation
-   - Pricing pages
+
+- [Copilot and Agents Spotlight (Training)](https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/) (Official Training)
+- [Azure AI Foundry Documentation](https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio)
+- Microsoft 365 Roadmap (Copilot filter)
+- Power Platform Release Planner
+- Microsoft Learn documentation
+- Pricing pages
 
 2. 🔍 **Validates repository accuracy:**
    - Licensing information and pricing
