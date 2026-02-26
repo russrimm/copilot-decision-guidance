@@ -2,7 +2,7 @@
   "version": "1.0",
   "metadata": {
     "description": "Decision model for Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, and Agent Builder guidance",
-    "lastUpdated": "2026-02-18"
+    "lastUpdated": "2026-02-26"
   },
   "questionGroups": [
     {
@@ -119,68 +119,6 @@
                 "hybrid": 4,
                 "foundry": 5,
                 "agentBuilder": 5
-              }
-            }
-          ]
-        },
-        {
-          "id": "outcome_development",
-          "title": "Who will build and maintain the agents?",
-          "helperText": "Consider whether end users, makers, or developers will create the solution",
-          "answers": [
-            {
-              "id": "dev_enduser",
-              "label": "End users—need simple agent creation without coding (upload files, chat)",
-              "weights": {
-                "m365Copilot": 5,
-                "copilotStudio": 4,
-                "foundry": 1,
-                "agentBuilder": 10,
-                "hybrid": 4
-              }
-            },
-            {
-              "id": "dev_nocode",
-              "label": "Citizen makers—low-code with topics, flows, and visual tools",
-              "weights": {
-                "m365Copilot": 3,
-                "copilotStudio": 10,
-                "foundry": 1,
-                "agentBuilder": 6,
-                "hybrid": 6
-              }
-            },
-            {
-              "id": "dev_code",
-              "label": "Developers—pro-code extensibility with SDKs, VS Code, custom models",
-              "weights": {
-                "m365Copilot": 2,
-                "copilotStudio": 5,
-                "foundry": 10,
-                "agentBuilder": 2,
-                "hybrid": 6
-              }
-            },
-            {
-              "id": "dev_mixed",
-              "label": "Mixed team—both makers and developers depending on the scenario",
-              "weights": {
-                "m365Copilot": 4,
-                "copilotStudio": 8,
-                "foundry": 7,
-                "agentBuilder": 5,
-                "hybrid": 10
-              }
-            },
-            {
-              "id": "dev_unsure",
-              "label": "I'm not sure",
-              "weights": {
-                "m365Copilot": 5,
-                "copilotStudio": 5,
-                "foundry": 4,
-                "agentBuilder": 4,
-                "hybrid": 5
               }
             }
           ]
@@ -802,55 +740,55 @@
       "questions": [
         {
           "id": "governance_needs",
-          "title": "What governance and lifecycle management capabilities do you need?",
-          "helperText": "Consider DLP, RBAC, analytics, environment management, and audit requirements",
+          "title": "What governance model and release controls do you need?",
+          "helperText": "Include trust boundary, DLP/RBAC depth, and ALM requirements (versioning, staged releases, rollback)",
           "answers": [
             {
-              "id": "compliance_m365",
-              "label": "Microsoft 365 compliance boundary is sufficient—inherits M365 DLP and RBAC",
+              "id": "governance_basic",
+              "label": "Basic: Microsoft 365 compliance boundary is sufficient with simple update processes",
               "weights": {
-                "m365Copilot": 10,
-                "copilotStudio": 3,
+                "m365Copilot": 9,
+                "copilotStudio": 4,
                 "foundry": 2,
-                "agentBuilder": 9,
+                "agentBuilder": 7,
                 "hybrid": 6
               }
             },
             {
-              "id": "compliance_powerplatform",
-              "label": "Need enterprise governance—DLP policies, lifecycle management, analytics, RBAC",
+              "id": "governance_moderate",
+              "label": "Moderate: Need custom controls and monitoring, but lightweight release management",
               "weights": {
-                "m365Copilot": 2,
-                "copilotStudio": 10,
-                "foundry": 5,
-                "agentBuilder": 4,
-                "hybrid": 7
+                "m365Copilot": 5,
+                "copilotStudio": 8,
+                "foundry": 6,
+                "agentBuilder": 5,
+                "hybrid": 8
               }
             },
             {
-              "id": "compliance_azure",
-              "label": "Need Azure-grade controls—network isolation, customer-managed keys, VNet",
+              "id": "governance_advanced",
+              "label": "Advanced: Need DLP, approval workflows, and structured ALM (dev/test/prod, versioning)",
+              "weights": {
+                "m365Copilot": 2,
+                "copilotStudio": 10,
+                "foundry": 4,
+                "agentBuilder": 7,
+                "hybrid": 6
+              }
+            },
+            {
+              "id": "governance_enterprise",
+              "label": "Enterprise/Azure-grade: Need network isolation, customer-managed keys, and strict platform controls",
               "weights": {
                 "m365Copilot": 1,
-                "copilotStudio": 4,
+                "copilotStudio": 5,
                 "foundry": 10,
                 "agentBuilder": 2,
                 "hybrid": 6
               }
             },
             {
-              "id": "compliance_hybrid",
-              "label": "Hybrid approach—centralized policy enforcement across M365 and custom infra",
-              "weights": {
-                "m365Copilot": 3,
-                "copilotStudio": 7,
-                "foundry": 8,
-                "agentBuilder": 3,
-                "hybrid": 10
-              }
-            },
-            {
-              "id": "compliance_unsure",
+              "id": "governance_unsure",
               "label": "I'm not sure",
               "weights": {
                 "m365Copilot": 5,
@@ -920,97 +858,6 @@
                 "foundry": 5,
                 "agentBuilder": 4,
                 "hybrid": 5
-              }
-            }
-          ]
-        },
-        {
-          "id": "governance_lifecycle",
-          "title": "What level of governance do you require?",
-          "helperText": "Consider admin controls, lifecycle management, and ALM needs",
-          "answers": [
-            {
-              "id": "governance_basic",
-              "label": "Basic: Standard Microsoft 365 security and compliance is sufficient",
-              "weights": {
-                "m365Copilot": 9,
-                "copilotStudio": 4,
-                "foundry": 2,
-                "agentBuilder": 7,
-                "hybrid": 6
-              }
-            },
-            {
-              "id": "governance_moderate",
-              "label": "Moderate: Need some custom controls and monitoring",
-              "weights": {
-                "m365Copilot": 5,
-                "copilotStudio": 8,
-                "hybrid": 8,
-                "foundry": 8,
-                "agentBuilder": 5
-              }
-            },
-            {
-              "id": "governance_advanced",
-              "label": "Advanced: Need dev/test/prod environments, DLP policies, approval workflows",
-              "weights": {
-                "m365Copilot": 2,
-                "copilotStudio": 10,
-                "hybrid": 6,
-                "foundry": 3,
-                "agentBuilder": 8
-              }
-            },
-            {
-              "id": "governance_unsure",
-              "label": "I'm not sure",
-              "weights": {
-                "m365Copilot": 5,
-                "copilotStudio": 5,
-                "hybrid": 5,
-                "foundry": 5,
-                "agentBuilder": 5
-              }
-            }
-          ]
-        },
-        {
-          "id": "governance_alm",
-          "title": "Do you need application lifecycle management (ALM)?",
-          "helperText": "Versioning, staged deployments, rollback capabilities",
-          "answers": [
-            {
-              "id": "lifecycle_no",
-              "label": "No, simple updates are fine",
-              "weights": {
-                "m365Copilot": 9,
-                "copilotStudio": 4,
-                "hybrid": 6,
-                "foundry": 2,
-                "agentBuilder": 6
-              }
-            },
-            {
-              "id": "lifecycle_yes",
-              "label": "Yes, need structured release management",
-              "weights": {
-                "m365Copilot": 2,
-                "copilotStudio": 10,
-                "hybrid": 5,
-                "foundry": 4,
-                "agentBuilder": 8
-              }
-            },
-            {
-              "id": "lifecycle_unsure",
-              "label": "I'm not sure",
-              "weights": {
-                "m365Copilot": 5,
-                "copilotStudio": 5,
-                "hybrid": 5,
-                "foundry": 5,
-                "agentBuilder": 5
               }
             }
           ]
@@ -1126,12 +973,12 @@
         },
         {
           "id": "ttv_skills",
-          "title": "What technical skills are available?",
-          "helperText": "Select all that apply. Consider your team's capabilities.",
+          "title": "Who will build the solution and what skills are available?",
+          "helperText": "Select all that apply. Combine ownership model (business users, makers, developers) with available capabilities.",
           "answers": [
             {
               "id": "skills_none",
-              "label": "No technical skills—need a solution that works out-of-the-box",
+              "label": "Business users only—minimal technical skills; need out-of-the-box setup",
               "weights": {
                 "m365Copilot": 10,
                 "copilotStudio": 1,
@@ -1142,7 +989,7 @@
             },
             {
               "id": "skills_lowcode",
-              "label": "Low-code/no-code skills (Power Platform experience)",
+              "label": "Citizen makers available—low-code/no-code skills (Power Platform)",
               "weights": {
                 "m365Copilot": 5,
                 "copilotStudio": 10,
@@ -1153,7 +1000,7 @@
             },
             {
               "id": "skills_developer",
-              "label": "Developer skills (can build custom APIs and integrations)",
+              "label": "Developer team available—can build custom APIs and integrations",
               "weights": {
                 "m365Copilot": 3,
                 "copilotStudio": 10,
@@ -1164,7 +1011,7 @@
             },
             {
               "id": "skills_datascience",
-              "label": "Data science / AI engineering skills (can build and fine-tune AI models)",
+              "label": "Data science / AI engineering available—can build and fine-tune models",
               "weights": {
                 "m365Copilot": 2,
                 "copilotStudio": 5,

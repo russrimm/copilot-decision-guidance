@@ -87,6 +87,10 @@ function generateM365CopilotRecommendation(scoringResult: ScoringResult): Recomm
         url: 'https://aka.ms/copilotstudioimplementationguide',
       },
       {
+        title: 'Copilot and Agents Spotlight (Training)',
+        url: 'https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/',
+      },
+      {
         title: 'Microsoft AI Decision Framework',
         url: 'https://microsoft.github.io/Microsoft-AI-Decision-Framework/',
       },
@@ -166,6 +170,10 @@ function generateCopilotStudioRecommendation(scoringResult: ScoringResult): Reco
       {
         title: 'Copilot Studio Implementation Guide',
         url: 'https://aka.ms/copilotstudioimplementationguide',
+      },
+      {
+        title: 'Copilot and Agents Spotlight (Training)',
+        url: 'https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/',
       },
       {
         title: 'Microsoft AI Decision Framework',
@@ -251,6 +259,10 @@ function generateFoundryRecommendation(scoringResult: ScoringResult): Recommenda
         url: 'https://microsoft.github.io/powercat/agent-platform-advisor/',
       },
       {
+        title: 'Copilot and Agents Spotlight (Training)',
+        url: 'https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/',
+      },
+      {
         title: 'Microsoft AI Decision Framework',
         url: 'https://microsoft.github.io/Microsoft-AI-Decision-Framework/',
       },
@@ -333,6 +345,10 @@ function generateAgentBuilderRecommendation(scoringResult: ScoringResult): Recom
       {
         title: 'Power CAT Agent Platform Advisor',
         url: 'https://microsoft.github.io/powercat/agent-platform-advisor/',
+      },
+      {
+        title: 'Copilot and Agents Spotlight (Training)',
+        url: 'https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/',
       },
       {
         title: 'Microsoft AI Decision Framework',
@@ -624,6 +640,10 @@ function generateHybridRecommendation(scoringResult: ScoringResult): Recommendat
       {
         title: 'Copilot Studio Implementation Guide',
         url: 'https://aka.ms/copilotstudioimplementationguide',
+      },
+      {
+        title: 'Copilot and Agents Spotlight (Training)',
+        url: 'https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/',
       },
       {
         title: 'Microsoft AI Decision Framework',

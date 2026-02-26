@@ -38,7 +38,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_none',
         integration_channels: 'channels_m365',
         governance_needs: 'governance_basic',
-        governance_lifecycle: 'lifecycle_no',
         ttv_urgency: 'urgency_immediate',
         ttv_skills: 'skills_none',
         cost_model: 'cost_per_user',
@@ -62,7 +61,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_custom',
         integration_channels: 'channels_web',
         governance_needs: 'governance_advanced',
-        governance_lifecycle: 'lifecycle_yes',
         ttv_urgency: 'urgency_months',
         ttv_skills: 'skills_developer',
         cost_model: 'cost_usage',
@@ -86,7 +84,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_prebuilt',
         integration_channels: 'channels_multiple',
         governance_needs: 'governance_moderate',
-        governance_lifecycle: 'lifecycle_no',
         ttv_urgency: 'urgency_weeks',
         ttv_skills: 'skills_lowcode',
         cost_model: 'cost_both',
@@ -111,7 +108,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_prebuilt',
         integration_channels: 'channels_teams',
         governance_needs: 'governance_moderate',
-        governance_lifecycle: 'lifecycle_no',
         ttv_urgency: 'urgency_weeks',
         ttv_skills: 'skills_lowcode',
         cost_model: 'cost_per_user',
@@ -134,7 +130,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_unsure',
         integration_channels: 'channels_unsure',
         governance_needs: 'governance_unsure',
-        governance_lifecycle: 'lifecycle_unsure',
         ttv_urgency: 'urgency_unsure',
         ttv_skills: 'skills_unsure',
         cost_model: 'cost_unsure',
@@ -241,7 +236,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_none',
         integration_channels: 'channels_m365',
         governance_needs: 'governance_basic',
-        governance_lifecycle: 'lifecycle_no',
         ttv_urgency: 'urgency_immediate',
         ttv_skills: 'skills_none',
         cost_model: 'cost_per_user',
@@ -271,7 +265,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_custom',
         integration_channels: 'channels_web',
         governance_needs: 'governance_advanced',
-        governance_lifecycle: 'lifecycle_yes',
         ttv_urgency: 'urgency_months',
         ttv_skills: 'skills_developer',
         cost_model: 'cost_usage',
@@ -297,7 +290,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_prebuilt',
         integration_channels: 'channels_multiple',
         governance_needs: 'governance_moderate',
-        governance_lifecycle: 'lifecycle_no',
         ttv_urgency: 'urgency_weeks',
         ttv_skills: 'skills_lowcode',
         cost_model: 'cost_both',
@@ -326,7 +318,6 @@ describe('Decision Engine', () => {
         integration_complexity: 'integration_none',
         integration_channels: 'channels_m365',
         governance_needs: 'governance_basic',
-        governance_lifecycle: 'lifecycle_no',
         ttv_urgency: 'urgency_immediate',
         ttv_skills: 'skills_none',
         cost_model: 'cost_per_user',
@@ -338,7 +329,7 @@ describe('Decision Engine', () => {
       recommendation.sources.forEach((source) => {
         expect(source.title).toBeTruthy();
         expect(source.url).toMatch(
-          /^https:\/\/(learn\.microsoft\.com|aka\.ms|microsoft\.github\.io)\//
+          /^https:\/\/(learn\.microsoft\.com|aka\.ms|microsoft\.github\.io|adoption\.microsoft\.com)\//
         );
       });
     });
