@@ -19,5 +19,19 @@
     "imagePath": "/Knowwledge Ecosystem.png",
     "imageAlt": "Knowledge ecosystem diagram showing data and knowledge relationships across Microsoft Copilot services",
     "description": "This infographic highlights the knowledge layer that powers consistent agent behavior and trustworthy outcomes. It is useful for executive discussions about data readiness, governance, and retrieval strategy across Copilot Studio, Microsoft 365 Copilot, and Microsoft Foundry scenarios."
+  },
+  {
+    "id": "copilot-studio-vs-azure-ai-foundry",
+    "title": "Copilot Studio vs Azure AI Foundry",
+    "imagePath": "/Copilot Studio vs Azure AI Foundry.png",
+    "imageAlt": "Comparison infographic of Copilot Studio and Azure AI Foundry capabilities",
+    "description": "This infographic compares Copilot Studio and Azure AI Foundry across platform model, extensibility, governance, and delivery patterns. Use it to align stakeholders on when to prioritize rapid low-code agent delivery versus pro-dev AI engineering control."
+  },
+  {
+    "id": "journey-of-a-prompt",
+    "title": "Journey of a Prompt",
+    "imagePath": "/Journey of a Prompt.png",
+    "imageAlt": "Infographic illustrating the end-to-end journey of a prompt through Microsoft AI systems",
+    "description": "This infographic explains how a user prompt travels through grounding, orchestration, model inference, and response delivery. Use it to align technical and business stakeholders on latency, governance checkpoints, and operational responsibilities across the prompt lifecycle."
   }
 ]
