@@ -227,7 +227,10 @@ function addBullets(slide, items, opts) {
     });
 }
 function normalizeForCompare(text) {
-    return text.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
 }
 function buildExecutiveOverviewContent(input) {
     const referenceSignals = new Set([

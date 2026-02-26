@@ -111,7 +111,9 @@ export default function ExecutiveOverview() {
             className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800"
           >
             <div className="border-b border-slate-200 px-6 py-5 dark:border-slate-700">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">{entry.title}</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                {entry.title}
+              </h2>
             </div>
 
             <div className="space-y-5 p-6">

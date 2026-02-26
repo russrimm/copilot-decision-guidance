@@ -3,6 +3,7 @@ export interface UseCase {
   title: string;
   description: string;
   vertical: 'oil' | 'gas' | 'energy';
+  personas: string[];
   departments: string[];
   dataSources: string[];
   agentArchitecture: {

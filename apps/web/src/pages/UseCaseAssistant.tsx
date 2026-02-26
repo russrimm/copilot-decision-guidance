@@ -568,6 +568,18 @@ export default function UseCaseAssistant() {
                             {useCase.title}
                           </h3>
                           <p className="text-gray-600 dark:text-gray-400">{useCase.description}</p>
+                          {useCase.personas && useCase.personas.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {useCase.personas.map((persona) => (
+                                <span
+                                  key={persona}
+                                  className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+                                >
+                                  {persona}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <RightChevronIcon
                           className={`w-6 h-6 text-gray-400 transition-transform ${

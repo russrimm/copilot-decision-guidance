@@ -4,6 +4,7 @@ export interface UseCase {
   title: string;
   description: string;
   vertical: 'oil' | 'gas' | 'energy';
+  personas: string[];
   departments: string[];
   dataSources: string[];
   agentArchitecture: {
@@ -29,7 +30,35 @@ export interface UseCase {
   screenshot?: string;
 }
 
-export const useCaseDatabase: UseCase[] = [
+type UseCaseSeed = Omit<UseCase, 'personas'> & {
+  personas?: string[];
+};
+
+const REQUIRED_PERSONAS = [
+  'Executive Persona (C-Suite / Sr Leader)',
+  'HR Persona (CHRO, VP of HR)',
+  'Analyst Persona (Heavy Excel User)',
+  'Sales Persona (Sales Leads, AEs, BDMs)',
+  'Legal Persona (General Counsel, Lawyers)',
+  'Exec Office Team (Chief of Staff, Admins)',
+  'Marketing Persona (Marketing roles)',
+  'Customer Support Persona',
+] as const;
+
+const DEPARTMENT_TO_PERSONAS: Record<string, readonly (typeof REQUIRED_PERSONAS)[number][]> = {
+  hr: [REQUIRED_PERSONAS[1]],
+  legal: [REQUIRED_PERSONAS[4]],
+  marketing: [REQUIRED_PERSONAS[6]],
+  sales: [REQUIRED_PERSONAS[3]],
+  'customer-service': [REQUIRED_PERSONAS[7]],
+  operations: [REQUIRED_PERSONAS[7]],
+  finance: [REQUIRED_PERSONAS[2]],
+  engineering: [REQUIRED_PERSONAS[2]],
+  it: [REQUIRED_PERSONAS[2]],
+  compliance: [REQUIRED_PERSONAS[4]],
+};
+
+const rawUseCaseDatabase: UseCaseSeed[] = [
   {
     id: 'wellops-monitoring',
     title: 'Well Operations Monitoring Agent',
@@ -588,6 +617,46 @@ export const useCaseDatabase: UseCase[] = [
     },
   },
 ];
+
+function buildPersonaList(useCase: UseCaseSeed): string[] {
+  const personas = new Set<string>([...REQUIRED_PERSONAS]);
+
+  if (Array.isArray(useCase.personas)) {
+    useCase.personas
+      .filter((persona): persona is string => typeof persona === 'string' && persona.length > 0)
+      .forEach((persona) => personas.add(persona));
+  }
+
+  useCase.departments.forEach((department) => {
+    const normalizedDepartment = normalizeDepartment(department);
+    const mappedPersonas = DEPARTMENT_TO_PERSONAS[normalizedDepartment] ?? [];
+    mappedPersonas.forEach((persona) => personas.add(persona));
+  });
+
+  const order = new Map<string, number>(
+    REQUIRED_PERSONAS.map((persona, index) => [persona, index] as const)
+  );
+  return [...personas].sort((left, right) => {
+    const leftIndex = order.get(left);
+    const rightIndex = order.get(right);
+
+    if (leftIndex !== undefined && rightIndex !== undefined) {
+      return leftIndex - rightIndex;
+    }
+    if (leftIndex !== undefined) {
+      return -1;
+    }
+    if (rightIndex !== undefined) {
+      return 1;
+    }
+    return left.localeCompare(right);
+  });
+}
+
+export const useCaseDatabase: UseCase[] = rawUseCaseDatabase.map((useCase) => ({
+  ...useCase,
+  personas: buildPersonaList(useCase),
+}));
 
 function normalizeToken(input: string): string {
   return input

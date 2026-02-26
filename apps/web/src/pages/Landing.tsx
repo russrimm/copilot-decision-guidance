@@ -389,8 +389,8 @@ export default function Landing() {
               Executive Overview Infographics
             </h2>
             <p className="text-gray-600 dark:text-gray-100 text-sm">
-              Review visual executive-level explainers that map how Microsoft 365 Copilot,
-              Copilot Studio, Microsoft Foundry, and related services connect.
+              Review visual executive-level explainers that map how Microsoft 365 Copilot, Copilot
+              Studio, Microsoft Foundry, and related services connect.
             </p>
           </div>
           <Link
