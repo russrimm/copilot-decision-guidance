@@ -80,6 +80,7 @@ Use this checklist for every feature before merge/deploy:
 ✅ **Readiness Assessment** - Score identity, data, security, platform, and operating model readiness with blocker detection  
 ✅ **Implementation Guide** - Introductory walkthroughs for Microsoft 365 Copilot and Copilot Studio covering licensing, prerequisites, role permissions, step-by-step first-agent delivery, and downloadable PDF/Markdown checklists
 ✅ **Interactive Mind Maps** - Copilot Studio, Microsoft 365 Copilot, and Microsoft Foundry topic maps with click-to-expand drill-down from top-level domains to sub-topics
+✅ **Executive Overview Infographics** - Dedicated executive briefing page for ecosystem relationship diagrams with concise strategic context per visual
 ✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms (integrated in Use Case Assistant)
 
 ### Release Tracking & News
@@ -270,6 +271,9 @@ The application includes the following pages:
 - **Use Case Assistant** - [http://localhost:3000/use-cases](http://localhost:3000/use-cases) - Explore common Copilot use cases with implementation guidance
 - **Readiness Assessment** - [http://localhost:3000/readiness](http://localhost:3000/readiness) - Assess deployment blockers and readiness scores
 - **Implementation Guide** - [http://localhost:3000/implementation-guide](http://localhost:3000/implementation-guide) - Guided setup walkthroughs for Microsoft 365 Copilot and Copilot Studio
+- **Executive Overview** - [http://localhost:3000/executive-overview](http://localhost:3000/executive-overview) - Executive-focused infographic briefings on platform relationships and strategy
+
+Executive overview infographic content is managed through `apps/web/public/executive-overview-infographics.json`.
 
 ### Release Intelligence
 

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "copilot-studio-ecosystem-interconnected",
+    "title": "Copilot Studio Ecosystem Interconnected",
+    "imagePath": "/Copilot Studio Ecosystem Interconnected.png",
+    "imageAlt": "Diagram showing the interconnected relationship among Copilot Studio, Microsoft 365 Copilot, and Microsoft Foundry",
+    "description": "This infographic gives executives a system-level view of how Copilot Studio connects business process automation and agent orchestration with Microsoft 365 Copilot productivity experiences and Microsoft Foundry AI engineering capabilities. Use this view to align ownership, governance, and investment priorities across business, IT, and data/AI teams."
+  },
+  {
+    "id": "copilot-studio-ecosystem-orchestration",
+    "title": "Copilot Studio Ecosystem Orchestration",
+    "imagePath": "/Copilot Studio Ecosystem Orchestration.png",
+    "imageAlt": "Orchestration view of Copilot Studio interactions across Microsoft 365 Copilot and Microsoft Foundry services",
+    "description": "This infographic focuses on orchestration flow. It helps executive teams understand how Copilot Studio can coordinate intents, actions, and integrations across enterprise systems while Microsoft 365 Copilot and Microsoft Foundry contribute user experience and advanced AI capabilities. Use this to clarify operational boundaries and platform accountability."
+  },
+  {
+    "id": "knowledge-ecosystem",
+    "title": "Knowledge Ecosystem",
+    "imagePath": "/Knowwledge Ecosystem.png",
+    "imageAlt": "Knowledge ecosystem diagram showing data and knowledge relationships across Microsoft Copilot services",
+    "description": "This infographic highlights the knowledge layer that powers consistent agent behavior and trustworthy outcomes. It is useful for executive discussions about data readiness, governance, and retrieval strategy across Copilot Studio, Microsoft 365 Copilot, and Microsoft Foundry scenarios."
+  }
+]

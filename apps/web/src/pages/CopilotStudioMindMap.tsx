@@ -489,6 +489,8 @@ const copilotStudioTree: MindMapNode = {
 const m365CopilotTree: MindMapNode = {
   id: 'm365-copilot',
   label: 'Microsoft 365 Copilot',
+  learnUrl:
+    'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
   children: [
     {
       id: 'm365-experiences',
@@ -975,6 +977,7 @@ const m365CopilotTree: MindMapNode = {
 const microsoftFoundryTree: MindMapNode = {
   id: 'microsoft-foundry',
   label: 'Microsoft Foundry',
+  learnUrl: 'https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry',
   children: [
     {
       id: 'foundry-model-catalog',

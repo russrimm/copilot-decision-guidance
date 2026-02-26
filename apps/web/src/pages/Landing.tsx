@@ -386,19 +386,18 @@ export default function Landing() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              Strategic Comparison Infographic
+              Executive Overview Infographics
             </h2>
             <p className="text-gray-600 dark:text-gray-100 text-sm">
-              View a one-page visual summary of all Microsoft AI solutions, licensing, best-fit
-              scenarios, and a phased hybrid adoption strategy.
+              Review visual executive-level explainers that map how Microsoft 365 Copilot,
+              Copilot Studio, Microsoft Foundry, and related services connect.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new Event('open-infographic-modal'))}
+          <Link
+            to="/executive-overview"
             className={`${ctaButtonClass} ${ctaButtonToneClass} ml-4 flex-shrink-0`}
           >
-            View Infographic
+            Open Executive Overview
             <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -407,7 +406,7 @@ export default function Landing() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </button>
+          </Link>
         </div>
       </div>
 

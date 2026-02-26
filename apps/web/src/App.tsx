@@ -10,6 +10,7 @@ import ReadinessAssessment from './pages/ReadinessAssessment';
 import ProfileSummary from './pages/ProfileSummary';
 import ImplementationGuide from './pages/ImplementationGuide';
 import CopilotStudioMindMap from './pages/CopilotStudioMindMap';
+import ExecutiveOverview from './pages/ExecutiveOverview';
 import Layout from './components/Layout';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="readiness" element={<ReadinessAssessment />} />
             <Route path="implementation-guide" element={<ImplementationGuide />} />
             <Route path="mind-maps" element={<CopilotStudioMindMap />} />
+            <Route path="executive-overview" element={<ExecutiveOverview />} />
             <Route path="copilot-studio-mind-map" element={<Navigate to="/mind-maps" replace />} />
             <Route path="profile-summary" element={<ProfileSummary />} />
             {/* Admin route excluded from production builds via __ENABLE_ADMIN__ flag */}

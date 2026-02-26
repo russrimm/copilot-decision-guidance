@@ -87,13 +87,12 @@ export default function Layout() {
                   >
                     Mind Maps
                   </Link>
-                  <button
-                    type="button"
-                    onClick={() => setIsInfographicOpen(true)}
+                  <Link
+                    to="/executive-overview"
                     className="text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400"
                   >
-                    Infographic
-                  </button>
+                    Executive Overview
+                  </Link>
                 </nav>
               )}
               <a
