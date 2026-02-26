@@ -4,6 +4,13 @@ _Last updated: December 29, 2025_
 
 This document provides detailed information to help organizations decide between Microsoft 365 Copilot and Copilot Studio based on various factors including capabilities, use cases, licensing, and governance.
 
+## Training & Adoption
+
+**Source:** [Copilot and Agents Spotlight (Training)](https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/)
+
+- Official Microsoft training resource for Copilot and agent adoption guidance
+- Useful for enablement planning, stakeholder onboarding, and role-based training support
+
 ## Microsoft 365 Copilot
 
 **Source:** [Microsoft 365 Copilot Overview](https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-overview)

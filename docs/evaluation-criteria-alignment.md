@@ -23,12 +23,12 @@ The questionnaire is designed to be simple and straightforward while covering al
 
 **Questionnaire Coverage:**
 
-| Question ID                 | Question                                     | Coverage                                      |
-| --------------------------- | -------------------------------------------- | --------------------------------------------- |
-| `outcome_tasks`             | What types of tasks?                         | Assistive vs action-oriented complexity       |
-| `data_sources`              | What data sources?                           | M365, line-of-business, external APIs         |
-| `integration_orchestration` | How complex is the orchestration?            | Simple Q&A → multi-agent coordination         |
-| `ttv_ai_requirements`       | What level of AI customization?              | Pre-built models → custom ML pipelines        |
+| Question ID                 | Question                          | Coverage                                |
+| --------------------------- | --------------------------------- | --------------------------------------- |
+| `outcome_tasks`             | What types of tasks?              | Assistive vs action-oriented complexity |
+| `data_sources`              | What data sources?                | M365, line-of-business, external APIs   |
+| `integration_orchestration` | How complex is the orchestration? | Simple Q&A → multi-agent coordination   |
+| `ttv_ai_requirements`       | What level of AI customization?   | Pre-built models → custom ML pipelines  |
 
 **Result:** Fully covered with 4 questions addressing all complexity dimensions.
 
@@ -45,8 +45,8 @@ The questionnaire is designed to be simple and straightforward while covering al
 
 **Questionnaire Coverage:**
 
-| Question ID  | Question                                                    | Coverage                                               |
-| ------------ | ----------------------------------------------------------- | ------------------------------------------------------ |
+| Question ID  | Question                                                   | Coverage                                               |
+| ------------ | ---------------------------------------------------------- | ------------------------------------------------------ |
 | `ttv_skills` | Who will build the solution and what skills are available? | Ownership model + technical capability in one question |
 
 **Answers:**
@@ -122,11 +122,11 @@ The questionnaire is designed to be simple and straightforward while covering al
 
 **Questionnaire Coverage:**
 
-| Question ID                | Question                                                  | Coverage                       |
-| -------------------------- | --------------------------------------------------------- | ------------------------------ |
-| `governance_needs`         | What governance model and release controls do you need?   | Trust boundary + governance + ALM depth |
-| `governance_dataresidency` | Do you have data residency or sovereignty requirements?   | GDPR, government cloud, hybrid |
-| `governance_operating_model` | Which admin and governance model best matches your organization? | Control plane and operating ownership |
+| Question ID                  | Question                                                         | Coverage                                |
+| ---------------------------- | ---------------------------------------------------------------- | --------------------------------------- |
+| `governance_needs`           | What governance model and release controls do you need?          | Trust boundary + governance + ALM depth |
+| `governance_dataresidency`   | Do you have data residency or sovereignty requirements?          | GDPR, government cloud, hybrid          |
+| `governance_operating_model` | Which admin and governance model best matches your organization? | Control plane and operating ownership   |
 
 **Result:** Fully covered with 3 questions addressing all governance dimensions.
 

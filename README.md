@@ -114,6 +114,7 @@ Use this checklist for every feature before merge/deploy:
 - Power Platform release plan: https://learn.microsoft.com/en-us/power-platform/release-plan/
 - Power Platform pricing: https://www.microsoft.com/en-us/power-platform/products/power-apps/pricing
 - Microsoft Learn Copilot Studio fundamentals: https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-whats-new
+- Copilot and Agents Spotlight training: https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/
 
 ## Scoring Logic Diagram
 
@@ -941,6 +942,7 @@ Every **Monday at 9 AM UTC**, a GitHub Action automatically:
    - [M365 Copilot Enablement Resources](https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-enablement-resources) (Primary Source)
    - [Microsoft 365 Copilot Release Notes](https://learn.microsoft.com/en-us/copilot/microsoft-365/release-notes) (Official)
    - [Copilot Studio What's New](https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new) (Official)
+  - [Copilot and Agents Spotlight (Training)](https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/) (Official Training)
    - [Azure AI Foundry Documentation](https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio)
    - Microsoft 365 Roadmap (Copilot filter)
    - Power Platform Release Planner

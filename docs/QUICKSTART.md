@@ -237,3 +237,4 @@ For questions or modifications:
 - Review [README.md](../README.md) for comprehensive documentation
 - Check [docs/decision-model.md](decision-model.md) for methodology
 - See [docs/verified-notes.md](verified-notes.md) for source references
+- Training source: [Copilot and Agents Spotlight](https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/)
