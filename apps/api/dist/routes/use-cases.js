@@ -294,7 +294,27 @@ function getRelevantUseCasesFromNormalized(verticalUseCases, departments, dataSo
 function scoreUseCaseMatch(useCase, selectedDepartmentIds, selectedDataSourceIds) {
     const deptOverlap = useCase.normalizedDepartments.filter((dept) => selectedDepartmentIds.has(dept)).length;
     const sourceOverlap = useCase.normalizedDataSources.filter((source) => selectedDataSourceIds.has(source)).length;
-    return deptOverlap * 10 + sourceOverlap * 3;
+    const departmentCoverage = selectedDepartmentIds.size === 0 ? 1 : deptOverlap / selectedDepartmentIds.size;
+    return deptOverlap * 20 + Math.round(departmentCoverage * 30) + sourceOverlap * 4;
+}
+function isStrongUseCaseMatch(useCase, selectedDepartmentIds, selectedDataSourceIds) {
+    const deptOverlap = useCase.normalizedDepartments.filter((dept) => selectedDepartmentIds.has(dept)).length;
+    if (selectedDepartmentIds.size > 0 && deptOverlap === 0) {
+        return false;
+    }
+    if (selectedDepartmentIds.size >= 3) {
+        const departmentCoverage = deptOverlap / selectedDepartmentIds.size;
+        if (departmentCoverage < 0.25) {
+            return false;
+        }
+    }
+    if (selectedDataSourceIds.size > 0) {
+        const sourceOverlap = useCase.normalizedDataSources.filter((source) => selectedDataSourceIds.has(source)).length;
+        if (selectedDepartmentIds.size === 0 && sourceOverlap === 0) {
+            return false;
+        }
+    }
+    return true;
 }
 function hasDepartmentMatch(useCase, selectedDepartmentIds) {
     if (selectedDepartmentIds.size === 0) {
@@ -342,6 +362,9 @@ function ensureMinimumRecommendations(selectedUseCases, verticalUseCases, select
         if (!hasDepartmentMatch(candidate, selectedDepartmentIds)) {
             continue;
         }
+        if (!isStrongUseCaseMatch(candidate, selectedDepartmentIds, selectedDataSourceIds)) {
+            continue;
+        }
         if (!result.some((item) => item.useCase.id === candidate.useCase.id)) {
             result.push(candidate);
         }
@@ -357,7 +380,7 @@ function getIndustryFallbackUseCase(verticalUseCases, selectedDepartmentIds, sel
     }
     const ranked = [...verticalUseCases].sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
         scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
-    return ranked[0] ?? null;
+    return (ranked.find((useCase) => isStrongUseCaseMatch(useCase, selectedDepartmentIds, selectedDataSourceIds)) ?? null);
 }
 // Get all verticals available
 router.get('/verticals', (req, res) => {
@@ -406,6 +429,7 @@ router.post('/generate', (req, res) => {
         const mergedUseCases = [...useCases, ...guaranteedDepartmentMatches]
             .filter((useCase, index, all) => all.findIndex((entry) => entry.useCase.id === useCase.useCase.id) === index)
             .filter((useCase) => hasDepartmentMatch(useCase, selectedDepartmentIds))
+            .filter((useCase) => isStrongUseCaseMatch(useCase, selectedDepartmentIds, selectedDataSourceIds))
             .sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
             scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
         let recommendedUseCases = ensureMinimumRecommendations(mergedUseCases, verticalUseCases, selectedDepartmentIds, selectedDataSourceIds, 3);
