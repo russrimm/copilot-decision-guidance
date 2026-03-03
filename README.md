@@ -78,7 +78,7 @@ Use this checklist for every feature before merge/deploy:
 
 ✅ **Use Case Assistant** - Interactive discovery and exploration of common Microsoft Copilot use cases with detailed implementation guidance  
 ✅ **Readiness Assessment** - Score identity, data, security, platform, and operating model readiness with blocker detection  
-✅ **Implementation Guide** - Introductory walkthroughs for Microsoft 365 Copilot and Copilot Studio covering licensing, prerequisites, role permissions, step-by-step first-agent delivery, and downloadable PDF/Markdown checklists
+✅ **Implementation Guide** - Introductory walkthroughs for Microsoft 365 Copilot, Copilot Studio, and Microsoft Foundry covering licensing, prerequisites, role permissions, step-by-step first-agent delivery, and downloadable PDF/Markdown checklists
 ✅ **Interactive Mind Maps** - Copilot Studio, Microsoft 365 Copilot, and Microsoft Foundry topic maps with click-to-expand drill-down from top-level domains to sub-topics
 ✅ **Executive Overview Infographics** - Dedicated executive briefing page for ecosystem relationship diagrams with concise strategic context per visual
 ✅ **Deployment Roadmap Generator** - Create phased implementation roadmaps across all three platforms (integrated in Use Case Assistant)

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import jsPDF from 'jspdf';
 
-type GuideTrack = 'm365-copilot' | 'copilot-studio';
+type GuideTrack = 'm365-copilot' | 'copilot-studio' | 'microsoft-foundry';
 
 interface RoleRequirement {
   role: string;
@@ -155,7 +155,81 @@ const implementationGuides: Record<GuideTrack, TrackGuide> = {
       'Agent behavior quality depends on iterative testing and monitoring, not one-time design.',
     ],
   },
+  'microsoft-foundry': {
+    id: 'microsoft-foundry',
+    label: 'Microsoft Foundry',
+    intro:
+      'Introductory path for rolling out Microsoft Foundry, building a first enterprise agent prototype, and applying guardrails before wider production use.',
+    licensing: [
+      'Confirm an Azure subscription and region strategy where required Foundry models/features are available for pilot and production.',
+      'Plan model capacity and deployment type (standard vs provisioned) for expected pilot workload and latency/cost goals.',
+      'Validate required role assignments and service access ahead of build (Foundry resource/project access plus model deployment permissions).',
+      'Allocate budget ownership and cost monitoring per business group or delivery team before rollout.',
+      'Record dependencies that can affect spend (model tokens, connected services like Search/Storage, and evaluation runs).',
+    ],
+    preImplementationDecisions: [
+      'Define environment boundaries (dev/test/prod) and whether resources are split by business group for isolation and cost tracking.',
+      'Choose access model and scopes early: subscription/resource group/resource/project with least-privilege RBAC.',
+      'Decide identity strategy per connection (managed identity/shared token vs user identity passthrough) based on audit needs.',
+      'Decide which enterprise data/tools to connect first (for example SharePoint, Microsoft Learn MCP, Search, Storage).',
+      'Choose initial guardrail strategy (risks, intervention points, and block vs annotate actions) before pilot publication.',
+      'Define evaluation gates for prototype quality and safety before promotion (task adherence, fluency, safety checks).',
+    ],
+    implementationSteps: [
+      '1) Create or confirm Foundry resource and project structure for your pilot use case.',
+      '2) Configure RBAC roles for admins, project managers, and project users at the right scopes.',
+      '3) Set baseline security controls (networking approach, key management requirements, and approved connection patterns).',
+      '4) Deploy your first model in the project and verify endpoint/authentication readiness.',
+      '5) Build the first enterprise agent prototype with core instructions and initial tools/connections.',
+      '6) Validate tool and data connectivity with real business prompts and graceful fallback behavior.',
+      '7) Configure a custom guardrail: add controls, set intervention points/actions, and assign it to target models/agents.',
+      '8) Run cloud evaluation for realistic scenarios and review pass/fail scores plus reasons.',
+      '9) Monitor usage/latency/cost, then tune prompts, tools, model choice, and guardrail settings.',
+      '10) Publish phased rollout with operations ownership, runbook checks, and promotion criteria for production.',
+    ],
+    permissions: [
+      {
+        role: 'Azure AI Account Owner (or equivalent high-privilege admin)',
+        why: 'Required for top-level Foundry governance, resource configuration, and advanced operations such as guardrail management setup.',
+        typicalOwner: 'Central AI Platform Administrator',
+      },
+      {
+        role: 'Azure AI Project Manager',
+        why: 'Creates and manages Foundry projects and coordinates contributor access and project-level delivery.',
+        typicalOwner: 'AI Product Owner / Delivery Lead',
+      },
+      {
+        role: 'Azure AI User',
+        why: 'Enables project users/developers to build, test, and evaluate agents within approved project boundaries.',
+        typicalOwner: 'AI Engineer / App Developer',
+      },
+      {
+        role: 'Security / Networking Administrator',
+        why: 'Implements organization security requirements including network isolation, private connectivity, and policy-aligned controls.',
+        typicalOwner: 'Cloud Security Engineer',
+      },
+      {
+        role: 'Cost & Observability Owner',
+        why: 'Owns Azure Monitor/Log Analytics visibility, budget controls, and service health signals across pilot and production.',
+        typicalOwner: 'Platform Operations / FinOps Lead',
+      },
+    ],
+    awareness: [
+      'Use least-privilege scope by default: start with Azure AI User and elevate only where required.',
+      'Guardrails should be tested in playground/non-production first; assignment takes effect immediately on selected models/agents.',
+      'Guardrail processing can add latency; start with essential controls and measure impact during pilot.',
+      'Preview SDK and feature paths can change; confirm package/version guidance before production commitments.',
+      'Document model region availability, quota assumptions, and fallback plans before expansion.',
+      'Sources used for this track: Foundry rollout planning, idea-to-prototype tutorial, and guardrails creation guidance on Microsoft Learn.',
+    ],
+  },
 };
+
+function checklistFileBaseName(track: GuideTrack): string {
+  if (track === 'm365-copilot') return 'm365-copilot';
+  if (track === 'copilot-studio') return 'copilot-studio';
+  return 'microsoft-foundry';
+}
 
 const sectionTitles = [
   { id: 'licensing', label: 'Licensing & Assignment' },
@@ -284,7 +358,7 @@ function buildPdfChecklist(guide: TrackGuide) {
   guide.awareness.forEach((item) => addBody(item, true));
 
   doc.save(
-    `${guide.id === 'm365-copilot' ? 'm365-copilot' : 'copilot-studio'}-implementation-checklist.pdf`
+    `${checklistFileBaseName(guide.id)}-implementation-checklist.pdf`
   );
 }
 
@@ -296,7 +370,7 @@ export default function ImplementationGuide() {
     const markdown = buildMarkdownChecklist(guide);
     saveTextFile(
       markdown,
-      `${guide.id === 'm365-copilot' ? 'm365-copilot' : 'copilot-studio'}-implementation-checklist.md`,
+      `${checklistFileBaseName(guide.id)}-implementation-checklist.md`,
       'text/markdown;charset=utf-8'
     );
   };
@@ -313,7 +387,7 @@ export default function ImplementationGuide() {
         </h1>
         <p className="text-gray-600 dark:text-gray-300 mb-4">
           Introductory walkthroughs to move from planning to a functional first agent in either
-          Microsoft 365 Copilot or Copilot Studio.
+          Microsoft 365 Copilot, Copilot Studio, or Microsoft Foundry.
         </p>
 
         <div className="flex flex-wrap gap-3 mb-4">
@@ -332,6 +406,15 @@ export default function ImplementationGuide() {
             }`}
           >
             Copilot Studio Walkthrough
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedTrack('microsoft-foundry')}
+            className={`btn ${
+              selectedTrack === 'microsoft-foundry' ? 'btn-primary' : 'btn-secondary'
+            }`}
+          >
+            Microsoft Foundry Walkthrough
           </button>
         </div>
 

@@ -6,11 +6,24 @@ type InfographicEntry = {
   imagePath: string;
   imageAlt: string;
   description: string;
+  imageCtaHref?: string;
+  imageCtaLabel?: string;
 };
 
 const INFOGRAPHICS_MANIFEST_PATH = '/executive-overview-infographics.json';
 
 const fallbackInfographicEntries: InfographicEntry[] = [
+  {
+    id: 'copilot-studio-in-your-industry',
+    title: 'Microsoft Copilot Studio in Your Industry',
+    imagePath: '/Copilot Studio in your industry.png',
+    imageAlt:
+      'Industry use-case visual for Microsoft Copilot Studio showing sector examples and ROI callouts',
+    description:
+      'This visual highlights example Copilot Studio agent scenarios by industry and includes a direct call to action for trying Copilot Studio.',
+    imageCtaHref: 'https://aka.ms/copilotstudio',
+    imageCtaLabel: 'Try it out: aka.ms/copilotstudio',
+  },
   {
     id: 'copilot-studio-ecosystem-interconnected',
     title: 'Copilot Studio Ecosystem Interconnected',
@@ -70,6 +83,8 @@ const normalizeEntry = (entry: Partial<InfographicEntry>): InfographicEntry | nu
     description:
       entry.description ??
       'Executive infographic covering platform relationships, operating model implications, and strategic planning considerations.',
+    imageCtaHref: entry.imageCtaHref,
+    imageCtaLabel: entry.imageCtaLabel,
   };
 };
 
@@ -134,13 +149,24 @@ export default function ExecutiveOverview() {
             </div>
 
             <div className="space-y-5 p-6">
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/40">
+              <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/40">
                 <img
                   src={encodeURI(entry.imagePath)}
                   alt={entry.imageAlt}
                   className="h-auto w-full object-contain"
                   loading="lazy"
                 />
+                {entry.imageCtaHref ? (
+                  <a
+                    href={entry.imageCtaHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-4 right-4 inline-flex h-10 items-center justify-center rounded-lg bg-white/95 px-3 text-xs font-semibold text-slate-900 shadow-sm ring-1 ring-slate-300 transition hover:bg-white dark:bg-slate-900/95 dark:text-slate-100 dark:ring-slate-600"
+                    aria-label={entry.imageCtaLabel ?? 'Open related link'}
+                  >
+                    {entry.imageCtaLabel ?? 'Open link'}
+                  </a>
+                ) : null}
               </div>
 
               <p className="text-base leading-relaxed text-gray-700 dark:text-gray-100">
