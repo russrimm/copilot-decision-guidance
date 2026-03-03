@@ -4,6 +4,7 @@ type InfographicEntry = {
   id: string;
   title: string;
   imagePath: string;
+  imageFallbackPath?: string;
   imageAlt: string;
   description: string;
   imageCtaHref?: string;
@@ -17,6 +18,7 @@ const fallbackInfographicEntries: InfographicEntry[] = [
     id: 'copilot-studio-in-your-industry',
     title: 'Microsoft Copilot Studio in Your Industry',
     imagePath: '/Copilot Studio in your industry.png',
+    imageFallbackPath: '/Copilot Studio Ecosystem Interconnected.png',
     imageAlt:
       'Industry use-case visual for Microsoft Copilot Studio showing sector examples and ROI callouts',
     description:
@@ -79,6 +81,7 @@ const normalizeEntry = (entry: Partial<InfographicEntry>): InfographicEntry | nu
     id: entry.id,
     title: entry.title,
     imagePath: entry.imagePath,
+    imageFallbackPath: entry.imageFallbackPath,
     imageAlt: entry.imageAlt ?? `${entry.title} infographic`,
     description:
       entry.description ??
@@ -155,6 +158,17 @@ export default function ExecutiveOverview() {
                   alt={entry.imageAlt}
                   className="h-auto w-full object-contain"
                   loading="lazy"
+                  onError={(event) => {
+                    const fallbackPath = entry.imageFallbackPath;
+
+                    if (!fallbackPath) {
+                      event.currentTarget.onerror = null;
+                      return;
+                    }
+
+                    event.currentTarget.onerror = null;
+                    event.currentTarget.src = encodeURI(fallbackPath);
+                  }}
                 />
                 {entry.imageCtaHref ? (
                   <a
@@ -174,7 +188,7 @@ export default function ExecutiveOverview() {
               </p>
 
               <a
-                href={encodeURI(entry.imagePath)}
+                href={encodeURI(entry.imageFallbackPath ?? entry.imagePath)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-11 items-center justify-center rounded-xl border border-primary-300 bg-primary-50 px-4 text-sm font-semibold text-primary-700 transition-all hover:bg-primary-100 dark:border-primary-700 dark:bg-primary-900/20 dark:text-primary-300 dark:hover:bg-primary-900/30"

@@ -3,6 +3,7 @@
     "id": "copilot-studio-in-your-industry",
     "title": "Microsoft Copilot Studio in Your Industry",
     "imagePath": "/Copilot Studio in your industry.png",
+    "imageFallbackPath": "/Copilot Studio Ecosystem Interconnected.png",
     "imageAlt": "Industry use-case visual for Microsoft Copilot Studio showing sector examples and ROI callouts",
     "description": "This visual highlights example Copilot Studio agent scenarios by industry and includes a direct call to action for trying Copilot Studio.",
     "imageCtaHref": "https://aka.ms/copilotstudio",
