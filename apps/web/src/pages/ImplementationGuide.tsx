@@ -357,9 +357,7 @@ function buildPdfChecklist(guide: TrackGuide) {
   addHeading('Things to Watch');
   guide.awareness.forEach((item) => addBody(item, true));
 
-  doc.save(
-    `${checklistFileBaseName(guide.id)}-implementation-checklist.pdf`
-  );
+  doc.save(`${checklistFileBaseName(guide.id)}-implementation-checklist.pdf`);
 }
 
 export default function ImplementationGuide() {
