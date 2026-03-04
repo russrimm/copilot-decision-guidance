@@ -5,7 +5,7 @@ An AI-powered chat interface for the Microsoft Agentic Solution Advisor that hel
 ## Features
 
 - **Real-time Chat**: Interactive conversation with an AI agent
-- **Knowledge Base**: Powered by structured licensing data from the December 2025 Microsoft licensing guide
+- **Knowledge Base**: Powered by structured licensing data aligned to the February 2026 Microsoft Copilot Studio licensing guidance
 - **Cost Calculations**: Can provide cost estimates on-demand
 - **Contextual Responses**: Maintains conversation history for better context
 - **Dual Display Modes**:

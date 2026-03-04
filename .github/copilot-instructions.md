@@ -27,9 +27,9 @@ Build a wizard or flowchart to guide customers based on:
 | Extend M365 Copilot                                | ✅ (via Copilot Studio) | ✅                                       |
 | Generative AI Capabilities                         | Limited (in apps)       | Full, configurable                       |
 | Publish to External Channels (e.g., Web, WhatsApp) | ❌                      | ✅                                       |
-| Pricing Model                                      | $30/user/month          | $0.01/message or $200/25k messages/month |
+| Pricing Model                                      | $30/user/month          | Copilot Credits model (Pay-As-You-Go, Capacity Pack, Copilot Credit P3, Microsoft Agent P3) |
 
-> 📌 Source: [Power Platform Licensing Guide – May 2025](#):contentReference[oaicite:0]{index=0}
+> 📌 Source: [Microsoft Copilot Studio Licensing Guide – February 2026](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/microsoft-365/1084694-Microsoft-Copilot-Studio-Licensing-Guide-February-2026-PUB.pdf)
 
 ---
 
@@ -54,7 +54,7 @@ Build a wizard or flowchart to guide customers based on:
 Let users input:
 
 - Number of users
-- Monthly message volume
+- Monthly Copilot Credit consumption (estimated)
 - Channels (Teams, Web, WhatsApp)
 - AI tools (basic/generative/graph)
 
@@ -64,7 +64,7 @@ Let users input:
 - Copilot Studio
 - Hybrid licensing
 
-> Note: M365 Copilot includes free use of Copilot Studio within Teams, SharePoint, and Word/Excel/Outlook, but external usage is billable:contentReference[oaicite:1]{index=1}.
+> Note: In February 2026 guidance, employee-facing usage scenarios are included for Microsoft 365 Copilot licensed users (subject to fair usage limits). External channel and broader standalone scenarios use Copilot Credits licensing paths.
 
 ---
 
@@ -100,7 +100,7 @@ Let users input:
 - [Microsoft 365 Copilot Overview](https://learn.microsoft.com/en-us/microsoft-365-copilot/)
 - [GitHub Samples – Copilot Studio](https://github.com/microsoft/CopilotStudioSamples)
 - [Power Platform Pricing](https://www.microsoft.com/en-us/power-platform/pricing)
-- [Licensing Guide PDF (May 2025)](#)
+- [Licensing Guide PDF (February 2026)](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/microsoft-365/1084694-Microsoft-Copilot-Studio-Licensing-Guide-February-2026-PUB.pdf)
 
 ---
 

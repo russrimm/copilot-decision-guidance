@@ -290,7 +290,7 @@ export class AIRecommendationService {
         }
         else if (recommended === 'COPILOT_STUDIO') {
             costConsiderations +=
-                'Copilot Studio offers flexible pricing from $0.01/message (pay-as-you-go) to $200/month subscriptions. Budget for development resources and integration work.';
+                'Copilot Studio uses a Copilot Credits model across Pay-As-You-Go, capacity packs, and pre-purchase plans (including P3 options). Budget for development resources, integration work, and ongoing credit consumption monitoring.';
         }
         else {
             costConsiderations +=

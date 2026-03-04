@@ -2,10 +2,10 @@
   "version": "1.0",
   "metadata": {
     "description": "Microsoft Copilot Studio Licensing Data",
-    "source": "Microsoft Licensing Guide - December 2025",
+    "source": "Microsoft Copilot Studio Licensing Guide - February 2026",
     "sourceUrl": "https://go.microsoft.com/fwlink/?linkid=2320995",
-    "lastUpdated": "2025-12-31",
-    "nextReviewDate": "2026-03-31"
+    "lastUpdated": "2026-02-01",
+    "nextReviewDate": "2026-04-01"
   },
   "licenses": {
     "m365Copilot": {
@@ -16,7 +16,7 @@
       "minimumUsers": 1,
       "includes": {
         "copilotStudioTeamsUsage": true,
-        "copilotStudioMessagesIncluded": "Unlimited within Teams, SharePoint, Word, Excel, Outlook",
+        "copilotStudioMessagesIncluded": "Included employee-facing usage in eligible Microsoft 365 Copilot contexts (subject to fair usage limits)",
         "graphConnectors": true,
         "aiBuilder": false,
         "premiumConnectors": false,
@@ -33,7 +33,7 @@
       "limitations": [
         "Cannot deploy agents to external channels (web, WhatsApp, etc.)",
         "Limited to Microsoft 365 app integrations",
-        "No custom workflow automation outside M365 apps"
+        "Included usage is subject to fair usage limits"
       ]
     },
     "copilotStudioPayAsYouGo": {
@@ -55,7 +55,8 @@
         "Generative AI capabilities",
         "Custom conversation flows",
         "Integration with Power Automate flows",
-        "Standard connectors included"
+        "Standard connectors included",
+        "Standalone plan options include Pay-As-You-Go, Copilot Studio License (capacity pack), Copilot Credit Pre-Purchase Plan (P3), and Microsoft Agent Pre-Purchase Plan (P3)"
       ],
       "costEstimates": [
         {
@@ -87,7 +88,7 @@
         "customAI": true
       },
       "features": [
-        "25,000 messages per month included",
+        "25,000 Copilot Credits per pack",
         "All pay-as-you-go features",
         "Cost-effective for high-volume usage",
         "Predictable monthly billing"
@@ -245,7 +246,7 @@
       "Need to deploy to external channels (web, mobile, WhatsApp)",
       "Require specific workflow automation",
       "Integration with line-of-business systems",
-      "Message volume is predictable and calculable",
+      "Copilot Credits consumption is predictable and calculable",
       "Need more than basic conversation flows"
     ],
     "useHybridWhen": [
@@ -257,13 +258,13 @@
   },
   "costCalculator": {
     "breakEvenAnalysis": {
-      "description": "Comparing Copilot Studio subscription vs pay-as-you-go",
+      "description": "Comparing Copilot Studio capacity pack vs pay-as-you-go",
       "subscriptionBreakEven": 20000,
-      "note": "At 20,000 messages/month, pay-as-you-go ($200) equals subscription ($200 for 25k messages). Above 20k, subscription becomes more cost-effective."
+      "note": "Use Copilot Credits consumption forecasts to compare Pay-As-You-Go against capacity pack and P3 options."
     },
     "m365VsCopilotStudio": {
       "description": "When does Copilot Studio become cheaper than M365 Copilot per user?",
-      "calculation": "If a user generates <3,000 messages/month, Copilot Studio ($30) is cheaper than M365 Copilot ($30). For high-volume bot usage by few users, Copilot Studio is more economical."
+      "calculation": "Use February 2026 Copilot Credits rates, capacity pack coverage, and fair usage rules to compare costs for your specific scenario."
     }
   }
 }

@@ -824,7 +824,8 @@ Every **1st of the month at 9 AM UTC**, a GitHub Action automatically runs **two
 🔍 **Checks for updates to:**
 
 - Microsoft 365 Copilot pricing ($30/user/month)
-- Copilot Studio pricing ($0.01/message or $200/25k messages/month)
+- Copilot Studio licensing model (Copilot Credits)
+- Copilot Studio plan options (Pay-As-You-Go, Copilot Studio License capacity pack, Copilot Credit P3, Microsoft Agent P3)
 - Premium connector entitlements
 - AI Builder capacity allocations
 - Feature availability and usage limits

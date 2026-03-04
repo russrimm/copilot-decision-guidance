@@ -501,7 +501,7 @@ function generateHybridRecommendation(scoringResult) {
                         },
                         {
                             factor: 'Licensing Model',
-                            studio: 'Zero-rated in M365 Copilot contexts; otherwise $0.01/message or $200/25k messages',
+                            studio: 'Included usage for eligible M365 Copilot employee-facing contexts (fair usage limits); otherwise Copilot Credits model (Pay-As-You-Go, capacity pack, Copilot Credit P3, Microsoft Agent P3)',
                             foundry: 'Azure consumption (pay-as-you-go) or Provisioned Throughput Units (PTU)',
                         },
                         {
@@ -549,10 +549,10 @@ function generateHybridRecommendation(scoringResult) {
                 competitivePlatforms.studio || foundryStudioOverlap
                     ? {
                         platform: 'Copilot Studio',
-                        model: 'Message-based consumption OR subscription',
-                        cost: '$0.01/message OR $200 for 25,000 messages/month',
-                        notes: 'Zero-rated when M365 Copilot licensed users access agents in Teams/SharePoint/M365 Copilot. Consumption applies for standalone use, external channels (web, WhatsApp), or non-M365-licensed users.',
-                        example: 'Custom HR agent with 10,000 monthly messages from non-M365 users = $100/month. If accessed by M365 Copilot users in Teams = $0/month.',
+                        model: 'Copilot Credits model (Pay-As-You-Go, capacity pack, pre-purchase plans)',
+                        cost: 'Usage measured in Copilot Credits; capacity pack includes 25,000 Copilot Credits per pack',
+                        notes: 'Employee-facing usage for M365 Copilot licensed users can be included (subject to fair usage). Standalone use, external channels (web, WhatsApp), or non-M365-licensed usage typically consume Copilot Credits.',
+                        example: 'Custom HR agent used by non-M365 licensed users on web channels consumes Copilot Credits. The same agent used by eligible M365 Copilot users in internal M365 contexts may be covered by included usage (fair usage limits apply).',
                     }
                     : null,
                 competitivePlatforms.foundry || foundryStudioOverlap
@@ -568,9 +568,9 @@ function generateHybridRecommendation(scoringResult) {
                     ? {
                         platform: 'Agent Builder',
                         model: 'Included with Copilot Studio licensing',
-                        cost: 'No separate cost—uses Copilot Studio message consumption ($0.01/message or $200/25k messages)',
+                        cost: 'No separate license SKU—uses Copilot Studio Copilot Credits model for applicable scenarios',
                         notes: 'Same zero-rated benefit as Copilot Studio when accessed by M365 Copilot users in Teams/SharePoint.',
-                        example: 'Simple FAQ agent with 5,000 monthly messages = $50/month (standalone) or $0/month (M365 Copilot users in Teams).',
+                        example: 'Simple FAQ agent in internal M365 contexts can be covered by included usage; external/standalone usage consumes Copilot Credits.',
                     }
                     : null,
             ].filter(Boolean),

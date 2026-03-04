@@ -214,14 +214,14 @@ class LicensingGuideValidator {
     const knownPricing = {
       m365Copilot: { price: '$30', unit: 'user/month', description: 'Microsoft 365 Copilot' },
       copilotStudioPayGo: {
-        price: '$0.01',
-        unit: 'message',
+        price: 'Copilot Credits',
+        unit: 'pay-as-you-go',
         description: 'Copilot Studio Pay-as-you-go',
       },
       copilotStudioPlan: {
-        price: '$200',
-        unit: '25k messages/month',
-        description: 'Copilot Studio messaging plan',
+        price: '25,000 Copilot Credits',
+        unit: 'capacity pack',
+        description: 'Copilot Studio License (capacity pack)',
       },
     };
 
@@ -329,8 +329,14 @@ class LicensingGuideValidator {
           'Power Automate flows',
           'AI Builder',
           'Premium connectors',
+          'Copilot Credit Pre-Purchase Plan (P3)',
+          'Microsoft Agent Pre-Purchase Plan (P3)',
         ],
-        limits: ['Message-based pricing', '25k messages per plan', 'ALM via Managed Environments'],
+        limits: [
+          'Copilot Credits-based pricing',
+          '25,000 Copilot Credits capacity pack option',
+          'ALM via Managed Environments',
+        ],
       },
     ];
 

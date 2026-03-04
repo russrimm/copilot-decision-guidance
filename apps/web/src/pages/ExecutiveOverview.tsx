@@ -17,8 +17,7 @@ const fallbackInfographicEntries: InfographicEntry[] = [
   {
     id: 'copilot-studio-in-your-industry',
     title: 'Microsoft Copilot Studio in Your Industry',
-    imagePath: '/Copilot Studio in your industry.png',
-    imageFallbackPath: '/Copilot Studio Ecosystem Interconnected.png',
+    imagePath: '/copilot.png',
     imageAlt:
       'Industry use-case visual for Microsoft Copilot Studio showing sector examples and ROI callouts',
     description:

@@ -63,7 +63,7 @@ The script validates that repository data matches current Microsoft information:
 
 - **Licensing Data** (`packages/decision-engine/src/data/licensing-data.json`)
   - Pricing per user/month
-  - Message-based pricing
+  - Copilot Credits-based pricing
   - Feature lists
   - Capability descriptions
 

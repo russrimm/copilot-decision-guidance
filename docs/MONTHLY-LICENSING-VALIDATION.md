@@ -21,8 +21,10 @@ This document describes the automated monthly process for:
 ### 1. **Pricing Information**
 
 - Microsoft 365 Copilot: $30/user/month
-- Copilot Studio Pay-as-you-go: $0.01/message
-- Copilot Studio Plan: $200 per 25k messages/month
+- Copilot Studio Pay-as-you-go (Copilot Credits consumption)
+- Copilot Studio License (Copilot Credit capacity pack: 25,000 Copilot Credits per pack)
+- Copilot Credit Pre-Purchase Plan (P3)
+- Microsoft Agent Pre-Purchase Plan (P3)
 - Premium connector costs
 - AI Builder capacity pricing
 
@@ -35,7 +37,7 @@ This document describes the automated monthly process for:
 
 ### 3. **Usage Limits & Quotas**
 
-- Message volume limits
+- Copilot Credits consumption and fair usage boundaries
 - Request capacity allocations
 - API call quotas
 - Storage limitations

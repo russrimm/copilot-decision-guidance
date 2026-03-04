@@ -1393,8 +1393,8 @@ app.post('/api/licensing/calculate', async (req: Request, res: Response) => {
       totalCost,
       recommendation,
       notes: [
-        `M365 Copilot includes unlimited Copilot Studio messages within Teams, SharePoint, and Office apps`,
-        `Copilot Studio subscription ($${subscriptionBase}/month) becomes cost-effective above ${licensingData.licenses.copilotStudioSubscription.messagesIncluded.toLocaleString()} messages/month`,
+        `M365 Copilot can include eligible employee-facing Copilot Studio usage in internal M365 contexts (subject to fair usage limits)`,
+        `Copilot Studio License capacity pack includes ${licensingData.licenses.copilotStudioSubscription.messagesIncluded.toLocaleString()} Copilot Credits per pack; compare with Pay-As-You-Go and P3 options for your usage profile`,
         `External channels (web, WhatsApp, mobile) require separate Copilot Studio licensing`,
       ],
     });

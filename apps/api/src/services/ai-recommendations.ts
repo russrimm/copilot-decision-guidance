@@ -348,7 +348,7 @@ export class AIRecommendationService {
         'M365 Copilot is $30/user/month. For a 100-user pilot, budget ~$3,000/month for licenses plus ~$50,000 for initial setup and training.';
     } else if (recommended === 'COPILOT_STUDIO') {
       costConsiderations +=
-        'Copilot Studio offers flexible pricing from $0.01/message (pay-as-you-go) to $200/month subscriptions. Budget for development resources and integration work.';
+        'Copilot Studio uses a Copilot Credits model across Pay-As-You-Go, capacity packs, and pre-purchase plans (including P3 options). Budget for development resources, integration work, and ongoing credit consumption monitoring.';
     } else {
       costConsiderations +=
         'Contact Microsoft or a partner for detailed pricing based on your specific requirements.';
