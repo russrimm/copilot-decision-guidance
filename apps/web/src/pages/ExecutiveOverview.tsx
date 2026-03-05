@@ -170,8 +170,7 @@ export default function ExecutiveOverview() {
                   }}
                 />
                 {entry.imageCtaHref ? (
-                  <div className="absolute bottom-4 right-4 inline-flex h-10 items-center rounded-lg bg-white/95 px-3 text-xs font-semibold text-slate-900 shadow-sm ring-1 ring-slate-300 dark:bg-slate-900/95 dark:text-slate-100 dark:ring-slate-600">
-                    <span>Try it Out:</span>
+                  <div className="absolute bottom-4 right-4 inline-flex h-10 items-center px-3">
                     <a
                       href={entry.imageCtaHref}
                       target="_blank"
