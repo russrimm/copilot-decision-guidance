@@ -20,13 +20,13 @@ Build a wizard or flowchart to guide customers based on:
 
 ## 📊 2. Feature Comparison Table
 
-| Feature                                            | Microsoft 365 Copilot   | Microsoft Copilot Studio                 |
-| -------------------------------------------------- | ----------------------- | ---------------------------------------- |
-| Embedded in Microsoft 365 Apps                     | ✅                      | ❌                                       |
-| Build Custom Agents/Copilots                       | ❌                      | ✅                                       |
-| Extend M365 Copilot                                | ✅ (via Copilot Studio) | ✅                                       |
-| Generative AI Capabilities                         | Limited (in apps)       | Full, configurable                       |
-| Publish to External Channels (e.g., Web, WhatsApp) | ❌                      | ✅                                       |
+| Feature                                            | Microsoft 365 Copilot   | Microsoft Copilot Studio                                                                    |
+| -------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------- |
+| Embedded in Microsoft 365 Apps                     | ✅                      | ❌                                                                                          |
+| Build Custom Agents/Copilots                       | ❌                      | ✅                                                                                          |
+| Extend M365 Copilot                                | ✅ (via Copilot Studio) | ✅                                                                                          |
+| Generative AI Capabilities                         | Limited (in apps)       | Full, configurable                                                                          |
+| Publish to External Channels (e.g., Web, WhatsApp) | ❌                      | ✅                                                                                          |
 | Pricing Model                                      | $30/user/month          | Copilot Credits model (Pay-As-You-Go, Capacity Pack, Copilot Credit P3, Microsoft Agent P3) |
 
 > 📌 Source: [Microsoft Copilot Studio Licensing Guide – February 2026](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/microsoft-365/1084694-Microsoft-Copilot-Studio-Licensing-Guide-February-2026-PUB.pdf)
@@ -99,6 +99,7 @@ Let users input:
 - [Copilot Studio Documentation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/overview)
 - [Microsoft 365 Copilot Overview](https://learn.microsoft.com/en-us/microsoft-365-copilot/)
 - [GitHub Samples – Copilot Studio](https://github.com/microsoft/CopilotStudioSamples)
+- [Copilot Studio API Decision Guide (Deployment Options)](https://microsoft.github.io/mcscatblog/posts/copilot-studio-api-decision-guide/)
 - [Power Platform Pricing](https://www.microsoft.com/en-us/power-platform/pricing)
 - [Licensing Guide PDF (February 2026)](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/microsoft-365/1084694-Microsoft-Copilot-Studio-Licensing-Guide-February-2026-PUB.pdf)
 

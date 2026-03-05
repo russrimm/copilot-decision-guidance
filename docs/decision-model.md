@@ -235,3 +235,4 @@ The decision model is versioned and can evolve:
 - [Microsoft 365 Copilot Overview](https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-overview)
 - [Copilot Studio Overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio)
 - [Choose between Microsoft 365 Copilot and Copilot Studio](https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/copilot-studio-experience)
+- [Copilot Studio API Decision Guide (Deployment Options)](https://microsoft.github.io/mcscatblog/posts/copilot-studio-api-decision-guide/)

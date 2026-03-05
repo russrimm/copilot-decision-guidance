@@ -170,15 +170,18 @@ export default function ExecutiveOverview() {
                   }}
                 />
                 {entry.imageCtaHref ? (
-                  <a
-                    href={entry.imageCtaHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute bottom-4 right-4 inline-flex h-10 items-center justify-center rounded-lg bg-white/95 px-3 text-xs font-semibold text-slate-900 shadow-sm ring-1 ring-slate-300 transition hover:bg-white dark:bg-slate-900/95 dark:text-slate-100 dark:ring-slate-600"
-                    aria-label={entry.imageCtaLabel ?? 'Open related link'}
-                  >
-                    {entry.imageCtaLabel ?? 'Open link'}
-                  </a>
+                  <div className="absolute bottom-4 right-4 inline-flex h-10 items-center rounded-lg bg-white/95 px-3 text-xs font-semibold text-slate-900 shadow-sm ring-1 ring-slate-300 dark:bg-slate-900/95 dark:text-slate-100 dark:ring-slate-600">
+                    <span>Try it Out:</span>
+                    <a
+                      href={entry.imageCtaHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-2 inline-flex h-8 min-w-[12rem] items-center rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                      aria-label={entry.imageCtaLabel ?? 'Open related link'}
+                    >
+                      <span className="sr-only">{entry.imageCtaLabel ?? 'Open link'}</span>
+                    </a>
+                  </div>
                 ) : null}
               </div>
 

@@ -7,6 +7,7 @@
  * Primary Sources:
  * - https://learn.microsoft.com/en-us/copilot/microsoft-365/
  * - https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-enablement-resources
+ * - https://microsoft.github.io/mcscatblog/posts/copilot-studio-api-decision-guide/
  *
  * Run monthly (1st of each month) via GitHub Actions
  */
@@ -43,6 +44,7 @@ class SurveyQuestionValidator {
     'https://learn.microsoft.com/en-us/copilot/microsoft-365/release-notes',
     'https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new',
     'https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio',
+    'https://microsoft.github.io/mcscatblog/posts/copilot-studio-api-decision-guide/',
   ];
 
   private decisionModel: any;
