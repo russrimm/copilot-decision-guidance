@@ -2,9 +2,11 @@
 
 This repository includes an **automated weekly validation process** that ensures the decision guidance tool, survey questions, and documentation remain accurate and aligned with the latest Microsoft product updates.
 
+The process is **MCP-first**: weekly validation reads a checked-in snapshot generated from Microsoft Learn MCP tools.
+
 ## Overview
 
-Every **Monday at 9 AM UTC**, a GitHub Action automatically checks official Microsoft sources for updates to:
+Every **Monday at 9 AM UTC**, a GitHub Action validates the Microsoft Learn MCP snapshot and checks for pending portal impacts related to:
 
 - Microsoft 365 Copilot
 - Microsoft Copilot Studio
@@ -15,7 +17,16 @@ Every **Monday at 9 AM UTC**, a GitHub Action automatically checks official Micr
 
 ## Sources Monitored
 
-The validation script checks the following official Microsoft sources:
+The validation flow uses this source of truth:
+
+- `docs/microsoft-learn-weekly-snapshot.json`
+
+That snapshot must be refreshed using Microsoft Learn MCP tools:
+
+- `microsoft_docs_search` (discover latest relevant pages)
+- `microsoft_docs_fetch` (capture full authoritative content)
+
+Expected Microsoft Learn pages include at least:
 
 ### Primary Release Notes (High Priority)
 
@@ -128,9 +139,9 @@ The validation script detects various types of changes:
 
 ```mermaid
 graph TD
-    A[Monday 9 AM UTC] --> B[Fetch Latest from Microsoft Sources]
-    B --> C[Parse Release Notes & Documentation]
-    C --> D{Changes Detected?}
+   A[Monday 9 AM UTC] --> B[Read MCP Snapshot]
+   B --> C[Validate Freshness + Pending Impacts]
+   C --> D{Action Required?}
     D -->|Yes| E[Generate Validation Report]
     D -->|No| F[Log: All Current]
     E --> G[Create GitHub Issue]
@@ -149,10 +160,9 @@ graph TD
    - Labels: `documentation`, `needs-review`, `automated`, `weekly-validation`
    - Body: Detailed report of all changes
 
-2. **Draft Pull Request Created**
-   - Branch: `automated/microsoft-updates-YYYYMMDD`
-   - Includes: Validation report and results JSON
-   - Status: Draft (requires manual review)
+2. **Snapshot and Impact Review Required**
+   - Refresh `docs/microsoft-learn-weekly-snapshot.json` via MCP if stale
+   - Complete and mark pending impact items as `completed`
 
 3. **Notification Sent** (if configured)
    - Power Automate flow triggered OR
@@ -168,10 +178,10 @@ When you receive a validation issue:
    - Note which sources reported updates
    - Identify confidence levels
 
-2. **Verify at Source**
-   - Visit the official Microsoft pages linked in the report
-   - Confirm the changes are accurate
-   - Read full context of any updates
+2. **Refresh with Microsoft Learn MCP**
+   - Use `microsoft_docs_search` to find latest official Learn pages
+   - Use `microsoft_docs_fetch` for full-page details
+   - Update `docs/microsoft-learn-weekly-snapshot.json` with highlights and impacts
 
 3. **Update Repository Files**
 
@@ -221,6 +231,20 @@ You can manually trigger the validation workflow:
 2. Select **"Validate Microsoft Product Updates"**
 3. Click **"Run workflow"**
 4. Optionally: Check "Send notification even if no changes detected"
+
+## MCP Snapshot Contract
+
+`docs/microsoft-learn-weekly-snapshot.json` must include:
+
+- `source: "microsoft-learn-mcp"`
+- `capturedAt` (ISO timestamp)
+- `pages[]` with reviewed Learn URLs and highlights
+- `impacts[]` with `status` and `recommendedFiles`
+
+Validation fails with action required when:
+
+- Snapshot is older than 8 days
+- Any impact item remains `pending`
 
 ## Configuration
 

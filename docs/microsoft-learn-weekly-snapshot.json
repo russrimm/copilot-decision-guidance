@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "source": "microsoft-learn-mcp",
+  "capturedAt": "2026-03-06T02:58:00.000Z",
+  "lookbackDays": 7,
+  "generatedBy": "GitHub Copilot + Microsoft Learn MCP tools (microsoft_docs_search + microsoft_docs_fetch)",
+  "pages": [
+    {
+      "id": "m365-copilot-release-notes",
+      "title": "Microsoft 365 Copilot release notes",
+      "url": "https://learn.microsoft.com/copilot/microsoft-365/release-notes",
+      "lastReviewedAt": "2026-03-06T02:58:00.000Z",
+      "highlights": [
+        "February 24, 2026 includes new Microsoft 365 Copilot extensibility connectors (Monday.com, WordPress, Azure File Share, Veeva, Jira Data Center).",
+        "Recent updates reinforce connector-driven integration patterns that can affect recommendation logic and feature descriptions in portal content."
+      ],
+      "changeSummary": "New connector coverage may affect platform capability guidance, roadmap recommendations, and questionnaire helper text."
+    },
+    {
+      "id": "copilot-studio-whats-new",
+      "title": "What's new in Copilot Studio",
+      "url": "https://learn.microsoft.com/microsoft-copilot-studio/whats-new",
+      "lastReviewedAt": "2026-03-06T02:58:00.000Z",
+      "highlights": [
+        "February 2026: improved ticket-based Microsoft 365 Graph connector responses and Claude Sonnet 4.5 support for Computer Use agents.",
+        "January 2026: evaluation enhancements and expanded computer use governance controls.",
+        "Notable entries include MCP-related capabilities and evolving model orchestration options."
+      ],
+      "changeSummary": "Model/orchestration and agent governance updates likely impact recommendation rules and feature comparison language."
+    },
+    {
+      "id": "foundry-whats-new-docs",
+      "title": "What's new in Microsoft Foundry documentation",
+      "url": "https://learn.microsoft.com/azure/foundry/whats-new-foundry",
+      "lastReviewedAt": "2026-03-06T02:58:00.000Z",
+      "highlights": [
+        "Documentation now reflects dual portal variants (new and classic) with version-specific guidance.",
+        "New articles include agent memory, publish agents, MCP server guidance, and observability resources."
+      ],
+      "changeSummary": "Foundry portal and capability updates likely affect Foundry guidance copy and roadmap content."
+    }
+  ],
+  "impacts": [
+    {
+      "id": "impact-001",
+      "summary": "Review and update Copilot Studio capability mapping for model options, computer use, and MCP-related enhancements.",
+      "severity": "major",
+      "status": "pending",
+      "recommendedFiles": [
+        "packages/decision-engine/src/data/decision-model.v1.json",
+        "packages/decision-engine/src/data/licensing-data.json",
+        "README.md"
+      ],
+      "notes": "Ensure recommendation thresholds and questionnaire helper text reflect latest Copilot Studio updates."
+    },
+    {
+      "id": "impact-002",
+      "summary": "Review Microsoft 365 Copilot connector-related feature descriptions and roadmap examples.",
+      "severity": "minor",
+      "status": "pending",
+      "recommendedFiles": [
+        "apps/web/src/pages/Landing.tsx",
+        "apps/web/src/pages/Roadmap.tsx",
+        "docs/decision-model.md"
+      ],
+      "notes": "Focus on connector-driven extensibility messaging and enterprise integration scenarios."
+    },
+    {
+      "id": "impact-003",
+      "summary": "Review Foundry documentation references and update Foundry guidance where portal/feature terminology changed.",
+      "severity": "major",
+      "status": "pending",
+      "recommendedFiles": ["README.md", "docs/QUICKSTART.md", "apps/web/src/pages/Roadmap.tsx"],
+      "notes": "Verify terminology for Microsoft Foundry new/classic portal and agent memory guidance links."
+    }
+  ],
+  "notes": [
+    "This file is the source of truth for weekly validation and must be refreshed using Microsoft Learn MCP tools.",
+    "Set impact status to completed after corresponding portal updates are merged."
+  ]
+}

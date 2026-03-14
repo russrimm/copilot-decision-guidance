@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-03-06T04:06:25.397Z",
+  "totalChanges": 4,
+  "hasChanges": true,
+  "results": [
+    {
+      "source": "Microsoft Learn MCP Snapshot",
+      "hasChanges": true,
+      "changes": [
+        {
+          "category": "portal_update_required",
+          "field": "packages/decision-engine/src/data/decision-model.v1.json, packages/decision-engine/src/data/licensing-data.json, README.md",
+          "oldValue": "pending",
+          "newValue": "completed",
+          "description": "Review and update Copilot Studio capability mapping for model options, computer use, and MCP-related enhancements.",
+          "severity": "major",
+          "source": "Impact impact-001"
+        },
+        {
+          "category": "portal_update_required",
+          "field": "apps/web/src/pages/Landing.tsx, apps/web/src/pages/Roadmap.tsx, docs/decision-model.md",
+          "oldValue": "pending",
+          "newValue": "completed",
+          "description": "Review Microsoft 365 Copilot connector-related feature descriptions and roadmap examples.",
+          "severity": "minor",
+          "source": "Impact impact-002"
+        },
+        {
+          "category": "portal_update_required",
+          "field": "README.md, docs/QUICKSTART.md, apps/web/src/pages/Roadmap.tsx",
+          "oldValue": "pending",
+          "newValue": "completed",
+          "description": "Review Foundry documentation references and update Foundry guidance where portal/feature terminology changed.",
+          "severity": "major",
+          "source": "Impact impact-003"
+        },
+        {
+          "category": "mcp_source_coverage",
+          "field": "pages.length",
+          "oldValue": null,
+          "newValue": 3,
+          "description": "Snapshot contains 3 MCP-validated Microsoft Learn sources.",
+          "severity": "minor",
+          "source": "Microsoft Learn MCP Snapshot"
+        }
+      ],
+      "lastChecked": "2026-03-06T04:06:25.374Z",
+      "confidence": "high"
+    }
+  ],
+  "metadata": {
+    "snapshotPath": "C:\\repos\\copilot-decision-guidance\\docs\\microsoft-learn-weekly-snapshot.json",
+    "maxSnapshotAgeDays": 8
+  }
+}

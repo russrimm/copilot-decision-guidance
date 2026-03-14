@@ -5,17 +5,25 @@ const DEFAULT_SOURCE_URLS = [
 ];
 let cached;
 function decodeHtmlEntities(input) {
-    return input
-        .replaceAll('&amp;', '&')
-        .replaceAll('&lt;', '<')
-        .replaceAll('&gt;', '>')
-        .replaceAll('&quot;', '"')
-        .replaceAll('&#39;', "'")
-        .replaceAll('&#8217;', "'")
-        .replaceAll('&#8220;', '"')
-        .replaceAll('&#8221;', '"')
-        .replaceAll('&#8211;', '-')
-        .replaceAll('&#8212;', '-');
+    const namedEntities = {
+        amp: '&',
+        lt: '<',
+        gt: '>',
+        quot: '"',
+        apos: "'",
+        nbsp: ' ',
+    };
+    return input.replace(/&(#(?:x[\da-fA-F]+|\d+)|[a-zA-Z]+);/g, (fullMatch, entityBody) => {
+        if (entityBody.startsWith('#x') || entityBody.startsWith('#X')) {
+            const codePoint = Number.parseInt(entityBody.slice(2), 16);
+            return Number.isFinite(codePoint) ? String.fromCodePoint(codePoint) : fullMatch;
+        }
+        if (entityBody.startsWith('#')) {
+            const codePoint = Number.parseInt(entityBody.slice(1), 10);
+            return Number.isFinite(codePoint) ? String.fromCodePoint(codePoint) : fullMatch;
+        }
+        return namedEntities[entityBody] ?? fullMatch;
+    });
 }
 function stripHtml(input) {
     return decodeHtmlEntities(input)

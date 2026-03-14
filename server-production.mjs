@@ -28,6 +28,10 @@ app.use(express.json());
 let decisionModel, calculateRecommendation, generateRecommendation;
 let getCopilotStudioReleasePlannerData;
 let getFoundryNews;
+let checkImplementationGuideUpdate;
+let getImplementationGuideMetadata;
+let acknowledgeImplementationGuideUpdate;
+let getImplementationGuideUpdateHistory;
 let useCasesRouter;
 let generateExecutiveOverviewPPTX;
 let azureCredential = null;
@@ -437,6 +441,45 @@ async function loadFoundryNewsService() {
   console.log(`[STARTUP] ✅ Foundry news service loaded from: ${loadedFrom}`);
 }
 
+async function loadImplementationGuideMonitorService() {
+  const importCandidates = ['./apps/api/dist/services/implementation-guide-monitor.js'];
+
+  let serviceModule = null;
+  let loadedFrom = null;
+  let lastError = null;
+
+  for (const candidate of importCandidates) {
+    try {
+      console.log(`[STARTUP] Loading implementation guide monitor service from ${candidate}`);
+      serviceModule = await import(candidate);
+      loadedFrom = candidate;
+      break;
+    } catch (error) {
+      lastError = error;
+      console.warn(
+        `[STARTUP] Unable to load implementation guide monitor service from ${candidate}: ${error.code || error.message}`
+      );
+    }
+  }
+
+  if (
+    !serviceModule?.checkImplementationGuideUpdate ||
+    !serviceModule?.getImplementationGuideMetadata ||
+    !serviceModule?.acknowledgeImplementationGuideUpdate ||
+    !serviceModule?.getImplementationGuideUpdateHistory
+  ) {
+    throw (
+      lastError || new Error('No implementation guide monitor service import candidate succeeded')
+    );
+  }
+
+  checkImplementationGuideUpdate = serviceModule.checkImplementationGuideUpdate;
+  getImplementationGuideMetadata = serviceModule.getImplementationGuideMetadata;
+  acknowledgeImplementationGuideUpdate = serviceModule.acknowledgeImplementationGuideUpdate;
+  getImplementationGuideUpdateHistory = serviceModule.getImplementationGuideUpdateHistory;
+  console.log(`[STARTUP] ✅ Implementation guide monitor service loaded from: ${loadedFrom}`);
+}
+
 async function loadUseCasesRouter() {
   const importCandidates = ['./apps/api/dist/routes/use-cases.js'];
 
@@ -753,6 +796,96 @@ app.get('/api/foundry/news', async (req, res) => {
   }
 });
 
+// Implementation Guide Update Monitoring
+app.get('/api/implementation-guide/update-check', async (_req, res) => {
+  try {
+    if (typeof checkImplementationGuideUpdate !== 'function') {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Implementation guide monitor service is not loaded on this deployment instance',
+      });
+    }
+
+    const updateInfo = await checkImplementationGuideUpdate();
+    res.json(updateInfo);
+  } catch (error) {
+    console.error('Error checking for Implementation Guide updates:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to check for updates',
+    });
+  }
+});
+
+app.get('/api/implementation-guide/metadata', async (_req, res) => {
+  try {
+    if (typeof getImplementationGuideMetadata !== 'function') {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Implementation guide monitor service is not loaded on this deployment instance',
+      });
+    }
+
+    const metadata = await getImplementationGuideMetadata();
+    if (!metadata) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Implementation Guide metadata not available',
+      });
+    }
+    res.json(metadata);
+  } catch (error) {
+    console.error('Error retrieving Implementation Guide metadata:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to retrieve metadata',
+    });
+  }
+});
+
+app.post('/api/implementation-guide/acknowledge-update', async (_req, res) => {
+  try {
+    if (typeof acknowledgeImplementationGuideUpdate !== 'function') {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Implementation guide monitor service is not loaded on this deployment instance',
+      });
+    }
+
+    const success = await acknowledgeImplementationGuideUpdate();
+    res.json({
+      success,
+      message: success ? 'Update acknowledged' : 'Failed to acknowledge update',
+    });
+  } catch (error) {
+    console.error('Error acknowledging Implementation Guide update:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to acknowledge update',
+    });
+  }
+});
+
+app.get('/api/implementation-guide/update-history', async (_req, res) => {
+  try {
+    if (typeof getImplementationGuideUpdateHistory !== 'function') {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Implementation guide monitor service is not loaded on this deployment instance',
+      });
+    }
+
+    const history = await getImplementationGuideUpdateHistory();
+    res.json(history);
+  } catch (error) {
+    console.error('Error retrieving Implementation Guide update history:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to retrieve update history',
+    });
+  }
+});
+
 // Copilot Agent Chat - AI-powered assistant
 app.post('/api/copilot-agent/chat', async (req, res) => {
   try {
@@ -1015,6 +1148,7 @@ Promise.all([
   loadDecisionEngine(),
   loadReleasePlannerService(),
   loadFoundryNewsService(),
+  loadImplementationGuideMonitorService(),
   loadUseCasesRouter(),
   loadExecutiveOverviewPptxService(),
 ])
