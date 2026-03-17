@@ -466,8 +466,7 @@ export default function ImplementationGuide() {
   const guide = useMemo(() => implementationGuides[selectedTrack], [selectedTrack]);
   const [openTopics, setOpenTopics] = useState<Record<string, boolean>>({});
 
-  const toggleTopic = (id: string) =>
-    setOpenTopics((prev) => ({ ...prev, [id]: !prev[id] }));
+  const toggleTopic = (id: string) => setOpenTopics((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const downloadMarkdownChecklist = () => {
     const markdown = buildMarkdownChecklist(guide);
