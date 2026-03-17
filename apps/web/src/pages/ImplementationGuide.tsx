@@ -20,6 +20,106 @@ interface TrackGuide {
   awareness: string[];
 }
 
+interface LearnTopicSection {
+  heading: string;
+  content?: string;
+  bullets?: string[];
+}
+
+interface LearnTopic {
+  id: string;
+  title: string;
+  badge: string;
+  summary: string;
+  sections: LearnTopicSection[];
+}
+
+const learnTopics: LearnTopic[] = [
+  {
+    id: 'copilot-studio-alm',
+    title: 'Copilot Studio Application Lifecycle Management (ALM)',
+    badge: 'ALM',
+    summary:
+      'How to use Power Platform Pipelines and version control strategies to manage the lifecycle of your Copilot Studio agents across Dev, Test, and Production environments.',
+    sections: [
+      {
+        heading: 'Why ALM Matters for Copilot Studio',
+        content:
+          'Version control and ALM are critical for managing changes, tracking history, and ensuring reliable collaboration in Copilot Studio projects. Unlike traditional software, Copilot Studio has no native built-in version control system like Git — but with the right strategies and integrations, teams can implement an effective versioning and promotion process for agent development.',
+        bullets: [
+          'Track changes over time — keep a history of modifications to agent logic, dialogues, and integrations.',
+          'Prevent data loss — restore previous agent versions in case of accidental deletion or errors.',
+          'Collaborate effectively — enable multiple developers to work on an agent simultaneously without overwriting changes.',
+          'Debugging and rollbacks — quickly revert to a previous version if an update introduces errors or breaks functionality.',
+          'Maintain deployment consistency — keep the production agent stable while making iterative changes in development.',
+        ],
+      },
+      {
+        heading: 'Recommended Approach: Solutions & Power Platform Pipelines',
+        content:
+          'For most enterprise scenarios, the most reliable "version control" approach is to treat the agent as part of a Power Platform solution and move changes through Dev → Test → Prod using repeatable ALM practices. This provides packaging, promotion, and rollback mechanics even when the authoring canvas itself cannot show Git-style diffs.',
+        bullets: [
+          'Package your agent alongside Power Automate flows, custom connectors, Dataverse tables, and other dependencies using Solutions.',
+          'Use separate Dev/Test/Prod environments to reduce risk and prevent direct edits in production.',
+          'Use environment variables and connection references so deployments bind to the right endpoints and credentials per environment.',
+          'Use managed solutions for production deployments to help control changes; keep unmanaged solutions for development.',
+          'Use Power Platform Pipelines (or a CI/CD process) to promote solutions consistently and with approvals.',
+          'Rollback tip: keep the last known-good managed solution (and/or agent export) in your repository — re-importing the previous managed solution into the target environment reverts to the earlier working state.',
+        ],
+      },
+      {
+        heading: 'Manual Export & Backup Versioning',
+        content:
+          'Since Copilot Studio has no native versioning, a foundational practice is to export agent versions manually and store them in a structured repository. This requires no additional tooling and provides a reliable baseline.',
+        bullets: [
+          'In the Copilot Studio Portal, open the agent you want to version and navigate to Settings > Export.',
+          'Download the .zip file containing the entire agent configuration.',
+          'Store exported files in a structured folder hierarchy (e.g., V1.0_Initial.zip, V1.1_Feature_Update.zip, V1.2_BugFix.zip).',
+          'Maintain a CHANGELOG.md documenting what changed in each version, who made it, and the rollback plan.',
+          'Capture with every release: version number, date, owner, environment, what changed (topics/actions/knowledge), dependencies, test evidence, and rollback plan.',
+        ],
+      },
+      {
+        heading: 'Automating Backups with Power Automate',
+        content:
+          'Power Automate can automatically track changes to agent components as they happen in Dataverse, reducing the risk of losing work between manual exports.',
+        bullets: [
+          'Create an Automated Cloud Flow triggered by "When a record is updated in Dataverse".',
+          'Choose Bot Components or Bot Topics as the Dataverse table to monitor.',
+          'Add a Create File action to save agent configurations in a versioned SharePoint folder on each change.',
+          'Optionally connect to Azure DevOps or GitHub for a more structured repository workflow.',
+          'Add a Power Automate approval step so changes are reviewed before being promoted to the next environment.',
+        ],
+      },
+      {
+        heading: 'GitHub / Azure DevOps Integration',
+        content:
+          'For advanced version control, team collaboration, and CI/CD pipelines, integrate your Copilot Studio export artifacts with GitHub or Azure DevOps.',
+        bullets: [
+          'After each major update, manually export agent versions and commit the .zip and supporting files to a Git repository.',
+          'Use Git branching: Main branch for the latest stable version, Development branch for testing new features, and Feature branches for individual work streams.',
+          'Configure GitHub Actions (or Azure DevOps pipelines) to trigger Power Platform deployment flows when new versions are merged.',
+          'Require Pull Request reviews and approvals from agent developers before merging major updates to main.',
+          'Store agent exports alongside bot-config.json, intents.json, and Power Automate flow exports for a complete environment snapshot.',
+        ],
+      },
+      {
+        heading: 'Best Practices Summary',
+        content: '',
+        bullets: [
+          'Use consistent naming conventions — clearly label versions (v1.0, v1.1, v1.2) and include environment context.',
+          'Maintain a version history document — a CHANGELOG.md listing each release, what changed, and the owner.',
+          'Automate exports using Power Automate — ensure agent versions are backed up regularly without relying on manual discipline.',
+          'Limit direct edits in production — always test changes in a development environment first, then promote through pipelines.',
+          'Use Power Platform Pipelines to deploy to Test/Sandbox/Production environments with consistent, approval-gated promotion.',
+          'For large-scale or multi-team projects, prefer GitHub or Azure DevOps integration over manual folder management.',
+          'Remember: Copilot Studio has no Git-style line-by-line diffs inside the authoring experience — environment-based development and solution packaging are your primary version control mechanisms.',
+        ],
+      },
+    ],
+  },
+];
+
 const implementationGuides: Record<GuideTrack, TrackGuide> = {
   'm365-copilot': {
     id: 'm365-copilot',
@@ -237,6 +337,7 @@ const sectionTitles = [
   { id: 'permissions', label: 'Permissions & Roles' },
   { id: 'steps', label: 'Implementation Steps' },
   { id: 'awareness', label: 'Things to Watch' },
+  { id: 'learn', label: 'Topics to Learn' },
 ] as const;
 
 function normalizeStep(step: string): string {
@@ -363,6 +464,10 @@ function buildPdfChecklist(guide: TrackGuide) {
 export default function ImplementationGuide() {
   const [selectedTrack, setSelectedTrack] = useState<GuideTrack>('m365-copilot');
   const guide = useMemo(() => implementationGuides[selectedTrack], [selectedTrack]);
+  const [openTopics, setOpenTopics] = useState<Record<string, boolean>>({});
+
+  const toggleTopic = (id: string) =>
+    setOpenTopics((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const downloadMarkdownChecklist = () => {
     const markdown = buildMarkdownChecklist(guide);
@@ -519,6 +624,75 @@ export default function ImplementationGuide() {
             <li key={item}>• {item}</li>
           ))}
         </ul>
+      </section>
+
+      <section id="learn" className="card">
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
+          Topics to Learn
+        </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          Deep-dive references to build expertise across key Copilot platform disciplines.
+        </p>
+        <div className="space-y-3">
+          {learnTopics.map((topic) => (
+            <div
+              key={topic.id}
+              className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+            >
+              <button
+                type="button"
+                onClick={() => toggleTopic(topic.id)}
+                className="w-full flex items-start gap-3 px-4 py-4 text-left bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-expanded={openTopics[topic.id] === true}
+              >
+                <span className="mt-0.5 shrink-0 inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/40 px-2.5 py-0.5 text-xs font-semibold text-blue-800 dark:text-blue-300">
+                  {topic.badge}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                    {topic.title}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{topic.summary}</p>
+                </div>
+                <span className="shrink-0 text-gray-400 dark:text-gray-500 text-lg leading-none mt-0.5">
+                  {openTopics[topic.id] ? '▲' : '▼'}
+                </span>
+              </button>
+
+              {openTopics[topic.id] && (
+                <div className="px-4 py-5 space-y-6 bg-white dark:bg-gray-900">
+                  {topic.sections.map((sec) => (
+                    <div key={sec.heading}>
+                      <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                        {sec.heading}
+                      </h3>
+                      {sec.content && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 leading-relaxed">
+                          {sec.content}
+                        </p>
+                      )}
+                      {sec.bullets && sec.bullets.length > 0 && (
+                        <ul className="space-y-1.5">
+                          {sec.bullets.map((b) => (
+                            <li
+                              key={b}
+                              className="flex gap-2 text-sm text-gray-700 dark:text-gray-300"
+                            >
+                              <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">
+                                •
+                              </span>
+                              <span>{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );
