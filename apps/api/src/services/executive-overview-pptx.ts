@@ -25,6 +25,8 @@ export interface ExecutiveOverviewPptxInput {
     implementationRoadmap?: string[];
     riskMitigation?: string[];
     nextSteps?: string[];
+    clarifications?: string[];
+    sources?: Array<{ title: string; url: string }>;
   };
 }
 
@@ -709,6 +711,64 @@ export async function generateExecutiveOverviewPPTX(
     const s = prs.addSlide();
     addTitle(s, 'AI-Powered Next Steps');
     addBullets(s, aiNext.slice(0, 8), { x: 0.6, y: 1.35, w: 8.8, h: 5.9, fontSize: 14 });
+  }
+
+  // Optional: Key Clarifications slide
+  const aiClarifications =
+    input.aiRecommendation?.clarifications?.filter((c) => (c ?? '').trim().length > 0) ?? [];
+  if (aiClarifications.length > 0) {
+    const sClar = prs.addSlide();
+    addTitle(sClar, 'Key Clarifications');
+    sClar.addText(
+      'Common misconceptions corrected — to help you apply this recommendation accurately.',
+      {
+        x: 0.6,
+        y: 1.2,
+        w: 8.8,
+        h: 0.35,
+        fontSize: 11,
+        color: COLOR_MUTED,
+        italic: true,
+      }
+    );
+    addBullets(sClar, aiClarifications.slice(0, 5), {
+      x: 0.6,
+      y: 1.65,
+      w: 8.8,
+      h: 5.6,
+      fontSize: 12,
+    });
+  }
+
+  // Optional: References & Further Reading slide
+  const aiSources = input.aiRecommendation?.sources?.filter((s) => s?.title && s?.url) ?? [];
+  if (aiSources.length > 0) {
+    const sRef = prs.addSlide();
+    addTitle(sRef, 'References & Further Reading');
+    let ry = 1.3;
+    aiSources.slice(0, 10).forEach((src) => {
+      if (ry > 7.0) return;
+      sRef.addText(src.title, {
+        x: 0.6,
+        y: ry,
+        w: 8.8,
+        h: 0.35,
+        fontSize: 12,
+        color: COLOR_DARK,
+        bold: true,
+      });
+      ry += 0.35;
+      sRef.addText(src.url, {
+        x: 0.8,
+        y: ry,
+        w: 8.6,
+        h: 0.32,
+        fontSize: 10,
+        color: '2563EB',
+        hyperlink: { url: src.url },
+      });
+      ry += 0.42;
+    });
   }
 
   const output = await prs.write({ outputType: 'nodebuffer' });

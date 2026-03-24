@@ -412,6 +412,10 @@ export default function Results() {
       reasons: displayReasons,
       nextSteps: displayNextSteps,
       complianceConsiderations: displayCompliance,
+      clarifications: enhancedExplanation?.clarifications,
+      sources: [...(recommendation.sources ?? []), ...(enhancedExplanation?.sources ?? [])].filter(
+        (s, i, arr) => s?.url && arr.findIndex((x) => x?.url === s.url) === i
+      ),
     };
 
     try {
@@ -428,6 +432,12 @@ export default function Results() {
 
     try {
       const qaData = buildQaData(model);
+      const aiPayload = {
+        ...(aiRecommendation || {}),
+        clarifications: enhancedExplanation?.clarifications,
+        sources: enhancedExplanation?.sources,
+      };
+
       const payload = {
         timestamp: completionTimestamp,
         scoringResult,
@@ -439,7 +449,7 @@ export default function Results() {
           nextSteps: displayNextSteps,
         },
         qaData,
-        aiRecommendation: aiRecommendation || undefined,
+        aiRecommendation: aiPayload,
       };
 
       const res = await fetch('/api/export/executive-overview/pptx', {
@@ -1436,7 +1446,7 @@ export default function Results() {
               </button>
             )}
             <button onClick={handleExportPDF} className="btn-secondary" disabled={isExportingPdf}>
-              {isExportingPdf ? '⏳ Exporting PDF...' : '📋 Export PDF'}
+              {isExportingPdf ? '⏳ Exporting Report...' : '📋 Export Report'}
             </button>
             <button onClick={handleExportExecutiveOverviewPPTX} className="btn-secondary">
               📊 Executive Overview PPTX

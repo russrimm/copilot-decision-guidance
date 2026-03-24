@@ -82,6 +82,10 @@ function generateM365CopilotRecommendation(scoringResult) {
                 url: 'https://aka.ms/copilotstudioimplementationguide',
             },
             {
+                title: 'Copilot Studio API Decision Guide (Deployment Options)',
+                url: 'https://microsoft.github.io/mcscatblog/posts/copilot-studio-api-decision-guide/',
+            },
+            {
                 title: 'Copilot and Agents Spotlight (Training)',
                 url: 'https://adoption.microsoft.com/en-us/customer-hub/copilot-and-agents-spotlight/',
             },
@@ -163,6 +167,10 @@ function generateCopilotStudioRecommendation(scoringResult) {
             {
                 title: 'Copilot Studio Implementation Guide',
                 url: 'https://aka.ms/copilotstudioimplementationguide',
+            },
+            {
+                title: 'Copilot Studio API Decision Guide (Deployment Options)',
+                url: 'https://microsoft.github.io/mcscatblog/posts/copilot-studio-api-decision-guide/',
             },
             {
                 title: 'Copilot and Agents Spotlight (Training)',

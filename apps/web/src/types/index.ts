@@ -41,6 +41,7 @@ export interface Recommendation {
   nextSteps: string[];
   risks: string[];
   complianceConsiderations: string[];
+  clarifications?: string[];
   keyDecisionPoints?: Array<{
     question: string;
     context: string;

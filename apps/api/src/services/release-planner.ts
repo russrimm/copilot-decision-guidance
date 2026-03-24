@@ -140,6 +140,7 @@ export async function getCopilotStudioReleasePlannerData(options?: {
       normalized.includes('copilot studio') ||
       normalized.includes('microsoft copilot studio') ||
       normalized.includes('copilot for power apps') ||
+      normalized.includes('copilot and ai innovation') ||
       normalized.includes('agent builder') ||
       normalized.includes('agent feed')
     );
@@ -194,19 +195,16 @@ export async function getCopilotStudioReleasePlannerData(options?: {
     const ppDate = parseUsDateToUtc(ppDateStr);
     const gaDate = parseUsDateToUtc(gaDateStr);
 
-    // Include in "In Public Preview" if:
-    // 1. Has preview date in past/today AND no GA date, OR
-    // 2. Has GA date less than 6 months in the past (but not in future)
-    // And exclude anything with a date older than 1 year
-    const hasPreviewWithoutGA = !!ppDate && ppDate.getTime() <= todayUtcMs && !gaDate;
+    // Include in "Public Preview" section if:
+    // 1. Has a preview date (past within 1 year OR future) AND GA hasn't shipped yet
+    //    (no GA date, or GA date is still in the future)
+    // 2. OR, has no PP date but has a recent GA (within past 6 months)
+    const gaNotYetShipped = !gaDate || gaDate.getTime() >= todayUtcMs;
+    const ppDateWithinWindow = ppDate && ppDate.getTime() >= oneYearAgoMs;
     const hasRecentGA =
       gaDate && gaDate.getTime() >= sixMonthsAgoMs && gaDate.getTime() <= todayUtcMs;
 
-    // Use the preview date if available, otherwise use GA date for filtering
-    const primaryDate = ppDate || gaDate;
-    const isWithin1Year = primaryDate && primaryDate.getTime() >= oneYearAgoMs;
-
-    if ((hasPreviewWithoutGA || hasRecentGA) && isWithin1Year) {
+    if ((ppDateWithinWindow && gaNotYetShipped) || hasRecentGA) {
       upcomingPublicPreview.push({
         date: formatDateUtc(ppDate || gaDate!),
         featureName: featureName || '(Unnamed feature)',

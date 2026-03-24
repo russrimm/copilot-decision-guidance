@@ -710,7 +710,7 @@ try {
 
 try {
   aiRecommendationService = new AIRecommendationService(
-    process.env.AZURE_OPENAI_API_KEY || process.env.OPENAI_API_KEY,
+    process.env.AZURE_OPENAI_API_KEY || process.env.OPENAI_API_KEY || process.env.GITHUB_TOKEN,
     process.env.AZURE_OPENAI_ENDPOINT || process.env.OPENAI_ENDPOINT,
     process.env.AZURE_OPENAI_DEPLOYMENT || process.env.OPENAI_MODEL
   );
@@ -755,7 +755,11 @@ app.get('/api/health', (_req: Request, res: Response) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     features: {
-      aiEnabled: !!(process.env.AZURE_OPENAI_ENDPOINT || process.env.OPENAI_API_KEY),
+      aiEnabled: !!(
+        process.env.AZURE_OPENAI_ENDPOINT ||
+        process.env.OPENAI_API_KEY ||
+        process.env.GITHUB_TOKEN
+      ),
       metricsEnabled: metricsService.isEnabled(),
       aiRecommendationsEnabled: aiRecommendationService.isEnabled(),
     },
@@ -946,7 +950,10 @@ app.post('/api/explain', async (req: Request, res: Response) => {
     }
 
     // Check if AI is enabled
-    const aiEnabled = !!process.env.AZURE_OPENAI_ENDPOINT || !!process.env.OPENAI_API_KEY;
+    const aiEnabled =
+      !!process.env.AZURE_OPENAI_ENDPOINT ||
+      !!process.env.OPENAI_API_KEY ||
+      !!process.env.GITHUB_TOKEN;
 
     if (!aiEnabled) {
       // No AI mode - return deterministic template
@@ -1478,11 +1485,12 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
 
   const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
   const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
-  const openaiKey = process.env.OPENAI_API_KEY;
+  const openaiKey = process.env.OPENAI_API_KEY || process.env.GITHUB_TOKEN;
+  const openaiEndpointOverride = process.env.OPENAI_ENDPOINT;
 
   const aiConfigured = !!(azureEndpoint || openaiKey);
   console.log(
-    `[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureEndpoint}, OpenAI: ${!!openaiKey})`
+    `[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureEndpoint}, OpenAI/GitHub: ${!!openaiKey})`
   );
 
   // Helper function to generate detailed introduction based on context
@@ -1526,9 +1534,9 @@ async function generateAIExplanation(recommendation: any, userContext?: any): Pr
     if (budget) contextFactors.push(`budget constraints (${budget.toLowerCase()})`);
 
     if (contextFactors.length > 0) {
-      intro += `The methodology follows the Microsoft AI Decision Framework (BXT + CAF principles), considering your ${contextFactors.join(', ')}. `;
+      intro += `The methodology follows the Microsoft AI Decision Framework, applying the BXT model (Business viability, Experience desirability, Technology feasibility) and the Microsoft Cloud Adoption Framework (CAF) — a structured approach covering strategy, planning, readiness, and governance for cloud and AI adoption — considering your ${contextFactors.join(', ')}. `;
     } else {
-      intro += `The methodology follows the Microsoft AI Decision Framework (BXT + CAF principles). `;
+      intro += `The methodology follows the Microsoft AI Decision Framework, applying the BXT model (Business viability, Experience desirability, Technology feasibility) and the Microsoft Cloud Adoption Framework (CAF) — a structured approach covering strategy, planning, readiness, and governance for cloud and AI adoption. `;
     }
 
     intro += `This is a scenario-specific recommendation—most organizations successfully deploy multiple Microsoft AI tools across different use cases, and this guidance helps optimize for your particular requirements.`;
@@ -1763,6 +1771,10 @@ Rewrite the summary, reasons, next steps, AND compliance considerations that:
 6. Include relevant compliance frameworks (HIPAA, GDPR, etc.) based on user context
 7. Use professional, advisory tone (not marketing language)
 8. Provide actionable detail on compliance implications
+9. Add KEY CLARIFICATIONS: identify 2-3 common misconceptions customers have about the recommended platform and correct them clearly. Explain what the recommendation does NOT cover so customers do not misapply it.
+10. Add SOURCES: cite 5-8 real, verified Microsoft Learn or Microsoft documentation URLs that are directly relevant to this recommendation. Prefer learn.microsoft.com and aka.ms links. Include licensing, governance, and getting-started pages.
+11. Expand NEXT STEPS with: specific named Microsoft tools/portals, estimated effort, and where applicable include real Microsoft Learn URL references inline (e.g. "See https://learn.microsoft.com/...").
+12. Expand COST CONSIDERATIONS: include current licensing model specifics (per-user vs Copilot Credits vs consumption), and link to the relevant pricing or licensing page.
 
 CONSTRAINTS:
 - Do NOT hallucinate capabilities, features, or compliance certifications
@@ -1773,17 +1785,30 @@ CONSTRAINTS:
 - If recommending Copilot Studio, MUST mention deployment channels including M365 Copilot and Teams
 - If uncertain about a compliance detail, note "verify with Microsoft documentation"
 - Keep technical accuracy aligned with Microsoft Learn sources
+- Sources MUST be real Microsoft documentation URLs — do NOT invent or guess URLs
+- Clarifications must be factual corrections aimed at common customer misconceptions
 
 Return ONLY valid JSON (no markdown, no code blocks):
 {
-  "introduction": "3-5 sentence paragraph explaining the analysis methodology (deterministic scoring based on user answers + weighted questions), the Microsoft AI Decision Framework foundation (BXT + CAF principles), and that this recommendation is scenario-specific (organizations typically use multiple tools)",
+  "introduction": "3-5 sentence paragraph explaining the analysis methodology (deterministic scoring based on user answers + weighted questions), the Microsoft AI Decision Framework foundation — which applies the BXT model (Business viability, Experience desirability, Technology feasibility) and the Microsoft Cloud Adoption Framework (CAF, a structured approach covering strategy, planning, readiness, and governance) — and that this recommendation is scenario-specific (organizations typically use multiple tools)",
   "summary": "enhanced summary for THIS SCENARIO (2-3 sentences, acknowledge coexistence)",
-  "reasons": ["reason 1 with specific technical details and 'why this matters' context", "reason 2 with implementation implications", "reason 3...", ...provide 4-6 detailed reasons],
-  "nextSteps": ["step 1 with concrete actions, tools, and timelines", "step 2 with specific Microsoft Learn links or resources", "step 3 with measurable outcomes", ...provide 5-7 actionable steps],
+  "reasons": ["reason 1 with specific technical details and 'why this matters' context", "reason 2 with implementation implications", "reason 3...", "provide 4-6 detailed reasons"],
+  "nextSteps": ["step 1 with concrete actions, named tools/portals, and timelines — include a real https://learn.microsoft.com/... URL where relevant", "step 2 with measurable outcomes", "provide 5-7 actionable steps"],
   "complianceConsiderations": [
     "Data residency: [specific guidance]",
-    "Regulatory compliance: [specific frameworks]",
-    "Governance controls: [specific recommendations]"
+    "Regulatory compliance: [specific frameworks and certifications]",
+    "Governance controls: [specific policy and tooling recommendations]",
+    "provide 3-5 items"
+  ],
+  "clarifications": [
+    "Misconception 1: [what customers often wrongly assume] — Fact: [the accurate clarification with specifics]",
+    "Misconception 2: [what customers often wrongly assume] — Fact: [the accurate clarification]",
+    "provide 2-3 items"
+  ],
+  "sources": [
+    { "title": "Descriptive title of the resource", "url": "https://learn.microsoft.com/..." },
+    { "title": "Another source title", "url": "https://learn.microsoft.com/..." },
+    "provide 5-8 real Microsoft documentation URLs relevant to this specific recommendation"
   ]
 }`;
 
@@ -1879,7 +1904,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
               { role: 'user', content: prompt },
             ],
             temperature: 0.3,
-            max_tokens: 2000,
+            max_tokens: 4000,
             response_format: { type: 'json_object' },
           }),
           signal: controller.signal,
@@ -1933,6 +1958,8 @@ Return ONLY valid JSON (no markdown, no code blocks):
       hasReasons: !!enhanced.reasons,
       hasNextSteps: !!enhanced.nextSteps,
       hasCompliance: !!enhanced.complianceConsiderations,
+      hasClarifications: !!enhanced.clarifications?.length,
+      hasSources: !!enhanced.sources?.length,
     });
 
     return enhanced;

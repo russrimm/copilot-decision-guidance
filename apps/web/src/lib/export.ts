@@ -251,6 +251,7 @@ export async function generatePDF(
     nextSteps,
     risks,
     complianceConsiderations,
+    clarifications,
     sources,
     scoringResult,
   } = recommendation;
@@ -608,6 +609,28 @@ export async function generatePDF(
         yPosition = 20;
       }
       addText(`${idx + 1}. ${item}`, 11, false);
+      yPosition += 2;
+    });
+    yPosition += 4;
+  }
+
+  // Key Clarifications (AI-generated)
+  if (clarifications && clarifications.length > 0) {
+    if (yPosition > 250) {
+      doc.addPage();
+      yPosition = 20;
+    }
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Key Clarifications', margin, yPosition);
+    yPosition += 8;
+
+    clarifications.forEach((item, idx) => {
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      addText(`${idx + 1}. ${item}`, 10, false);
       yPosition += 2;
     });
     yPosition += 4;

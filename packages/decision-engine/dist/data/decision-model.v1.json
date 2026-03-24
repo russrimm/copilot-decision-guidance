@@ -559,7 +559,7 @@
         {
           "id": "integration_channels",
           "title": "Where do users need to access the agent?",
-          "helperText": "Consider deployment requirements—inside M365, external channels, or both",
+          "helperText": "Consider deployment requirements—inside M365, external channels, or both. For deployment option guidance, see https://microsoft.github.io/mcscatblog/posts/copilot-studio-api-decision-guide/",
           "answers": [
             {
               "id": "channels_m365",

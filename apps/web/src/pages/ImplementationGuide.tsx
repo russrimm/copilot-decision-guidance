@@ -338,6 +338,7 @@ const sectionTitles = [
   { id: 'steps', label: 'Implementation Steps' },
   { id: 'awareness', label: 'Things to Watch' },
   { id: 'learn', label: 'Topics to Learn' },
+  { id: 'alm', label: 'Application Lifecycle Management' },
 ] as const;
 
 function normalizeStep(step: string): string {
@@ -691,6 +692,408 @@ export default function ImplementationGuide() {
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      <section id="alm" className="card">
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
+          AI Automation and Lifecycle Management in Microsoft Copilot Studio
+        </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
+          Enterprise-grade ALM patterns, governance zones, security architecture, and operational
+          monitoring for Copilot Studio agent deployments.
+        </p>
+
+        <div className="mb-6 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+          <img
+            src="/Copilot%20Studio%20ALM.png"
+            alt="Copilot Studio Application Lifecycle Management diagram"
+            className="w-full object-contain max-h-[480px] bg-white dark:bg-gray-900"
+          />
+        </div>
+
+        <div className="space-y-8 text-sm text-gray-700 dark:text-gray-300">
+          {/* Executive Summary */}
+          <div>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-2">
+              Executive Summary
+            </h3>
+            <p className="leading-relaxed">
+              The rapid adoption of AI agents within the Microsoft Power Platform necessitates a
+              shift from experimental &ldquo;vibe coding&rdquo; to rigorous, enterprise-grade
+              Application Lifecycle Management (ALM). While AI simplifies initial creation,
+              successful deployment at scale requires a structured approach to governance, security,
+              and testing. This document synthesizes critical insights from industry experts and
+              Microsoft technical guidance, highlighting that authorization must be identity-driven
+              rather than prompt-driven, and that ALM processes&mdash;including environment
+              segregation and managed solutions&mdash;are essential to prevent &ldquo;production
+              issues from biting back.&rdquo; Key takeaways include the implementation of a tiered
+              &ldquo;Zoned Governance&rdquo; strategy, the use of Power Platform Pipelines for
+              automated deployment, and the necessity of &ldquo;clean data&rdquo; for optimal agent
+              performance.
+            </p>
+          </div>
+
+          {/* Prompt Engineering */}
+          <div>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">
+              Prompt Engineering Foundations (GCSE)
+            </h3>
+            <p className="mb-2 leading-relaxed">
+              Effective interaction with agents requires structured prompting. The GCSE framework is
+              recommended:
+            </p>
+            <ul className="space-y-1.5">
+              {[
+                'Goal: What is the specific objective?',
+                'Context: What are the limitations or environmental factors?',
+                'Source: What specific data tables or files should be used?',
+                'Expectation: How should the output be formatted (e.g., table, bullet points)?',
+              ].map((b) => (
+                <li key={b} className="flex gap-2">
+                  <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ALM Framework */}
+          <div>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">
+              Application Lifecycle Management (ALM) Framework
+            </h3>
+            <p className="mb-3 leading-relaxed">
+              ALM is defined as the continuous governance of an agent from inception to
+              decommissioning.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  The Three-Environment Strategy
+                </h4>
+                <p className="mb-2">
+                  A healthy ALM strategy requires a minimum of three distinct environments:
+                </p>
+                <ol className="space-y-1.5 list-decimal list-inside">
+                  <li>
+                    <strong>Development (Source):</strong> Where makers build and iterate. Solutions
+                    are maintained as unmanaged.
+                  </li>
+                  <li>
+                    <strong>Test/UAT (Target):</strong> Where end-users validate functionality.
+                    Solutions are deployed as managed.
+                  </li>
+                  <li>
+                    <strong>Production (Target):</strong> The final destination for reliable, live
+                    agents. Solutions are strictly managed to prevent unauthorized direct edits.
+                  </li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  The &ldquo;Golden Rules&rdquo; of ALM
+                </h4>
+                <ul className="space-y-1.5">
+                  {[
+                    'Never customize in production: Direct updates to production are cited as the most common and damaging ALM mistake.',
+                    'Solution-Centricity: Always work within the context of a solution container to ensure all dependencies (flows, connection references, environment variables) are packaged together.',
+                    'Managed Solutions: Use managed solutions for all downstream environments to prevent "unmanaged layers" and ensure a single source of truth in the development environment.',
+                    'Environment Variables: Use these to store URLs, secrets, and settings that change between Dev, Test, and Prod.',
+                  ].map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  Specific Copilot Studio Considerations
+                </h4>
+                <p className="mb-2">
+                  Not all agent components are &ldquo;solution-aware.&rdquo; The following require
+                  manual post-deployment steps in target environments:
+                </p>
+                <ul className="space-y-1.5">
+                  {[
+                    'Azure Application Insights settings.',
+                    'Manual authentication configurations (e.g., Entra ID Client IDs/Secrets).',
+                    'Direct Line/Web channel security settings.',
+                    'Channel deployment (e.g., specific Teams or SharePoint publishing).',
+                    'Sharing permissions with other makers or end-users.',
+                  ].map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Security and Governance */}
+          <div>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">
+              Security and Governance
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                  Zoned Governance Strategy
+                </h4>
+                <p className="mb-3">
+                  Microsoft recommends segmenting governance based on agent risk and purpose:
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg text-xs">
+                    <thead className="bg-gray-100 dark:bg-gray-700">
+                      <tr>
+                        <th className="text-left px-3 py-2 font-semibold text-gray-900 dark:text-white">
+                          Zone
+                        </th>
+                        <th className="text-left px-3 py-2 font-semibold text-gray-900 dark:text-white">
+                          Audience
+                        </th>
+                        <th className="text-left px-3 py-2 font-semibold text-gray-900 dark:text-white">
+                          Purpose
+                        </th>
+                        <th className="text-left px-3 py-2 font-semibold text-gray-900 dark:text-white">
+                          Controls
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        {
+                          zone: 'Zone 1: Citizen',
+                          audience: 'Anyone',
+                          purpose: 'Personal/Team productivity',
+                          controls: 'Safe defaults, read-only, read-only data.',
+                        },
+                        {
+                          zone: 'Zone 2: Partnered',
+                          audience: 'Trained Makers',
+                          purpose: 'Departmental agents',
+                          controls: 'IT-managed review, specific advanced connectors.',
+                        },
+                        {
+                          zone: 'Zone 3: Professional',
+                          audience: 'Pro Developers',
+                          purpose: 'Mission-critical / Enterprise-wide',
+                          controls: 'Full ALM, strong security, SLAs, pro-dev tools.',
+                        },
+                      ].map((row) => (
+                        <tr
+                          key={row.zone}
+                          className="border-t border-gray-200 dark:border-gray-700"
+                        >
+                          <td className="px-3 py-2 font-medium text-gray-900 dark:text-gray-100">
+                            {row.zone}
+                          </td>
+                          <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                            {row.audience}
+                          </td>
+                          <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                            {row.purpose}
+                          </td>
+                          <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                            {row.controls}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  Identity vs. Prompt-Level Security
+                </h4>
+                <p className="mb-2">
+                  Authorization must be enforced by identity systems (Entra ID), not the Large
+                  Language Model (LLM).
+                </p>
+                <ul className="space-y-1.5">
+                  {[
+                    'The Risk: LLMs interpret intent but do not enforce policy. Prompt-level instructions to "only show data to HR" can be bypassed.',
+                    'The Solution: Use Delegated Permissions for user-initiated actions and Application Permissions for background automation.',
+                    "RBAC Enforcement: Power Automate acts as an external enforcement layer, using Microsoft Graph to validate a user's Entra ID group membership before allowing the agent to trigger a business action.",
+                  ].map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  Data Loss Prevention (DLP)
+                </h4>
+                <p className="mb-2">
+                  DLP policies govern how agents interact with services. Administrators can block
+                  specific connectors, such as:
+                </p>
+                <ul className="space-y-1.5">
+                  {[
+                    '"Chat without Entra ID authentication" to force secure logins.',
+                    'Knowledge sources (SharePoint, public websites, or documents).',
+                    'HTTP request nodes to prevent unauthorized API calls.',
+                  ].map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Testing and QA */}
+          <div>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">
+              Testing and Quality Assurance
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  Testing Methodologies
+                </h4>
+                <p className="mb-2">
+                  Testing should transition from manual &ldquo;hello&rdquo; checks to automated
+                  evaluations.
+                </p>
+                <ul className="space-y-1.5">
+                  {[
+                    'Deterministic Testing: Validating that a specific input (e.g., "What are your hours?") triggers the exact expected response or topic.',
+                    "Generative Testing: Using AI-assisted prompts to evaluate if the agent's nondeterministic answers remain grounded and accurate.",
+                    'Multi-Turn Testing: Evaluating end-to-end scenarios where the conversation context must be maintained over several exchanges.',
+                  ].map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  The Copilot Studio Kit
+                </h4>
+                <p className="mb-2">This Power CAT tool provides advanced testing capabilities:</p>
+                <ul className="space-y-1.5">
+                  {[
+                    "Plan Validation: Verifies that the agent's dynamic plan includes the expected tools and actions.",
+                    'Telemetry Integration: Pulls data from Application Insights and Dataverse to analyze intent recognition scores and triggered topics.',
+                  ].map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Automation and Monitoring */}
+          <div>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">
+              Automation and Monitoring
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  Deployment Pipelines
+                </h4>
+                <p className="mb-2">
+                  Power Platform Pipelines automate the &ldquo;conveyor belt&rdquo; of solutions
+                  between environments.
+                </p>
+                <ul className="space-y-1.5">
+                  {[
+                    'Custom Pipeline Host: A dedicated production environment that stores pipeline configurations and run history.',
+                    'Delegated Deployment: Using Service Accounts or Service Principals allows makers to deploy to production without needing administrative privileges in that environment.',
+                    'Approval Gates: Integration with Power Automate enables mandatory admin approval before a solution is promoted to production.',
+                  ].map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                  Operational Monitoring Tools
+                </h4>
+                <ul className="space-y-1.5">
+                  {[
+                    'Application Insights: Tracks logged messages, events, and custom telemetry.',
+                    'Microsoft Sentinel: Used for threat detection and audit logging of agent activities.',
+                    'Microsoft Purview: Manages compliance, auditing, and content moderation (e.g., tracking blocked queries).',
+                    'Transcript Retention: Default retention in Dataverse is 30 days. Organizations requiring longer histories should export data to Azure Data Lake via Synapse Link.',
+                  ].map((b) => (
+                    <li key={b} className="flex gap-2">
+                      <span className="shrink-0 text-blue-500 dark:text-blue-400 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Common Risks */}
+          <div>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-2">
+              Common Risks and Misconfigurations
+            </h3>
+            <p className="mb-3">
+              The Microsoft Defender Security Research team identifies ten critical risks in agent
+              deployments:
+            </p>
+            <ol className="space-y-2 list-decimal list-inside">
+              {[
+                'Over-sharing: Agents shared with the entire organization by default.',
+                'No Authentication: Publicly reachable agents exposing internal logic.',
+                'Risky HTTP Requests: Using insecure schemes or non-standard ports.',
+                'Email Exfiltration: Agents capable of sending internal data to external recipients via prompt injection.',
+                'Dormancy: Stale agents or connections serving as unmonitored entry points.',
+                "Maker Authentication: Agents running with the creator's elevated permissions instead of the end-user's.",
+                'Hardcoded Credentials: API keys or tokens embedded directly in topics.',
+                'Unmanaged MCP Tools: Model Context Protocol tools providing undocumented access paths.',
+                'Lacking Instructions: Generative orchestration without clear constraints, leading to behavioral drift.',
+                'Orphaned Agents: Agents with no active owner, bypassing review cycles.',
+              ].map((item, i) => (
+                <li key={i} className="leading-relaxed">
+                  {item}
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {/* Conclusion */}
+          <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 px-4 py-4">
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-2">
+              Conclusion
+            </h3>
+            <p className="leading-relaxed">
+              Modern AI agent development requires a balance of speed and discipline. By treating
+              agents as first-class enterprise actors&mdash;enforcing identity at the platform
+              level, automating deployments through pipelines, and maintaining rigorous environment
+              segregation&mdash;organizations can scale their AI capabilities while mitigating the
+              inherent risks of generative technology. As one expert noted:{' '}
+              <em>
+                &ldquo;ALM is still ALM&hellip; those extra works are a buffer to make sure things
+                run smoothly.&rdquo;
+              </em>
+            </p>
+          </div>
         </div>
       </section>
     </div>
