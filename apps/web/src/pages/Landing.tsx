@@ -32,6 +32,114 @@ export default function Landing() {
           Copilot, Copilot Studio, Microsoft Foundry, or Microsoft Agent Framework—fits each
           specific use case in your organization.
         </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
+          <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center mb-3">
+                <img
+                  src="https://microsoft.github.io/powercat/images/m365-copilot-logo.png"
+                  alt="Microsoft 365 Copilot"
+                  className="w-16 h-16 object-contain"
+                />
+              </div>
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
+                Microsoft 365 Copilot
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-100">
+                AI-powered productivity in Word, Excel, PowerPoint, Outlook, Teams
+              </p>
+            </div>
+          </div>
+
+          <div className="card bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center mb-3">
+                <img
+                  src="https://microsoft.github.io/powercat/images/copilot-studio.png"
+                  alt="Copilot Studio"
+                  className="w-16 h-16 object-contain"
+                />
+              </div>
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Copilot Studio</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-100">
+                Build custom agents with workflows, connectors, and integrations
+              </p>
+            </div>
+          </div>
+
+          <div className="card bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center mb-3">
+                <img
+                  src="https://microsoft.github.io/powercat/images/ai-foundry.png"
+                  alt="Microsoft Foundry"
+                  className="w-16 h-16 object-contain"
+                />
+              </div>
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
+                Microsoft Foundry
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-100">
+                Full-stack AI development with custom models, fine-tuning, and orchestration
+              </p>
+            </div>
+          </div>
+
+          <div className="card bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 bg-violet-100 dark:bg-violet-800">
+                <svg
+                  className="w-8 h-8 text-violet-600 dark:text-violet-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9.75 3v2.25M14.25 3v2.25M9.75 18.75V21M14.25 18.75V21M3 9.75h2.25M18.75 9.75H21M3 14.25h2.25M18.75 14.25H21"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7.5 6.75h9a.75.75 0 01.75.75v9a.75.75 0 01-.75.75h-9a.75.75 0 01-.75-.75v-9a.75.75 0 01.75-.75zm2.25 3h4.5m-4.5 2.25h4.5m-4.5 2.25h2.25"
+                  />
+                </svg>
+              </div>
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
+                Microsoft Agent Framework
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-100 mb-3">
+                Framework-first option for building agentic apps and orchestration with developer
+                control over tools, memory, and execution flow.
+              </p>
+              <a
+                href="https://learn.microsoft.com/en-us/agent-framework/overview"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-sm font-semibold text-violet-700 hover:text-violet-800 dark:text-violet-300 dark:hover:text-violet-200"
+              >
+                Learn more
+                <svg
+                  className="ml-1.5 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Menu Options */}
@@ -278,107 +386,6 @@ export default function Landing() {
           >
             Open Product Mind Maps
           </Link>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center mb-3">
-              <img
-                src="https://microsoft.github.io/powercat/images/m365-copilot-logo.png"
-                alt="Microsoft 365 Copilot"
-                className="w-16 h-16 object-contain"
-              />
-            </div>
-            <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
-              Microsoft 365 Copilot
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-100">
-              AI-powered productivity in Word, Excel, PowerPoint, Outlook, Teams
-            </p>
-          </div>
-        </div>
-
-        <div className="card bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center mb-3">
-              <img
-                src="https://microsoft.github.io/powercat/images/copilot-studio.png"
-                alt="Copilot Studio"
-                className="w-16 h-16 object-contain"
-              />
-            </div>
-            <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Copilot Studio</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-100">
-              Build custom agents with workflows, connectors, and integrations
-            </p>
-          </div>
-        </div>
-
-        <div className="card bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center mb-3">
-              <img
-                src="https://microsoft.github.io/powercat/images/ai-foundry.png"
-                alt="Microsoft Foundry"
-                className="w-16 h-16 object-contain"
-              />
-            </div>
-            <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Microsoft Foundry</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-100">
-              Full-stack AI development with custom models, fine-tuning, and orchestration
-            </p>
-          </div>
-        </div>
-
-        <div className="card bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 bg-violet-100 dark:bg-violet-800">
-              <svg
-                className="w-8 h-8 text-violet-600 dark:text-violet-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9.75 3v2.25M14.25 3v2.25M9.75 18.75V21M14.25 18.75V21M3 9.75h2.25M18.75 9.75H21M3 14.25h2.25M18.75 14.25H21"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7.5 6.75h9a.75.75 0 01.75.75v9a.75.75 0 01-.75.75h-9a.75.75 0 01-.75-.75v-9a.75.75 0 01.75-.75zm2.25 3h4.5m-4.5 2.25h4.5m-4.5 2.25h2.25"
-                />
-              </svg>
-            </div>
-            <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
-              Microsoft Agent Framework
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-100 mb-3">
-              Framework-first option for building agentic apps and orchestration with developer
-              control over tools, memory, and execution flow.
-            </p>
-            <a
-              href="https://learn.microsoft.com/en-us/agent-framework/overview"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-sm font-semibold text-violet-700 hover:text-violet-800 dark:text-violet-300 dark:hover:text-violet-200"
-            >
-              Learn more
-              <svg className="ml-1.5 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                />
-              </svg>
-            </a>
-          </div>
         </div>
       </div>
 
