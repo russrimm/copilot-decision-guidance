@@ -136,6 +136,17 @@
           "helperText": "Consider the scope of who needs access",
           "answers": [
             {
+              "id": "audience_anonymous_public",
+              "label": "Anonymous / public-facing users (no login required, no internal data access)",
+              "weights": {
+                "m365Copilot": 1,
+                "copilotStudio": 10,
+                "hybrid": 2,
+                "foundry": 5,
+                "agentBuilder": 9
+              }
+            },
+            {
               "id": "audience_all_employees",
               "label": "All employees / organization-wide knowledge workers",
               "weights": {
@@ -430,6 +441,17 @@
           "title": "Can the agent take destructive or high-risk actions?",
           "helperText": "Consider if the agent will delete data, make purchases, or take actions that require human approval",
           "answers": [
+            {
+              "id": "actions_none",
+              "label": "No—read-only or informational only (anonymous/public-facing agent with no internal knowledge)",
+              "weights": {
+                "m365Copilot": 2,
+                "copilotStudio": 9,
+                "foundry": 5,
+                "agentBuilder": 10,
+                "hybrid": 4
+              }
+            },
             {
               "id": "actions_draft",
               "label": "Draft-only—agent suggests but humans always execute",

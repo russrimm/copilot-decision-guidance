@@ -1363,36 +1363,6 @@ export default function Results() {
             </div>
           </div>
 
-          {/* Strategic Comparison Infographic */}
-          <div className="card bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                  Want the full picture?
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-100">
-                  View a one-page strategic comparison of all Microsoft AI solutions, licensing, and
-                  a phased hybrid adoption strategy.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => window.dispatchEvent(new Event('open-infographic-modal'))}
-                className="btn-secondary flex-shrink-0 ml-4"
-              >
-                View Infographic
-                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-
           {/* How We Scored This */}
           <div className="card">
             <button
