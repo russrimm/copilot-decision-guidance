@@ -97,26 +97,49 @@ function toAbsoluteReleasePlansUrl(path: string): string | undefined {
 }
 
 async function fetchJsonWithTimeout(url: string, timeoutMs: number): Promise<unknown> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {
-      method: 'GET',
-      signal: controller.signal,
-      headers: {
-        // Avoid overly aggressive caching by intermediaries
-        'Cache-Control': 'no-cache',
-      },
-    });
+  const MAX_RETRIES = 3;
+  const RETRY_BASE_DELAY_MS = 1500;
 
-    if (!res.ok) {
-      throw new Error(`Release Planner API request failed: ${res.status} ${res.statusText}`);
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        signal: controller.signal,
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Release Planner API request failed: ${res.status} ${res.statusText}`);
+      }
+
+      return await res.json();
+    } catch (err: unknown) {
+      lastError = err;
+      const isRetryable =
+        err instanceof Error &&
+        (err.name === 'AbortError' ||
+          (err as NodeJS.ErrnoException).code === 'ECONNRESET' ||
+          (err as NodeJS.ErrnoException).code === 'ECONNREFUSED' ||
+          (err as NodeJS.ErrnoException).code === 'ETIMEDOUT');
+
+      if (!isRetryable || attempt === MAX_RETRIES) {
+        throw err;
+      }
+
+      const delay = RETRY_BASE_DELAY_MS * 2 ** (attempt - 1);
+      await new Promise<void>((resolve) => setTimeout(resolve, delay));
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    return await res.json();
-  } finally {
-    clearTimeout(timeoutId);
   }
+
+  throw lastError;
 }
 
 export async function getCopilotStudioReleasePlannerData(options?: {
@@ -198,9 +221,10 @@ export async function getCopilotStudioReleasePlannerData(options?: {
       });
     }
 
-    // Include in "Upcoming GA" if: has a GA date AND either it's in the future OR
-    // status is still Planned (i.e. not yet shipped even if scheduled date passed)
-    if (gaDate && (gaDate.getTime() >= todayUtcMs || (gaStatus === 'Planned' && !gaHasShipped))) {
+    // Include in "Upcoming GA" only if the GA date is strictly in the future.
+    // Past-dated "Planned" items (delayed releases) are excluded — the list must
+    // show only genuinely upcoming dates.
+    if (gaDate && gaDate.getTime() >= todayUtcMs) {
       upcomingGA.push({
         date: formatDateUtc(gaDate),
         featureName: featureName || '(Unnamed feature)',
