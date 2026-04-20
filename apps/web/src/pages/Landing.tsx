@@ -36,12 +36,26 @@ export default function Landing() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
           <div className="card bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center mb-3">
-                <img
-                  src="https://microsoft.github.io/powercat/images/m365-copilot-logo.png"
-                  alt="Microsoft 365 Copilot"
-                  className="w-16 h-16 object-contain"
-                />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 bg-blue-100 dark:bg-blue-800">
+                <svg
+                  className="w-8 h-8 text-blue-600 dark:text-blue-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"
+                  />
+                </svg>
               </div>
               <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
                 Microsoft 365 Copilot
@@ -54,12 +68,20 @@ export default function Landing() {
 
           <div className="card bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center mb-3">
-                <img
-                  src="https://microsoft.github.io/powercat/images/copilot-studio.png"
-                  alt="Copilot Studio"
-                  className="w-16 h-16 object-contain"
-                />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 bg-green-100 dark:bg-green-800">
+                <svg
+                  className="w-8 h-8 text-green-600 dark:text-green-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3v-3z"
+                  />
+                </svg>
               </div>
               <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Copilot Studio</h3>
               <p className="text-sm text-gray-600 dark:text-gray-100">
@@ -70,12 +92,20 @@ export default function Landing() {
 
           <div className="card bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center mb-3">
-                <img
-                  src="https://microsoft.github.io/powercat/images/ai-foundry.png"
-                  alt="Microsoft Foundry"
-                  className="w-16 h-16 object-contain"
-                />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 bg-orange-100 dark:bg-orange-800">
+                <svg
+                  className="w-8 h-8 text-orange-600 dark:text-orange-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                  />
+                </svg>
               </div>
               <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
                 Microsoft Foundry

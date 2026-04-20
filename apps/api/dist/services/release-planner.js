@@ -1,4 +1,5 @@
-const SOURCE_URL = 'https://releaseplans.microsoft.com/en-US/releaseplanner-json/?productId=e72f17ac-715d-e911-a968-000d3a4e32b5&langCode=en-US';
+// productId 1019ec3d-1dc5-e911-a969-000d3a4f36ce is the Microsoft Copilot Studio product
+const SOURCE_URL = 'https://releaseplans.microsoft.com/en-US/releaseplanner-json/?productId=1019ec3d-1dc5-e911-a969-000d3a4f36ce&langCode=en-US';
 const RELEASE_PLANS_BASE_URL = 'https://releaseplans.microsoft.com/en-US/';
 const LEARN_BASE_URL = 'https://learn.microsoft.com';
 let cached;
@@ -88,29 +89,8 @@ export async function getCopilotStudioReleasePlannerData(options) {
     const raw = (await fetchJsonWithTimeout(SOURCE_URL, 20000));
     const results = Array.isArray(raw?.results) ? raw.results : [];
     const todayUtcMs = toStartOfTodayUtc();
-    const isCopilotSignal = (value) => {
-        const normalized = value.toLowerCase();
-        return (normalized.includes('copilot studio') ||
-            normalized.includes('microsoft copilot studio') ||
-            normalized.includes('copilot for power apps') ||
-            normalized.includes('copilot and ai innovation') ||
-            normalized.includes('agent builder') ||
-            normalized.includes('agent feed'));
-    };
-    const matches = results.filter((r) => {
-        if (!r || typeof r !== 'object')
-            return false;
-        const item = r;
-        const productName = getFirstStringField(item, ['Product', 'Product name']);
-        const productArea = getFirstStringField(item, ['ProductArea', 'Product area']);
-        const featureName = getFirstStringField(item, ['FeatureName', 'Feature name']);
-        const featureDetails = getFirstStringField(item, ['FeatureDetails', 'Feature details']);
-        return (isCopilotSignal(productName) ||
-            isCopilotSignal(productArea) ||
-            isCopilotSignal(featureName) ||
-            isCopilotSignal(featureDetails));
-    });
-    const effectiveMatches = matches.length > 0 ? matches : results;
+    // All items from the Copilot Studio product endpoint are relevant — no signal filtering needed.
+    const effectiveMatches = results.filter((r) => r && typeof r === 'object');
     const upcomingPublicPreview = [];
     const upcomingGA = [];
     // 6 months in milliseconds
@@ -131,14 +111,22 @@ export async function getCopilotStudioReleasePlannerData(options) {
         const featureUrl = toAbsoluteLearnUrl(docsUrlRaw) || toAbsoluteReleasePlansUrl(articlePathRaw);
         const ppDate = parseUsDateToUtc(ppDateStr);
         const gaDate = parseUsDateToUtc(gaDateStr);
+        // Use status fields to correctly determine shipment state — the release planner
+        // keeps items as "Planned" even after their scheduled date if they haven't shipped.
+        const gaStatus = getFirstStringField(item, ['GAStatus']);
+        const gaHasShipped = gaStatus === 'Shipped';
         // Include in "Public Preview" section if:
-        // 1. Has a preview date (past within 1 year OR future) AND GA hasn't shipped yet
-        //    (no GA date, or GA date is still in the future)
-        // 2. OR, has no PP date but has a recent GA (within past 6 months)
-        const gaNotYetShipped = !gaDate || gaDate.getTime() >= todayUtcMs;
-        const ppDateWithinWindow = ppDate && ppDate.getTime() >= oneYearAgoMs;
-        const hasRecentGA = gaDate && gaDate.getTime() >= sixMonthsAgoMs && gaDate.getTime() <= todayUtcMs;
-        if ((ppDateWithinWindow && gaNotYetShipped) || hasRecentGA) {
+        // 1. Has a preview date AND GA hasn't shipped yet — this covers all active previews
+        //    regardless of how long they've been in preview (no artificial 1-year cutoff
+        //    when GA has not yet occurred, including features with no GA date at all)
+        // 2. OR, has a recent GA (within past 6 months)
+        const gaNotYetShipped = !gaDate || !gaHasShipped || gaDate.getTime() >= todayUtcMs;
+        const ppHasDate = !!ppDate;
+        const hasRecentGA = gaHasShipped &&
+            gaDate &&
+            gaDate.getTime() >= sixMonthsAgoMs &&
+            gaDate.getTime() <= todayUtcMs;
+        if ((ppHasDate && gaNotYetShipped) || hasRecentGA) {
             upcomingPublicPreview.push({
                 date: formatDateUtc(ppDate || gaDate),
                 featureName: featureName || '(Unnamed feature)',
@@ -147,7 +135,9 @@ export async function getCopilotStudioReleasePlannerData(options) {
                 releasePlanId,
             });
         }
-        if (gaDate && gaDate.getTime() >= todayUtcMs) {
+        // Include in "Upcoming GA" if: has a GA date AND either it's in the future OR
+        // status is still Planned (i.e. not yet shipped even if scheduled date passed)
+        if (gaDate && (gaDate.getTime() >= todayUtcMs || (gaStatus === 'Planned' && !gaHasShipped))) {
             upcomingGA.push({
                 date: formatDateUtc(gaDate),
                 featureName: featureName || '(Unnamed feature)',
