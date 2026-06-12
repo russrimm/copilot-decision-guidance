@@ -244,6 +244,8 @@ function normalizeDepartmentId(input: string): string {
     hsse: 'hsse',
     'health-safety-environment': 'hsse',
     'health-safety-and-environment': 'hsse',
+    'health-safety': 'hsse',
+    'health-and-safety': 'hsse',
     maintenance: 'maintenance',
     production: 'production',
     geosciences: 'geosciences',
@@ -480,26 +482,74 @@ function ensureMinimumRecommendations(
   return result;
 }
 
-function getIndustryFallbackUseCase(
+function getFallbackRecommendations(
   verticalUseCases: NormalizedUseCase[],
   selectedDepartmentIds: Set<string>,
-  selectedDataSourceIds: Set<string>
-): NormalizedUseCase | null {
-  if (verticalUseCases.length === 0) {
-    return null;
+  selectedDataSourceIds: Set<string>,
+  minimumCount = 3
+): NormalizedUseCase[] {
+  const result: NormalizedUseCase[] = [];
+  const seen = new Set<string>();
+  const add = (candidate: NormalizedUseCase) => {
+    if (!seen.has(candidate.useCase.id)) {
+      seen.add(candidate.useCase.id);
+      result.push(candidate);
+    }
+  };
+
+  const rankByMatch = (pool: NormalizedUseCase[]): NormalizedUseCase[] =>
+    [...pool].sort(
+      (a, b) =>
+        scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
+        scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds)
+    );
+
+  const verticalRanked = rankByMatch(verticalUseCases);
+
+  // Tier 1: vertical matches with any department or data-source overlap.
+  for (const candidate of verticalRanked) {
+    if (result.length >= minimumCount) break;
+    const deptOverlap = candidate.normalizedDepartments.some((dept) =>
+      selectedDepartmentIds.has(dept)
+    );
+    const sourceOverlap = candidate.normalizedDataSources.some((source) =>
+      selectedDataSourceIds.has(source)
+    );
+    if (deptOverlap || sourceOverlap) {
+      add(candidate);
+    }
   }
 
-  const ranked = [...verticalUseCases].sort(
-    (a, b) =>
-      scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
-      scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds)
-  );
+  // Tier 2: cross-vertical matches when the resolved vertical has no department coverage.
+  if (result.length < minimumCount && selectedDepartmentIds.size > 0) {
+    const crossVerticalRanked = rankByMatch(NORMALIZED_USE_CASES);
+    for (const candidate of crossVerticalRanked) {
+      if (result.length >= minimumCount) break;
+      const deptOverlap = candidate.normalizedDepartments.some((dept) =>
+        selectedDepartmentIds.has(dept)
+      );
+      if (deptOverlap) {
+        add(candidate);
+      }
+    }
+  }
 
-  return (
-    ranked.find((useCase) =>
-      isStrongUseCaseMatch(useCase, selectedDepartmentIds, selectedDataSourceIds)
-    ) ?? null
-  );
+  // Tier 3: top-ranked use cases from the resolved vertical (no overlap required).
+  for (const candidate of verticalRanked) {
+    if (result.length >= minimumCount) break;
+    add(candidate);
+  }
+
+  // Tier 4: ultimate safety net — top-ranked use cases from the entire catalog.
+  if (result.length < minimumCount) {
+    const crossVerticalRanked = rankByMatch(NORMALIZED_USE_CASES);
+    for (const candidate of crossVerticalRanked) {
+      if (result.length >= minimumCount) break;
+      add(candidate);
+    }
+  }
+
+  return result;
 }
 
 // Get all verticals available
@@ -599,16 +649,13 @@ router.post('/generate', (req: Request, res: Response) => {
 
     let industryFallbackApplied = false;
     if (recommendedUseCases.length === 0) {
-      const fallbackUseCase = getIndustryFallbackUseCase(
+      recommendedUseCases = getFallbackRecommendations(
         verticalUseCases,
         selectedDepartmentIds,
-        selectedDataSourceIds
+        selectedDataSourceIds,
+        3
       );
-
-      if (fallbackUseCase) {
-        recommendedUseCases = [fallbackUseCase];
-        industryFallbackApplied = true;
-      }
+      industryFallbackApplied = recommendedUseCases.length > 0;
     }
 
     res.json({

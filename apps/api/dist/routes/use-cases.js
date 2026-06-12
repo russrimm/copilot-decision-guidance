@@ -229,6 +229,8 @@ function normalizeDepartmentId(input) {
         hsse: 'hsse',
         'health-safety-environment': 'hsse',
         'health-safety-and-environment': 'hsse',
+        'health-safety': 'hsse',
+        'health-and-safety': 'hsse',
         maintenance: 'maintenance',
         production: 'production',
         geosciences: 'geosciences',
@@ -374,13 +376,56 @@ function ensureMinimumRecommendations(selectedUseCases, verticalUseCases, select
     }
     return result;
 }
-function getIndustryFallbackUseCase(verticalUseCases, selectedDepartmentIds, selectedDataSourceIds) {
-    if (verticalUseCases.length === 0) {
-        return null;
-    }
-    const ranked = [...verticalUseCases].sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
+function getFallbackRecommendations(verticalUseCases, selectedDepartmentIds, selectedDataSourceIds, minimumCount = 3) {
+    const result = [];
+    const seen = new Set();
+    const add = (candidate) => {
+        if (!seen.has(candidate.useCase.id)) {
+            seen.add(candidate.useCase.id);
+            result.push(candidate);
+        }
+    };
+    const rankByMatch = (pool) => [...pool].sort((a, b) => scoreUseCaseMatch(b, selectedDepartmentIds, selectedDataSourceIds) -
         scoreUseCaseMatch(a, selectedDepartmentIds, selectedDataSourceIds));
-    return (ranked.find((useCase) => isStrongUseCaseMatch(useCase, selectedDepartmentIds, selectedDataSourceIds)) ?? null);
+    const verticalRanked = rankByMatch(verticalUseCases);
+    // Tier 1: vertical matches with any department or data-source overlap.
+    for (const candidate of verticalRanked) {
+        if (result.length >= minimumCount)
+            break;
+        const deptOverlap = candidate.normalizedDepartments.some((dept) => selectedDepartmentIds.has(dept));
+        const sourceOverlap = candidate.normalizedDataSources.some((source) => selectedDataSourceIds.has(source));
+        if (deptOverlap || sourceOverlap) {
+            add(candidate);
+        }
+    }
+    // Tier 2: cross-vertical matches when the resolved vertical has no department coverage.
+    if (result.length < minimumCount && selectedDepartmentIds.size > 0) {
+        const crossVerticalRanked = rankByMatch(NORMALIZED_USE_CASES);
+        for (const candidate of crossVerticalRanked) {
+            if (result.length >= minimumCount)
+                break;
+            const deptOverlap = candidate.normalizedDepartments.some((dept) => selectedDepartmentIds.has(dept));
+            if (deptOverlap) {
+                add(candidate);
+            }
+        }
+    }
+    // Tier 3: top-ranked use cases from the resolved vertical (no overlap required).
+    for (const candidate of verticalRanked) {
+        if (result.length >= minimumCount)
+            break;
+        add(candidate);
+    }
+    // Tier 4: ultimate safety net — top-ranked use cases from the entire catalog.
+    if (result.length < minimumCount) {
+        const crossVerticalRanked = rankByMatch(NORMALIZED_USE_CASES);
+        for (const candidate of crossVerticalRanked) {
+            if (result.length >= minimumCount)
+                break;
+            add(candidate);
+        }
+    }
+    return result;
 }
 // Get all verticals available
 router.get('/verticals', (req, res) => {
@@ -435,11 +480,8 @@ router.post('/generate', (req, res) => {
         let recommendedUseCases = ensureMinimumRecommendations(mergedUseCases, verticalUseCases, selectedDepartmentIds, selectedDataSourceIds, 3);
         let industryFallbackApplied = false;
         if (recommendedUseCases.length === 0) {
-            const fallbackUseCase = getIndustryFallbackUseCase(verticalUseCases, selectedDepartmentIds, selectedDataSourceIds);
-            if (fallbackUseCase) {
-                recommendedUseCases = [fallbackUseCase];
-                industryFallbackApplied = true;
-            }
+            recommendedUseCases = getFallbackRecommendations(verticalUseCases, selectedDepartmentIds, selectedDataSourceIds, 3);
+            industryFallbackApplied = recommendedUseCases.length > 0;
         }
         res.json({
             useCases: recommendedUseCases.map((entry) => entry.useCase),
