@@ -185,10 +185,11 @@ ENABLE_SECURE_SCORE=true
 
 ### Core Configuration
 
-| Variable   | Required | Default       | Description      |
-| ---------- | -------- | ------------- | ---------------- |
-| `PORT`     | No       | `3001`        | API server port  |
-| `NODE_ENV` | No       | `development` | Environment mode |
+| Variable               | Required | Default       | Description                                                        |
+| ---------------------- | -------- | ------------- | ------------------------------------------------------------------ |
+| `PORT`                 | No       | `3001`        | API server port                                                    |
+| `NODE_ENV`             | No       | `development` | Environment mode                                                   |
+| `CORS_ALLOWED_ORIGINS` | No       | none          | Comma-separated allowlist for cross-origin browser API requests    |
 
 ### AI Features
 
@@ -261,11 +262,12 @@ curl http://localhost:3001/api/health
 ```json
 {
   "status": "ok",
-  "aiEnabled": true,
-  "microsoftLearnIntegration": "active",
-  "dashboardFeaturesEnabled": true
+  "timestamp": "2026-08-02T00:00:00.000Z",
+  "uptime": 42
 }
 ```
+
+Use `GET /api/ready` for readiness probes that should fail until the decision model and scoring services are loaded.
 
 ### Test 2: Check Configuration Status
 

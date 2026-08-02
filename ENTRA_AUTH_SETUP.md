@@ -47,24 +47,23 @@ The application uses `DefaultAzureCredential` from `@azure/identity`, which supp
    AZURE_OPENAI_DEPLOYMENT=your-deployment-name
    ```
 
-### Option 2: Service Principal (CI/CD)
+### Option 2: Workload identity federation (CI/CD)
 
-For automated environments or CI/CD pipelines:
+For automated environments or CI/CD pipelines, use workload identity federation so the pipeline exchanges its platform identity for a short-lived Microsoft Entra token. Do not create or store a client secret unless federation is unavailable.
 
-1. Create a service principal:
+1. Create an app registration or user-assigned managed identity with a federated identity credential for the CI/CD platform.
 
-   ```bash
-   az ad sp create-for-rbac --name "copilot-decision-guidance" --role "Cognitive Services OpenAI User" --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.CognitiveServices/accounts/{openai-resource-name}
-   ```
+2. Assign **Cognitive Services OpenAI User** at the individual Azure OpenAI resource scope.
 
-2. Set environment variables:
+3. Configure the non-secret identifiers required by your CI/CD identity provider:
    ```env
    AZURE_TENANT_ID=your-tenant-id
    AZURE_CLIENT_ID=your-client-id
-   AZURE_CLIENT_SECRET=your-client-secret
    AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
    AZURE_OPENAI_DEPLOYMENT=your-deployment-name
    ```
+
+See [workload identity federation](https://learn.microsoft.com/entra/workload-id/workload-identity-federation) for provider-specific setup.
 
 ## Azure Deployment Setup
 

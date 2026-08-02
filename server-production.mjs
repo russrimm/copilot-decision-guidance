@@ -21,8 +21,73 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.disable('x-powered-by');
+
+const allowedOrigins = new Set(
+  (process.env.CORS_ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+);
+
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.add('http://localhost:3000');
+  allowedOrigins.add('http://localhost:5173');
+}
+
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self' data:; frame-ancestors 'none'; img-src 'self' data: https:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+  );
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+  next();
+});
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error('CORS origin denied'));
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+  })
+);
+app.use(express.json({ limit: '256kb' }));
+
+app.use((error, _req, res, next) => {
+  if (error?.message === 'CORS origin denied') {
+    return res.status(403).json({
+      error: 'Forbidden',
+      message: 'The request origin is not allowed.',
+    });
+  }
+
+  if (error?.type === 'entity.too.large') {
+    return res.status(413).json({
+      error: 'Payload too large',
+      message: 'Request bodies must not exceed 256 KB.',
+    });
+  }
+
+  if (error?.type === 'entity.parse.failed' || error instanceof SyntaxError) {
+    return res.status(400).json({
+      error: 'Invalid JSON payload',
+      message: 'Request body contains malformed JSON.',
+    });
+  }
+
+  return next(error);
+});
 
 // Dynamic import of decision engine (handles TypeScript via package exports)
 let decisionModel, calculateRecommendation, generateRecommendation;
@@ -551,6 +616,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.get('/api/ready', (_req, res) => {
+  const ready = Boolean(decisionModel?.version && calculateRecommendation && generateRecommendation);
+  res.status(ready ? 200 : 503).json({
+    status: ready ? 'ready' : 'not-ready',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Root health check for Azure App Service
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
@@ -652,6 +725,7 @@ app.use('/api/use-cases', (req, res, next) => {
 
 // Readiness Assessment model
 app.get('/api/readiness/model', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
   res.json({
     version: '2.0.0',
     domains: readinessDomains,
@@ -662,6 +736,83 @@ app.get('/api/readiness/model', (req, res) => {
       { id: 'no', label: 'No' },
     ],
   });
+});
+
+app.get('/api/portfolio/model', (_req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
+  res.json({
+    version: '1.0.0',
+    criteria: portfolioCriteria,
+    defaultWeights: portfolioDefaultWeights,
+    defaultUseCases: portfolioDefaultUseCases,
+  });
+});
+
+app.post('/api/portfolio/prioritize', (req, res) => {
+  const useCases = req.body?.useCases ?? portfolioDefaultUseCases;
+  const requestedWeights = req.body?.weights;
+
+  if (!Array.isArray(useCases) || useCases.length === 0 || useCases.length > 100) {
+    return res.status(400).json({
+      error: 'Invalid use cases',
+      message: 'useCases must contain between 1 and 100 items.',
+    });
+  }
+
+  const valid = useCases.every(
+    (item) =>
+      item &&
+      typeof item.id === 'string' &&
+      item.id.length <= 100 &&
+      typeof item.name === 'string' &&
+      item.name.length <= 200 &&
+      typeof item.description === 'string' &&
+      item.description.length <= 2000 &&
+      item.ratings &&
+      portfolioCriteria.every((criterion) =>
+        Number.isFinite(Number(item.ratings[criterion.id]))
+      )
+  );
+
+  if (!valid) {
+    return res.status(400).json({
+      error: 'Invalid use cases',
+      message: 'Each use case must include id, name, description, and numeric ratings.',
+    });
+  }
+
+  if (
+    requestedWeights !== undefined &&
+    (typeof requestedWeights !== 'object' ||
+      requestedWeights === null ||
+      portfolioCriteria.some((criterion) => {
+        const value = requestedWeights[criterion.id];
+        return value !== undefined && (typeof value !== 'number' || !Number.isFinite(value) || value < 0);
+      }))
+  ) {
+    return res.status(400).json({
+      error: 'Invalid weights',
+      message: 'weights must contain finite, non-negative numbers.',
+    });
+  }
+
+  const weights = normalizeWeights(requestedWeights);
+  const prioritized = useCases
+    .map((item) => {
+      const normalized = {
+        ...item,
+        ratings: Object.fromEntries(
+          portfolioCriteria.map((criterion) => [
+            criterion.id,
+            clampRating(Number(item.ratings[criterion.id])),
+          ])
+        ),
+      };
+      return { ...normalized, ...scorePortfolioUseCase(normalized, weights) };
+    })
+    .sort((left, right) => right.score - left.score);
+
+  return res.json({ weights, prioritized, scoredAt: new Date().toISOString() });
 });
 
 // Readiness Assessment scoring
@@ -843,29 +994,6 @@ app.get('/api/implementation-guide/metadata', async (_req, res) => {
   }
 });
 
-app.post('/api/implementation-guide/acknowledge-update', async (_req, res) => {
-  try {
-    if (typeof acknowledgeImplementationGuideUpdate !== 'function') {
-      return res.status(503).json({
-        error: 'Service Unavailable',
-        message: 'Implementation guide monitor service is not loaded on this deployment instance',
-      });
-    }
-
-    const success = await acknowledgeImplementationGuideUpdate();
-    res.json({
-      success,
-      message: success ? 'Update acknowledged' : 'Failed to acknowledge update',
-    });
-  } catch (error) {
-    console.error('Error acknowledging Implementation Guide update:', error);
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: error instanceof Error ? error.message : 'Failed to acknowledge update',
-    });
-  }
-});
-
 app.get('/api/implementation-guide/update-history', async (_req, res) => {
   try {
     if (typeof getImplementationGuideUpdateHistory !== 'function') {
@@ -891,8 +1019,30 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
   try {
     const { message, history } = req.body;
 
-    if (!message) {
-      return res.status(400).json({ error: 'Missing message in request body' });
+    if (typeof message !== 'string' || message.trim().length === 0 || message.length > 4000) {
+      return res.status(400).json({
+        error: 'Invalid message',
+        message: 'message must be a non-empty string no longer than 4,000 characters.',
+      });
+    }
+
+    if (
+      history !== undefined &&
+      (!Array.isArray(history) ||
+        history.length > 10 ||
+        history.some(
+          (entry) =>
+            !entry ||
+            (entry.role !== 'user' && entry.role !== 'assistant') ||
+            typeof entry.content !== 'string' ||
+            entry.content.length > 4000
+        ))
+    ) {
+      return res.status(400).json({
+        error: 'Invalid history',
+        message:
+          'history must contain at most 10 user or assistant messages of up to 4,000 characters each.',
+      });
     }
 
     // Check if AI is enabled
@@ -1002,10 +1152,8 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
       });
 
       if (!response.ok && allowAzureKeyFallback && hasAzureKeyConfig) {
-        const initialErrorBody = await response.text();
         console.warn(
-          `[COPILOT] azure-openai token auth failed (${response.status}), attempting key fallback because ALLOW_AZURE_OPENAI_API_KEY_AUTH=true.`,
-          initialErrorBody
+          `[COPILOT] azure-openai token auth failed (${response.status}), attempting key fallback because ALLOW_AZURE_OPENAI_API_KEY_AUTH=true.`
         );
 
         response = await fetch(apiUrl, {
@@ -1047,8 +1195,7 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
     }
 
     if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(`[COPILOT] ${provider} API error:`, response.status, errorBody);
+      console.error(`[COPILOT] ${provider} API request failed with HTTP ${response.status}`);
       return res.status(response.status === 401 || response.status === 403 ? 502 : 500).json({
         error: 'Failed to get response from AI service',
         message:

@@ -493,7 +493,7 @@ router.post('/generate', (req, res) => {
             industryFallbackApplied,
         });
     }
-    catch (error) {
+    catch (_error) {
         res.status(500).json({ error: 'Failed to generate use cases' });
     }
 });

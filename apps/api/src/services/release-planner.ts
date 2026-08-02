@@ -170,10 +170,6 @@ export async function getCopilotStudioReleasePlannerData(options?: {
   const sixMonthsMs = 6 * 30 * 24 * 60 * 60 * 1000;
   const sixMonthsAgoMs = todayUtcMs - sixMonthsMs;
 
-  // 1 year in milliseconds
-  const oneYearMs = 365 * 24 * 60 * 60 * 1000;
-  const oneYearAgoMs = todayUtcMs - oneYearMs;
-
   for (const item of effectiveMatches) {
     const featureName = getFirstStringField(item, ['FeatureName', 'Feature name']);
     const releasePlanId =
