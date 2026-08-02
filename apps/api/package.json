@@ -9,7 +9,7 @@
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
-    "@azure/identity": "^4.0.0",
+    "@azure/identity": "4.13.1",
     "@azure/storage-blob": "^12.17.0",
     "@copilot-guidance/decision-engine": "*",
     "cors": "^2.8.5",

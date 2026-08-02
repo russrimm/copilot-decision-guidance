@@ -11,7 +11,7 @@
   "dependencies": {
     "@copilot-guidance/decision-engine": "*",
     "@hookform/resolvers": "^3.9.1",
-    "jspdf": "^4.2.0",
+    "jspdf": "4.2.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.574.0",
     "react": "^18.3.1",
@@ -31,9 +31,9 @@
     "eslint": "^9.39.2",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.0",
-    "postcss": "^8.4.49",
+    "postcss": "8.5.23",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.7.2",
-    "vite": "^7.3.1"
+    "vite": "6.4.1"
   }
 }

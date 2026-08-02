@@ -15,6 +15,10 @@
 import * as https from 'https';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface QuestionValidationResult {
   questionId: string;
@@ -73,10 +77,31 @@ class SurveyQuestionValidator {
     }
   }
 
-  private async fetchUrl(url: string): Promise<string> {
+  private async fetchUrl(url: string, redirects = 0): Promise<string> {
     return new Promise((resolve, reject) => {
       https
         .get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
+          if (
+            res.statusCode &&
+            res.statusCode >= 300 &&
+            res.statusCode < 400 &&
+            res.headers.location
+          ) {
+            res.resume();
+            if (redirects >= 5) {
+              reject(new Error(`Too many redirects while fetching ${url}`));
+              return;
+            }
+            resolve(this.fetchUrl(new URL(res.headers.location, url).toString(), redirects + 1));
+            return;
+          }
+
+          if (!res.statusCode || res.statusCode >= 400) {
+            res.resume();
+            reject(new Error(`HTTP ${res.statusCode || 'unknown'} while fetching ${url}`));
+            return;
+          }
+
           let data = '';
           res.on('data', (chunk) => (data += chunk));
           res.on('end', () => resolve(data));
@@ -226,8 +251,12 @@ class SurveyQuestionValidator {
     content: string,
     result: QuestionValidationResult
   ): void {
+    if (question.id !== 'outcome_primary') {
+      return;
+    }
+
     // Check if primary outcomes are still valid
-    const outcomes = ['productivity', 'automation', 'custom agent', 'chatbot', 'workflow'];
+    const outcomes = ['productivity', 'automation', 'custom agent', 'agent', 'workflow'];
 
     for (const outcome of outcomes) {
       if (!content.includes(outcome)) {
@@ -242,7 +271,6 @@ class SurveyQuestionValidator {
     // Check for new use cases
     const newUseCases = [
       'multi-agent orchestration',
-      'ai agents',
       'intelligent automation',
       'decision support',
       'knowledge management',
@@ -290,6 +318,10 @@ class SurveyQuestionValidator {
     content: string,
     result: QuestionValidationResult
   ): void {
+    if (question.id !== 'data_sources') {
+      return;
+    }
+
     // Check if Graph is still the primary data source for M365 Copilot
     if (!content.includes('microsoft graph') && !content.includes('graph api')) {
       result.issues.push(
@@ -430,11 +462,13 @@ class SurveyQuestionValidator {
     content: string,
     result: QuestionValidationResult
   ): void {
-    // Check pricing mentions
-    if (content.includes('$30') && content.includes('per user')) {
-      // M365 Copilot pricing confirmed
-    } else {
-      result.issues.push('M365 Copilot pricing ($30/user/month) not found in documentation');
+    if (question.id !== 'cost_licensing_path') {
+      return;
+    }
+
+    const licensingTerms = ['license', 'copilot credits', 'pay-as-you-go'];
+    if (!licensingTerms.some((term) => content.includes(term))) {
+      result.issues.push('Current licensing and billing terminology was not found in documentation');
       result.status = 'needs-review';
     }
 
