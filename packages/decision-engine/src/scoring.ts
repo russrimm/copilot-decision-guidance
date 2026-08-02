@@ -4,7 +4,59 @@ import type {
   ScoringResult,
   Weights,
   RecommendationType,
+  Question,
 } from './types.js';
+
+type IndexedQuestion = {
+  groupId: string;
+  groupTitle: string;
+  question: Question;
+  answersById: Map<string, Question['answers'][number]>;
+};
+
+const modelIndexCache = new WeakMap<DecisionModel, IndexedQuestion[]>();
+
+function isDeeplyFrozenModel(model: DecisionModel): boolean {
+  return (
+    Object.isFrozen(model) &&
+    Object.isFrozen(model.questionGroups) &&
+    model.questionGroups.every(
+      (group) =>
+        Object.isFrozen(group) &&
+        Object.isFrozen(group.questions) &&
+        group.questions.every(
+          (question) =>
+            Object.isFrozen(question) &&
+            Object.isFrozen(question.answers) &&
+            question.answers.every((answer) => Object.isFrozen(answer))
+        )
+    )
+  );
+}
+
+function getModelIndex(model: DecisionModel): IndexedQuestion[] {
+  const cacheable = isDeeplyFrozenModel(model);
+  if (cacheable) {
+    const cached = modelIndexCache.get(model);
+    if (cached) {
+      return cached;
+    }
+  }
+
+  const index = model.questionGroups.flatMap((group) =>
+    group.questions.map((question) => ({
+      groupId: group.id,
+      groupTitle: group.title,
+      question,
+      answersById: new Map(question.answers.map((answer) => [answer.id, answer])),
+    }))
+  );
+
+  if (cacheable) {
+    modelIndexCache.set(model, index);
+  }
+  return index;
+}
 
 /**
  * Calculate the recommendation based on user answers
@@ -25,44 +77,37 @@ export function calculateRecommendation(
 
   const breakdown: ScoringResult['breakdown'] = [];
 
-  // Iterate through all question groups
-  for (const group of model.questionGroups) {
-    for (const question of group.questions) {
-      const selectedAnswerId = userAnswers[question.id];
+  for (const { question, answersById } of getModelIndex(model)) {
+    const selectedAnswerId = userAnswers[question.id];
 
-      if (!selectedAnswerId) {
-        // Skip unanswered questions
+    if (!selectedAnswerId) {
+      continue;
+    }
+
+    const selectedAnswerIds = Array.isArray(selectedAnswerId)
+      ? selectedAnswerId
+      : [selectedAnswerId];
+
+    for (const answerId of selectedAnswerIds) {
+      const selectedAnswer = answersById.get(answerId);
+
+      if (!selectedAnswer) {
         continue;
       }
 
-      const selectedAnswerIds = Array.isArray(selectedAnswerId)
-        ? selectedAnswerId
-        : [selectedAnswerId];
+      scores.m365Copilot += selectedAnswer.weights.m365Copilot;
+      scores.copilotStudio += selectedAnswer.weights.copilotStudio;
+      scores.foundry += selectedAnswer.weights.foundry || 0;
+      scores.agentBuilder += selectedAnswer.weights.agentBuilder || 0;
+      scores.hybrid += selectedAnswer.weights.hybrid;
 
-      for (const answerId of selectedAnswerIds) {
-        const selectedAnswer = question.answers.find((a) => a.id === answerId);
-
-        if (!selectedAnswer) {
-          // Invalid answer ID
-          continue;
-        }
-
-        // Add weights to scores
-        scores.m365Copilot += selectedAnswer.weights.m365Copilot;
-        scores.copilotStudio += selectedAnswer.weights.copilotStudio;
-        scores.foundry += selectedAnswer.weights.foundry || 0;
-        scores.agentBuilder += selectedAnswer.weights.agentBuilder || 0;
-        scores.hybrid += selectedAnswer.weights.hybrid;
-
-        // Track breakdown for transparency
-        breakdown.push({
-          questionId: question.id,
-          questionTitle: question.title,
-          answerId: selectedAnswer.id,
-          answerLabel: selectedAnswer.label,
-          weights: selectedAnswer.weights,
-        });
-      }
+      breakdown.push({
+        questionId: question.id,
+        questionTitle: question.title,
+        answerId: selectedAnswer.id,
+        answerLabel: selectedAnswer.label,
+        weights: selectedAnswer.weights,
+      });
     }
   }
 
@@ -177,13 +222,11 @@ function calculateConfidence(
  * Get all questions flattened from the model
  */
 export function getAllQuestions(model: DecisionModel) {
-  return model.questionGroups.flatMap((group) =>
-    group.questions.map((question) => ({
-      groupId: group.id,
-      groupTitle: group.title,
-      ...question,
-    }))
-  );
+  return getModelIndex(model).map(({ groupId, groupTitle, question }) => ({
+    groupId,
+    groupTitle,
+    ...question,
+  }));
 }
 
 /**

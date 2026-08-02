@@ -1,3 +1,32 @@
+const modelIndexCache = new WeakMap();
+function isDeeplyFrozenModel(model) {
+    return (Object.isFrozen(model) &&
+        Object.isFrozen(model.questionGroups) &&
+        model.questionGroups.every((group) => Object.isFrozen(group) &&
+            Object.isFrozen(group.questions) &&
+            group.questions.every((question) => Object.isFrozen(question) &&
+                Object.isFrozen(question.answers) &&
+                question.answers.every((answer) => Object.isFrozen(answer)))));
+}
+function getModelIndex(model) {
+    const cacheable = isDeeplyFrozenModel(model);
+    if (cacheable) {
+        const cached = modelIndexCache.get(model);
+        if (cached) {
+            return cached;
+        }
+    }
+    const index = model.questionGroups.flatMap((group) => group.questions.map((question) => ({
+        groupId: group.id,
+        groupTitle: group.title,
+        question,
+        answersById: new Map(question.answers.map((answer) => [answer.id, answer])),
+    })));
+    if (cacheable) {
+        modelIndexCache.set(model, index);
+    }
+    return index;
+}
 /**
  * Calculate the recommendation based on user answers
  * This is a deterministic scoring function - no AI/LLM involvement
@@ -12,38 +41,31 @@ export function calculateRecommendation(model, userAnswers) {
         hybrid: 0,
     };
     const breakdown = [];
-    // Iterate through all question groups
-    for (const group of model.questionGroups) {
-        for (const question of group.questions) {
-            const selectedAnswerId = userAnswers[question.id];
-            if (!selectedAnswerId) {
-                // Skip unanswered questions
+    for (const { question, answersById } of getModelIndex(model)) {
+        const selectedAnswerId = userAnswers[question.id];
+        if (!selectedAnswerId) {
+            continue;
+        }
+        const selectedAnswerIds = Array.isArray(selectedAnswerId)
+            ? selectedAnswerId
+            : [selectedAnswerId];
+        for (const answerId of selectedAnswerIds) {
+            const selectedAnswer = answersById.get(answerId);
+            if (!selectedAnswer) {
                 continue;
             }
-            const selectedAnswerIds = Array.isArray(selectedAnswerId)
-                ? selectedAnswerId
-                : [selectedAnswerId];
-            for (const answerId of selectedAnswerIds) {
-                const selectedAnswer = question.answers.find((a) => a.id === answerId);
-                if (!selectedAnswer) {
-                    // Invalid answer ID
-                    continue;
-                }
-                // Add weights to scores
-                scores.m365Copilot += selectedAnswer.weights.m365Copilot;
-                scores.copilotStudio += selectedAnswer.weights.copilotStudio;
-                scores.foundry += selectedAnswer.weights.foundry || 0;
-                scores.agentBuilder += selectedAnswer.weights.agentBuilder || 0;
-                scores.hybrid += selectedAnswer.weights.hybrid;
-                // Track breakdown for transparency
-                breakdown.push({
-                    questionId: question.id,
-                    questionTitle: question.title,
-                    answerId: selectedAnswer.id,
-                    answerLabel: selectedAnswer.label,
-                    weights: selectedAnswer.weights,
-                });
-            }
+            scores.m365Copilot += selectedAnswer.weights.m365Copilot;
+            scores.copilotStudio += selectedAnswer.weights.copilotStudio;
+            scores.foundry += selectedAnswer.weights.foundry || 0;
+            scores.agentBuilder += selectedAnswer.weights.agentBuilder || 0;
+            scores.hybrid += selectedAnswer.weights.hybrid;
+            breakdown.push({
+                questionId: question.id,
+                questionTitle: question.title,
+                answerId: selectedAnswer.id,
+                answerLabel: selectedAnswer.label,
+                weights: selectedAnswer.weights,
+            });
         }
     }
     // Determine recommendation based on scores and thresholds
@@ -125,11 +147,11 @@ function calculateConfidence(scores, recommendation) {
  * Get all questions flattened from the model
  */
 export function getAllQuestions(model) {
-    return model.questionGroups.flatMap((group) => group.questions.map((question) => ({
-        groupId: group.id,
-        groupTitle: group.title,
+    return getModelIndex(model).map(({ groupId, groupTitle, question }) => ({
+        groupId,
+        groupTitle,
         ...question,
-    })));
+    }));
 }
 /**
  * Validate that all questions have been answered
