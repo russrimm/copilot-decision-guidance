@@ -1,4 +1,12 @@
-import { type MouseEvent as ReactMouseEvent, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 type MindMapNode = {
   id: string;
@@ -1625,6 +1633,8 @@ export default function CopilotStudioMindMap() {
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
+  const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
+  const [announcement, setAnnouncement] = useState('');
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const surfaceRef = useRef<HTMLElement | null>(null);
   const dragStateRef = useRef({
@@ -1713,25 +1723,28 @@ export default function CopilotStudioMindMap() {
     setOffset({ x: 0, y: 0 });
   };
 
-  const applyZoomAtPoint = (nextZoomRaw: number, anchorX: number, anchorY: number) => {
-    const boundedZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, nextZoomRaw));
+  const applyZoomAtPoint = useCallback(
+    (nextZoomRaw: number, anchorX: number, anchorY: number) => {
+      const boundedZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, nextZoomRaw));
 
-    if (boundedZoom === zoom) {
-      return;
-    }
+      if (boundedZoom === zoom) {
+        return;
+      }
 
-    const worldX = (anchorX - offset.x) / zoom;
-    const worldY = (anchorY - offset.y) / zoom;
+      const worldX = (anchorX - offset.x) / zoom;
+      const worldY = (anchorY - offset.y) / zoom;
 
-    const nextOffsetX = Math.min(0, anchorX - worldX * boundedZoom);
-    const nextOffsetY = Math.min(0, anchorY - worldY * boundedZoom);
+      const nextOffsetX = Math.min(0, anchorX - worldX * boundedZoom);
+      const nextOffsetY = Math.min(0, anchorY - worldY * boundedZoom);
 
-    setZoom(Number(boundedZoom.toFixed(2)));
-    setOffset({
-      x: Number(nextOffsetX.toFixed(2)),
-      y: Number(nextOffsetY.toFixed(2)),
-    });
-  };
+      setZoom(Number(boundedZoom.toFixed(2)));
+      setOffset({
+        x: Number(nextOffsetX.toFixed(2)),
+        y: Number(nextOffsetY.toFixed(2)),
+      });
+    },
+    [offset.x, offset.y, zoom]
+  );
 
   const zoomIn = () => {
     const anchorX = viewportWidth > 0 ? viewportWidth / 2 : frameWidth / 2;
@@ -1971,8 +1984,10 @@ export default function CopilotStudioMindMap() {
       if (next.has(node.id)) {
         next.delete(node.id);
         collectDescendantIds(node).forEach((descendantId) => next.delete(descendantId));
+        setAnnouncement(`${node.label} collapsed`);
       } else {
         next.add(node.id);
+        setAnnouncement(`${node.label} expanded`);
       }
 
       return next;
@@ -2012,7 +2027,7 @@ export default function CopilotStudioMindMap() {
             </button>
           </div>
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-2" role="tablist" aria-label="Mind maps">
           {mindMapOptions.map((map) => {
             const isSelected = map.id === selectedMapId;
             return (
@@ -2020,6 +2035,8 @@ export default function CopilotStudioMindMap() {
                 key={map.id}
                 type="button"
                 onClick={() => setSelectedMapId(map.id)}
+                role="tab"
+                aria-selected={isSelected}
                 className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
                   isSelected
                     ? 'bg-primary-600 text-white'
@@ -2032,11 +2049,14 @@ export default function CopilotStudioMindMap() {
           })}
         </div>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-200">
-          Click a box with an arrow to expand into the next level of sub-topics.
+          Click a box with an arrow, or focus it and press Enter, to expand the next level.
         </p>
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-300">
           Tip: use mouse wheel to zoom at cursor, click-drag to pan, or pinch on touch devices.
         </p>
+        <span className="sr-only" role="status" aria-live="polite">
+          {announcement}
+        </span>
       </div>
 
       <div ref={viewportRef} className="pb-2">
@@ -2051,7 +2071,8 @@ export default function CopilotStudioMindMap() {
             width={canvasWidth}
             height={canvasHeight}
             className="block"
-            aria-label="Copilot Studio drill-down map"
+            role="tree"
+            aria-label={`${selectedMap.label} drill-down map`}
           >
             <defs>
               <filter id="helpGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -2127,11 +2148,43 @@ export default function CopilotStudioMindMap() {
                   window.open(targetUrl, '_blank', 'noopener,noreferrer');
                 };
 
+                const onHelpKeyDown = (event: ReactKeyboardEvent<SVGGElement>) => {
+                  if (event.key !== 'Enter' && event.key !== ' ') {
+                    return;
+                  }
+                  event.preventDefault();
+                  event.stopPropagation();
+                  if (entry.node.learnUrl) {
+                    window.open(entry.node.learnUrl, '_blank', 'noopener,noreferrer');
+                  }
+                };
+
+                const onNodeKeyDown = (event: ReactKeyboardEvent<SVGGElement>) => {
+                  if (event.key !== 'Enter' && event.key !== ' ') {
+                    return;
+                  }
+                  event.preventDefault();
+                  if (expandable) {
+                    toggleNode(entry.node);
+                  } else if (entry.node.learnUrl) {
+                    window.open(entry.node.learnUrl, '_blank', 'noopener,noreferrer');
+                  }
+                };
+
                 return (
                   <g
                     key={entry.id}
                     transform={`translate(${x}, ${y})`}
                     onClick={onNodeClick}
+                    onKeyDown={onNodeKeyDown}
+                    onFocus={() => setFocusedNodeId(entry.id)}
+                    onBlur={() => setFocusedNodeId(null)}
+                    tabIndex={0}
+                    role="treeitem"
+                    aria-expanded={expandable ? isExpanded : undefined}
+                    aria-label={`${entry.node.label}${
+                      expandable ? `, ${isExpanded ? 'expanded' : 'collapsed'}` : ''
+                    }${entry.node.learnUrl ? ', Microsoft Learn link available' : ''}`}
                     className={expandable ? 'cursor-pointer' : ''}
                   >
                     {entry.node.learnUrl && (
@@ -2144,12 +2197,21 @@ export default function CopilotStudioMindMap() {
                       height={NODE_HEIGHT}
                       rx={12}
                       fill={rectFill}
-                      stroke={rectStroke}
-                      strokeWidth={1.4}
+                      stroke={
+                        focusedNodeId === entry.id ? 'rgb(253 224 71)' : rectStroke
+                      }
+                      strokeWidth={focusedNodeId === entry.id ? 3 : 1.4}
                     />
 
                     {!isRoot && entry.node.learnUrl && (
-                      <g onClick={onHelpClick} className="cursor-pointer">
+                      <g
+                        onClick={onHelpClick}
+                        onKeyDown={onHelpKeyDown}
+                        tabIndex={0}
+                        role="link"
+                        aria-label={`Open Microsoft Learn documentation for ${entry.node.label}`}
+                        className="cursor-pointer"
+                      >
                         <circle
                           cx={-11}
                           cy={NODE_HEIGHT / 2}
@@ -2193,7 +2255,14 @@ export default function CopilotStudioMindMap() {
                     </text>
 
                     {isRoot && entry.node.learnUrl && (
-                      <g onClick={onHelpClick} className="cursor-pointer">
+                      <g
+                        onClick={onHelpClick}
+                        onKeyDown={onHelpKeyDown}
+                        tabIndex={0}
+                        role="link"
+                        aria-label={`Open Microsoft Learn documentation for ${entry.node.label}`}
+                        className="cursor-pointer"
+                      >
                         <circle
                           cx={-11}
                           cy={NODE_HEIGHT / 2}

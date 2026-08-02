@@ -25,7 +25,6 @@ export function ImplementationGuideUpdateBanner() {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [acknowledging, setAcknowledging] = useState(false);
 
   useEffect(() => {
     checkForUpdates();
@@ -40,7 +39,11 @@ export function ImplementationGuideUpdateBanner() {
     try {
       const response = await fetch('/api/implementation-guide/update-check');
       if (response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as UpdateInfo;
+        const updateId = data.sha || data.version || data.detectedAt;
+        if (updateId && localStorage.getItem('implementation-guide-reviewed') === updateId) {
+          setDismissed(true);
+        }
         setUpdateInfo(data);
       }
     } catch {
@@ -49,21 +52,12 @@ export function ImplementationGuideUpdateBanner() {
     }
   };
 
-  const handleAcknowledge = async () => {
-    setAcknowledging(true);
-    try {
-      const response = await fetch('/api/implementation-guide/acknowledge-update', {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        setUpdateInfo({ updateAvailable: false });
-        setDismissed(true);
-      }
-    } catch {
-    } finally {
-      setAcknowledging(false);
+  const handleAcknowledge = () => {
+    const updateId = updateInfo?.sha || updateInfo?.version || updateInfo?.detectedAt;
+    if (updateId) {
+      localStorage.setItem('implementation-guide-reviewed', updateId);
     }
+    setDismissed(true);
   };
 
   const handleDismiss = () => {
@@ -162,11 +156,10 @@ export function ImplementationGuideUpdateBanner() {
 
               <button
                 onClick={handleAcknowledge}
-                disabled={acknowledging}
-                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 rounded hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors disabled:opacity-50"
+                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 rounded hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
               >
                 <CheckCircle className="mr-1 h-3 w-3" />
-                {acknowledging ? 'Acknowledging...' : 'Mark as Reviewed'}
+                Mark as Reviewed
               </button>
             </div>
           </div>

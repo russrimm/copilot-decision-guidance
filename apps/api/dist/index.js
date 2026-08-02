@@ -25,7 +25,7 @@ import useCasesRouter from './routes/use-cases.js';
 import { generateExecutiveOverviewPPTX } from './services/executive-overview-pptx.js';
 import { getCopilotStudioReleasePlannerData } from './services/release-planner.js';
 import { getFoundryNews } from './services/foundry-news.js';
-import { checkImplementationGuideUpdate, getImplementationGuideMetadata, acknowledgeImplementationGuideUpdate, getImplementationGuideUpdateHistory, } from './services/implementation-guide-monitor.js';
+import { checkImplementationGuideUpdate, getImplementationGuideMetadata, getImplementationGuideUpdateHistory, } from './services/implementation-guide-monitor.js';
 console.log('[2/10] Core imports loaded successfully');
 let decisionModel;
 let calculateRecommendation;
@@ -81,6 +81,7 @@ else {
 console.log('[5/10] ✅ Environment loaded. PORT =', process.env.PORT || '3001 (default)');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const licensingDataPromise = readFile(path.join(__dirname, '../../../packages/decision-engine/dist/data/licensing-data.json'), 'utf-8').then((content) => JSON.parse(content));
 const getOpenAIChatCompletionsUrl = () => {
     const rawEndpoint = (process.env.OPENAI_ENDPOINT || '').trim();
     if (!rawEndpoint) {
@@ -99,6 +100,15 @@ console.log('[6/10] Creating Express app...');
 const app = express();
 const PORT = process.env.PORT || 3001;
 console.log('[6/10] ✅ Express app created. Will listen on port:', PORT);
+const isChatHistory = (value) => Array.isArray(value) &&
+    value.length <= 10 &&
+    value.every((entry) => typeof entry === 'object' &&
+        entry !== null &&
+        'role' in entry &&
+        (entry.role === 'user' || entry.role === 'assistant') &&
+        'content' in entry &&
+        typeof entry.content === 'string' &&
+        entry.content.length <= 4000);
 const readinessDomains = [
     {
         id: 'identity',
@@ -594,9 +604,50 @@ catch (error) {
 }
 console.log('[8/10] Configuring middleware...');
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.disable('x-powered-by');
+const allowedOrigins = new Set((process.env.CORS_ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean));
+if (process.env.NODE_ENV !== 'production') {
+    allowedOrigins.add('http://localhost:3000');
+    allowedOrigins.add('http://localhost:5173');
+}
+app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    res.setHeader('Content-Security-Policy', "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self' data:; frame-ancestors 'none'; img-src 'self' data: https:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'");
+    if (process.env.NODE_ENV === 'production') {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+    next();
+});
+app.use(cors({
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.has(origin)) {
+            callback(null, true);
+            return;
+        }
+        callback(new Error('CORS origin denied'));
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+}));
+app.use(express.json({ limit: '256kb' }));
 app.use((error, _req, res, next) => {
+    if (error?.message === 'CORS origin denied') {
+        return res.status(403).json({
+            error: 'Forbidden',
+            message: 'The request origin is not allowed.',
+        });
+    }
+    if (error?.type === 'entity.too.large') {
+        return res.status(413).json({
+            error: 'Payload too large',
+            message: 'Request bodies must not exceed 256 KB.',
+        });
+    }
     if (error?.type === 'entity.parse.failed' || error instanceof SyntaxError) {
         return res.status(400).json({
             error: 'Invalid JSON payload',
@@ -618,6 +669,7 @@ app.get('/api/health', (_req, res) => {
     res.json({
         status: 'ok',
         timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
         features: {
             aiEnabled: !!(process.env.AZURE_OPENAI_ENDPOINT ||
                 process.env.OPENAI_API_KEY ||
@@ -630,8 +682,16 @@ app.get('/api/health', (_req, res) => {
         authMethod: process.env.AZURE_OPENAI_ENDPOINT ? 'entra' : 'none',
     });
 });
+app.get('/api/ready', (_req, res) => {
+    const ready = Boolean(decisionModel?.version && calculateRecommendation && generateRecommendation);
+    res.status(ready ? 200 : 503).json({
+        status: ready ? 'ready' : 'not-ready',
+        timestamp: new Date().toISOString(),
+    });
+});
 // Readiness Assessment model
 app.get('/api/readiness/model', (_req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
     res.json({
         version: '2.0.0',
         domains: readinessDomains,
@@ -642,6 +702,66 @@ app.get('/api/readiness/model', (_req, res) => {
             { id: 'no', label: 'No' },
         ],
     });
+});
+app.get('/api/portfolio/model', (_req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
+    res.json({
+        version: '1.0.0',
+        criteria: portfolioCriteria,
+        defaultWeights: portfolioDefaultWeights,
+        defaultUseCases: portfolioDefaultUseCases,
+    });
+});
+app.post('/api/portfolio/prioritize', (req, res) => {
+    const useCases = req.body?.useCases ?? portfolioDefaultUseCases;
+    const requestedWeights = req.body?.weights;
+    if (!Array.isArray(useCases) || useCases.length === 0 || useCases.length > 100) {
+        return res.status(400).json({
+            error: 'Invalid use cases',
+            message: 'useCases must contain between 1 and 100 items.',
+        });
+    }
+    const valid = useCases.every((item) => item &&
+        typeof item.id === 'string' &&
+        item.id.length <= 100 &&
+        typeof item.name === 'string' &&
+        item.name.length <= 200 &&
+        typeof item.description === 'string' &&
+        item.description.length <= 2000 &&
+        item.ratings &&
+        portfolioCriteria.every((criterion) => Number.isFinite(Number(item.ratings[criterion.id]))));
+    if (!valid) {
+        return res.status(400).json({
+            error: 'Invalid use cases',
+            message: 'Each use case must include id, name, description, and numeric ratings.',
+        });
+    }
+    if (requestedWeights !== undefined &&
+        (typeof requestedWeights !== 'object' ||
+            requestedWeights === null ||
+            portfolioCriteria.some((criterion) => {
+                const value = requestedWeights[criterion.id];
+                return value !== undefined && (typeof value !== 'number' || !Number.isFinite(value) || value < 0);
+            }))) {
+        return res.status(400).json({
+            error: 'Invalid weights',
+            message: 'weights must contain finite, non-negative numbers.',
+        });
+    }
+    const weights = normalizeWeights(requestedWeights);
+    const prioritized = useCases
+        .map((item) => {
+        const normalized = {
+            ...item,
+            ratings: Object.fromEntries(portfolioCriteria.map((criterion) => [
+                criterion.id,
+                clampRating(Number(item.ratings[criterion.id])),
+            ])),
+        };
+        return { ...normalized, ...scorePortfolioUseCase(normalized, weights) };
+    })
+        .sort((left, right) => right.score - left.score);
+    return res.json({ weights, prioritized, scoredAt: new Date().toISOString() });
 });
 // Readiness Assessment scoring
 app.post('/api/readiness/assess', (req, res) => {
@@ -933,22 +1053,6 @@ app.get('/api/implementation-guide/metadata', async (_req, res) => {
         });
     }
 });
-app.post('/api/implementation-guide/acknowledge-update', async (_req, res) => {
-    try {
-        const success = await acknowledgeImplementationGuideUpdate();
-        res.json({
-            success,
-            message: success ? 'Update acknowledged' : 'Failed to acknowledge update',
-        });
-    }
-    catch (error) {
-        console.error('Error acknowledging Implementation Guide update:', error);
-        res.status(500).json({
-            error: 'Internal Server Error',
-            message: error instanceof Error ? error.message : 'Failed to acknowledge update',
-        });
-    }
-});
 app.get('/api/implementation-guide/update-history', async (_req, res) => {
     try {
         const history = await getImplementationGuideUpdateHistory();
@@ -966,8 +1070,18 @@ app.get('/api/implementation-guide/update-history', async (_req, res) => {
 app.post('/api/copilot-agent/chat', async (req, res) => {
     try {
         const { message, history } = req.body;
-        if (!message) {
-            return res.status(400).json({ error: 'Missing message in request body' });
+        if (typeof message !== 'string' || message.trim().length === 0 || message.length > 4000) {
+            return res.status(400).json({
+                error: 'Invalid message',
+                message: 'message must be a non-empty string no longer than 4,000 characters.',
+            });
+        }
+        if (history !== undefined &&
+            !isChatHistory(history)) {
+            return res.status(400).json({
+                error: 'Invalid history',
+                message: 'history must contain at most 10 user or assistant messages of up to 4,000 characters each.',
+            });
         }
         // Check if AI is enabled
         const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
@@ -979,12 +1093,9 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
                 message: 'Set AZURE_OPENAI_ENDPOINT or OPENAI_API_KEY to enable the Copilot Agent',
             });
         }
-        // Load licensing data for context
-        const licensingDataPath = path.join(__dirname, '../../../packages/decision-engine/src/data/licensing-data.json');
-        const licensingData = await readFile(licensingDataPath, 'utf-8');
-        const licensing = JSON.parse(licensingData);
+        const licensing = await licensingDataPromise;
         // Build conversation history
-        const conversationHistory = (history || []).slice(-5).map((msg) => ({
+        const conversationHistory = (isChatHistory(history) ? history : []).slice(-5).map((msg) => ({
             role: msg.role,
             content: msg.content,
         }));
@@ -1069,8 +1180,7 @@ app.post('/api/copilot-agent/chat', async (req, res) => {
                 }),
             });
             if (!response.ok) {
-                const errorBody = await response.text();
-                throw new Error(`Azure OpenAI API error: ${response.status} - ${errorBody}`);
+                throw new Error(`Azure OpenAI API request failed with HTTP ${response.status}`);
             }
             const data = (await response.json());
             responseText =
@@ -1261,7 +1371,6 @@ async function generateAIExplanation(recommendation, userContext) {
     const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
     const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT;
     const openaiKey = process.env.OPENAI_API_KEY || process.env.GITHUB_TOKEN;
-    const openaiEndpointOverride = process.env.OPENAI_ENDPOINT;
     const aiConfigured = !!(azureEndpoint || openaiKey);
     console.log(`[AI Explanation] AI configured: ${aiConfigured} (Azure: ${!!azureEndpoint}, OpenAI/GitHub: ${!!openaiKey})`);
     // Helper function to generate detailed introduction based on context
@@ -1325,7 +1434,6 @@ async function generateAIExplanation(recommendation, userContext) {
         };
     }
     try {
-        const answers = userContext?.answers || {};
         console.log('[AI Explanation] Microsoft Learn lookups are handled by MCP tools in the agent layer');
         const prompt = `You are a Microsoft AI solutions advisor helping enterprise customers evaluate Microsoft 365 Copilot and Copilot Studio for specific scenarios. Your guidance must be technically accurate, compliance-aware, and based solely on verified Microsoft documentation and the Microsoft AI Decision Framework.
 
@@ -1878,4 +1986,26 @@ server.on('listening', () => {
     const addr = server.address();
     console.log('Server address:', addr);
 });
+let isShuttingDown = false;
+const shutdown = (signal) => {
+    if (isShuttingDown) {
+        return;
+    }
+    isShuttingDown = true;
+    console.log(`[SHUTDOWN] ${signal} received; closing HTTP server`);
+    server.close((error) => {
+        if (error) {
+            console.error('[SHUTDOWN] Failed to close HTTP server:', error);
+            process.exit(1);
+        }
+        console.log('[SHUTDOWN] HTTP server closed');
+        process.exit(0);
+    });
+    setTimeout(() => {
+        console.error('[SHUTDOWN] Timed out waiting for connections to close');
+        process.exit(1);
+    }, 10000).unref();
+};
+process.once('SIGTERM', () => shutdown('SIGTERM'));
+process.once('SIGINT', () => shutdown('SIGINT'));
 export default app;

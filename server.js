@@ -53,9 +53,28 @@ app.get('*', (req, res) => {
   res.sendFile(join(staticPath, 'index.html'));
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n🚀 Server running on port ${PORT}`);
   console.log(`   http://localhost:${PORT}\n`);
 });
+
+let isShuttingDown = false;
+const shutdown = (signal) => {
+  if (isShuttingDown) {
+    return;
+  }
+  isShuttingDown = true;
+  console.log(`[SHUTDOWN] ${signal} received; stopping web and API servers`);
+
+  apiProcess.kill('SIGTERM');
+  server.close((error) => {
+    process.exit(error ? 1 : 0);
+  });
+
+  setTimeout(() => process.exit(1), 10000).unref();
+};
+
+process.once('SIGTERM', () => shutdown('SIGTERM'));
+process.once('SIGINT', () => shutdown('SIGINT'));
 
 export default app;

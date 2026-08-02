@@ -385,7 +385,7 @@ curl http://localhost:3001/api/metrics
 
 **Issue:** "Cannot find module" error on Azure deployment
 
-- **Solution**: See [Azure Deployment Troubleshooting](../AZURE_DEPLOYMENT_TROUBLESHOOTING.md)
+- **Solution**: See [Azure App Service deployment](./AZURE_APP_SERVICE_DEPLOYMENT.md)
 
 **Full troubleshooting:** [Configuration Guide - Troubleshooting](./docs/CONFIGURATION_GUIDE.md#troubleshooting)
 
@@ -432,7 +432,7 @@ curl http://localhost:3001/api/metrics
 ## Getting Help
 
 - **Configuration issues**: [Configuration Guide](./docs/CONFIGURATION_GUIDE.md#troubleshooting)
-- **Deployment problems**: [Azure Deployment Troubleshooting](../AZURE_DEPLOYMENT_TROUBLESHOOTING.md)
+- **Deployment problems**: [Azure App Service deployment](./AZURE_APP_SERVICE_DEPLOYMENT.md)
 - **Microsoft Learn content**: [Microsoft Documentation](https://learn.microsoft.com/en-us/microsoft-365-copilot/)
 - **AI Decision Framework**: [Official Framework](https://microsoft.github.io/Microsoft-AI-Decision-Framework/)
 

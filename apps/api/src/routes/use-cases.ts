@@ -667,7 +667,7 @@ router.post('/generate', (req: Request, res: Response) => {
       guaranteedDepartmentCoverage: guaranteedDepartmentMatches.map((entry) => entry.useCase.id),
       industryFallbackApplied,
     });
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({ error: 'Failed to generate use cases' });
   }
 });
