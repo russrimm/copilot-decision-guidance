@@ -17,6 +17,15 @@ build/
 # Misc
 .DS_Store
 *.pem
+/validation-report.md
+/validation-results.json
+/mindmap-validation-report.md
+/mindmap-validation-results.json
+/licensing-validation-report.md
+/licensing-validation-results.json
+/survey-validation-report.md
+/survey-validation-results.json
+/tmp-executive-overview.pptx
 
 # Debug
 npm-debug.log*

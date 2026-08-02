@@ -159,7 +159,7 @@ For an interactive web view of this diagram, open `/scoring-weights-diagram.html
 
 ### Backend
 
-- **Node.js 24+** + **TypeScript** + **Express**
+- **Node.js 20+** + **TypeScript** + **Express**
 - RESTful API endpoints
 - AI/LLM abstraction layer (Azure OpenAI or OpenAI-compatible)
 
@@ -233,8 +233,6 @@ NODE_ENV=development
 1. **Demo Mode** (No configuration): Tool works with sample data, shows questionnaire and deterministic recommendations
 2. **AI Mode** (OpenAI keys only): Adds AI-enhanced explanations and personalized recommendations
 3. **Enterprise Mode** (Azure credentials + OpenAI): Full dashboard with tenant metrics + AI recommendations
-
-**Note:** The `.env` and `.env.local` files are the **ONLY files you may edit manually**. All other work must be done via this agent.
 
 ### 3. Run in Development Mode
 
@@ -357,18 +355,21 @@ When API keys are configured:
 
 #### `GET /api/health`
 
-Health check endpoint with feature status
+Liveness check with timestamp, uptime, and feature status.
 
 **Returns:**
 
 ```json
 {
   "status": "ok",
-  "aiEnabled": true,
-  "microsoftLearnIntegration": "active",
-  "dashboardFeaturesEnabled": true
+  "timestamp": "2026-08-02T00:00:00.000Z",
+  "uptime": 42
 }
 ```
+
+#### `GET /api/ready`
+
+Readiness check for deployment probes. Returns `200` when the decision model and scoring services are loaded, otherwise `503`.
 
 #### `GET /api/model`
 
@@ -387,6 +388,14 @@ Returns the decision model (questions and weights)
 #### `GET /api/sources`
 
 Returns curated Microsoft Learn source URLs
+
+#### `GET /api/portfolio/model`
+
+Returns prioritization criteria, default weights, and starter use cases.
+
+#### `POST /api/portfolio/prioritize`
+
+Scores up to 100 use cases against configurable value, feasibility, time-to-value, risk, and data-sensitivity weights.
 
 ---
 
@@ -594,7 +603,7 @@ Features:
 
 #### Azure App Service Deployment
 
-**⚠️ IMPORTANT: If you get "Cannot find module" errors, see [AZURE_DEPLOYMENT_TROUBLESHOOTING.md](./AZURE_DEPLOYMENT_TROUBLESHOOTING.md)**
+For build, startup, health-check, and rollback guidance, see the [Azure App Service deployment guide](./docs/AZURE_APP_SERVICE_DEPLOYMENT.md).
 
 **Prerequisites:**
 
@@ -623,7 +632,7 @@ Features:
    - In Azure Portal → Your App Service → Configuration
    - **General Settings** → **Startup Command:**
      ```
-     node server-production.js
+     node server-production.mjs
      ```
    - **Application Settings** → Add:
      ```
@@ -647,7 +656,6 @@ Features:
    - In Azure Portal → Configuration → Application settings
    - Add:
      ```
-     AZURE_OPENAI_API_KEY=your-key
      AZURE_OPENAI_ENDPOINT=your-endpoint
      AZURE_OPENAI_DEPLOYMENT=your-deployment
      OPENAI_API_KEY=your-openai-or-github-key
@@ -665,15 +673,15 @@ Features:
 **Troubleshooting:**
 If deployment fails with "Cannot find module" error:
 
-1. See [AZURE_DEPLOYMENT_TROUBLESHOOTING.md](./AZURE_DEPLOYMENT_TROUBLESHOOTING.md) for detailed steps
-2. Verify Startup Command is set to: `node --import tsx server-production.js`
+1. See the [Azure App Service deployment guide](./docs/AZURE_APP_SERVICE_DEPLOYMENT.md) for detailed steps
+2. Verify Startup Command is set to: `node server-production.mjs`
 3. Check Deployment Center logs in Azure Portal
 4. Clear Azure cache and redeploy if needed
 
 **Files for Azure Deployment:**
 
-- `server-production.js` - Production server with integrated API
-- `package.json` - With "main": "server-production.js"
+- `server-production.mjs` - Production server with integrated API
+- `package.json` - Workspace build and runtime dependencies
 - `.deployment` - Azure deployment config with custom build script
 - `.azure/deploy.sh` - Custom deployment script
 - `web.config` - IIS configuration (for Windows App Service)
@@ -689,8 +697,8 @@ If deployment fails with "Cannot find module" error:
 1. **Never commit API keys** - Use environment variables
 2. **Validate all inputs** - Zod schemas enforce type safety
 3. **Secrets management** - Use Azure Key Vault, AWS Secrets Manager, etc. in production
-4. **Authentication** - Add auth middleware for admin routes in production
-5. **CORS** - Configure CORS properly for production domains
+4. **Authentication** - Use Azure App Service authentication or an API gateway for restricted deployments
+5. **CORS** - Set `CORS_ALLOWED_ORIGINS` to a comma-separated allowlist when browsers call the API cross-origin
 
 ## Automated Documentation Updates
 
