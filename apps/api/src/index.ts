@@ -783,8 +783,8 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
 app.use(
   cors({
     origin(origin, callback) {
-      // Outside of local development, allow any origin so the dev server can be reached
-      // via localhost, 127.0.0.1, a LAN IP, or a forwarded/tunneled URL (e.g. Codespaces,
+      // In local development, allow any origin so the dev server can be reached via
+      // localhost, 127.0.0.1, a LAN IP, or a forwarded/tunneled URL (e.g. Codespaces,
       // devtunnels) without every API request being rejected with 403. Staging/test/other
       // non-production environments still enforce the explicit allowlist.
       if (!origin || isDevelopment || allowedOrigins.has(origin)) {
