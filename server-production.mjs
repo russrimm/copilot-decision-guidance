@@ -23,6 +23,8 @@ const PORT = process.env.PORT || 8080;
 // Middleware
 app.disable('x-powered-by');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const allowedOrigins = new Set(
   (process.env.CORS_ALLOWED_ORIGINS || '')
     .split(',')
@@ -30,7 +32,7 @@ const allowedOrigins = new Set(
     .filter(Boolean)
 );
 
-if (process.env.NODE_ENV !== 'production') {
+if (!isProduction) {
   allowedOrigins.add('http://localhost:3000');
   allowedOrigins.add('http://localhost:5173');
 }
@@ -44,7 +46,7 @@ app.use((_req, res, next) => {
     'Content-Security-Policy',
     "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self' data:; frame-ancestors 'none'; img-src 'self' data: https:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'"
   );
-  if (process.env.NODE_ENV === 'production') {
+  if (isProduction) {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   }
   next();
@@ -53,7 +55,10 @@ app.use((_req, res, next) => {
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.has(origin)) {
+      // Outside of production, allow any origin so the dev server can be reached
+      // via localhost, 127.0.0.1, a LAN IP, or a forwarded/tunneled URL (e.g. Codespaces,
+      // devtunnels) without every API request being rejected with 403.
+      if (!origin || !isProduction || allowedOrigins.has(origin)) {
         callback(null, true);
         return;
       }
