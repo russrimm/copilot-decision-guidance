@@ -749,6 +749,9 @@ console.log('[8/10] Configuring middleware...');
 app.disable('x-powered-by');
 
 const isProduction = process.env.NODE_ENV === 'production';
+// Only relax CORS for local development, not for staging/test/other non-production
+// environments where NODE_ENV is explicitly set to something other than 'development'.
+const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 const allowedOrigins = new Set(
   (process.env.CORS_ALLOWED_ORIGINS || '')
@@ -780,10 +783,11 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
 app.use(
   cors({
     origin(origin, callback) {
-      // Outside of production, allow any origin so the dev server can be reached
+      // Outside of local development, allow any origin so the dev server can be reached
       // via localhost, 127.0.0.1, a LAN IP, or a forwarded/tunneled URL (e.g. Codespaces,
-      // devtunnels) without every API request being rejected with 403.
-      if (!origin || !isProduction || allowedOrigins.has(origin)) {
+      // devtunnels) without every API request being rejected with 403. Staging/test/other
+      // non-production environments still enforce the explicit allowlist.
+      if (!origin || isDevelopment || allowedOrigins.has(origin)) {
         callback(null, true);
         return;
       }
