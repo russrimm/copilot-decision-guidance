@@ -46,37 +46,63 @@ const ZOOM_STEP = 0.1;
 
 const copilotStudioTree: MindMapNode = {
   id: 'copilot-studio',
-  label: 'Copilot Studio',
+  label: 'Microsoft Copilot Studio',
   learnUrl:
-    'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
+    'https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
   children: [
     {
-      id: 'build-publish',
-      label: 'Build & Publish',
-      learnUrl:
-        'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-create-first-agent',
+      id: 'agent-design-authoring',
+      label: 'Agent Design & Authoring',
+      learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-overview',
       children: [
+        {
+          id: 'choose-harness',
+          label: 'Choose a Harness',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/harnesses-overview',
+          children: [
+            {
+              id: 'harness-github-copilot',
+              label: 'GitHub Copilot Harness',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/overview',
+            },
+            {
+              id: 'harness-standard',
+              label: 'Standard Harness',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/switch-experiences',
+            },
+            {
+              id: 'harness-copilot-chat',
+              label: 'Copilot Chat Harness',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/microsoft-365-copilot-extend-with-agents',
+            },
+          ],
+        },
         {
           id: 'agent-authoring',
           label: 'Agent Authoring',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-first-bot',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/build-overview',
           children: [
             {
-              id: 'visual-canvas',
-              label: 'Visual Canvas & Low-code Design',
+              id: 'agent-instructions',
+              label: 'Instructions & Descriptions',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-instructions',
             },
             {
-              id: 'templates',
-              label: 'Templates & Starter Experiences',
+              id: 'agent-templates',
+              label: 'Agent Templates',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-templates',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/template-fundamentals',
             },
             {
-              id: 'real-time-testing',
-              label: 'Real-time Testing',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-test-bot',
+              id: 'agent-test-panel',
+              label: 'Test Your Agent',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-test-bot',
             },
           ],
         },
@@ -84,165 +110,143 @@ const copilotStudioTree: MindMapNode = {
           id: 'topics-conversation',
           label: 'Topics & Conversation Design',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-create-edit-topics',
           children: [
             {
-              id: 'specific-topics',
-              label: 'Specific/Curated Topics',
+              id: 'topic-triggers',
+              label: 'Topic Trigger Phrases',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-triggers',
             },
             {
               id: 'multilingual-agents',
               label: 'Multilingual Agents',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-language-support',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/multilingual',
             },
             {
-              id: 'rich-responses',
-              label: 'Rich & Dynamic Responses',
+              id: 'adaptive-cards',
+              label: 'Adaptive Cards',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-message',
-            },
-          ],
-        },
-        {
-          id: 'publish-channels',
-          label: 'Publish to Channels',
-          learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
-          children: [
-            {
-              id: 'm365-copilot-channel',
-              label: 'Microsoft 365 Copilot',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
-            },
-            {
-              id: 'teams-channel',
-              label: 'Microsoft Teams',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
-            },
-            {
-              id: 'custom-channel-runtime',
-              label: 'Web/Custom Channels',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/publication-fundamentals-publish-channels',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/adaptive-cards-overview',
             },
           ],
         },
       ],
     },
     {
-      id: 'language-dialog-orchestration',
-      label: 'Language, Dialog & Orchestration',
-      learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+      id: 'orchestration-triggers',
+      label: 'Orchestration & Triggers',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-copilot-studio/extend-agent-capabilities',
       children: [
         {
-          id: 'language-understanding',
-          label: 'Language Understanding',
+          id: 'generative-orchestration',
+          label: 'Generative Orchestration',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-generative-actions',
           children: [
             {
-              id: 'classic-nlu',
-              label: 'Classic NLU',
+              id: 'orch-classic-topics',
+              label: 'Classic Topic Orchestration',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-topic-management',
             },
             {
-              id: 'builtin-nlu',
-              label: 'Built-in NLU',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+              id: 'orch-generative-answers',
+              label: 'Generative Answers Node',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/nlu-boost-node',
             },
             {
-              id: 'byo-nlu',
-              label: 'Bring-your-own NLU',
+              id: 'orch-faq',
+              label: 'Orchestration FAQ',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-generative-orchestration',
             },
           ],
         },
         {
-          id: 'dialog-management',
-          label: 'Dialog Management',
+          id: 'event-triggers',
+          label: 'Event Triggers (Autonomous)',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-triggers-about',
           children: [
             {
-              id: 'multi-turn',
-              label: 'Multi-turn Conversations',
+              id: 'trigger-add-event',
+              label: 'Scheduled & Record Triggers',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-trigger-event',
             },
             {
-              id: 'inputs-outputs',
-              label: 'Inputs, Outputs & Variables',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-variables',
-            },
-            {
-              id: 'escalation',
-              label: 'Escalate to Live Agent',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-hand-off',
+              id: 'trigger-quotas',
+              label: 'Quotas & Throttling',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-quotas',
             },
           ],
         },
         {
-          id: 'orchestration-triggers',
-          label: 'Orchestration & Triggers',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-triggers-about',
+          id: 'model-selection',
+          label: 'Model Selection',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-select-agent-model',
           children: [
             {
-              id: 'generative-orch',
-              label: 'Generative Orchestration',
+              id: 'model-external',
+              label: 'External Foundry Model',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-select-external-response-model',
             },
             {
-              id: 'autonomous-triggers',
-              label: 'Autonomous Triggers',
+              id: 'model-reasoning',
+              label: 'Deep Reasoning (preview)',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/guidance/autonomous-agents',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-reasoning-models',
             },
             {
-              id: 'system-triggers',
-              label: 'System-driven Triggers',
+              id: 'model-retired',
+              label: 'Retired Model Guidance',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/authoring-triggers-about',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-retired-model',
             },
           ],
         },
       ],
     },
     {
-      id: 'knowledge-generative-answers',
-      label: 'Knowledge & Generative Answers',
-      learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+      id: 'knowledge-grounding',
+      label: 'Knowledge & Grounding',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio',
       children: [
         {
           id: 'knowledge-sources',
           label: 'Knowledge Sources',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/knowledge-sources-overview',
           children: [
             {
-              id: 'public-websites',
+              id: 'knowledge-public-websites',
               label: 'Public Websites',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-public-website',
             },
             {
-              id: 'dataverse-documents',
-              label: 'Dataverse Documents',
+              id: 'knowledge-sharepoint',
+              label: 'SharePoint',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-sharepoint',
             },
             {
-              id: 'sharepoint-knowledge',
-              label: 'SharePoint Knowledge',
+              id: 'knowledge-dataverse',
+              label: 'Dataverse Tables',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-unstructured-data',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-dataverse',
+            },
+            {
+              id: 'knowledge-file-upload',
+              label: 'File Uploads',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-file-upload',
             },
           ],
         },
@@ -250,127 +254,303 @@ const copilotStudioTree: MindMapNode = {
           id: 'enterprise-grounding',
           label: 'Enterprise Grounding',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-real-time-connectors',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-graph-vs-power-platform-connectors',
           children: [
             {
-              id: 'graph-grounding',
-              label: 'Microsoft Graph Grounding',
+              id: 'grounding-copilot-connectors',
+              label: 'Copilot Connectors (Graph)',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-connectors',
             },
             {
-              id: 'connector-grounding',
-              label: 'Enterprise Connectors',
+              id: 'grounding-power-platform',
+              label: 'Power Platform Connectors (preview)',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-real-time-connectors',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-real-time-connectors',
             },
             {
-              id: 'azure-ai-search',
-              label: 'Azure AI Search Grounding',
+              id: 'grounding-azure-ai-search',
+              label: 'Azure AI Search',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-azure-ai-search',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-azure-ai-search',
             },
           ],
         },
         {
-          id: 'answer-controls',
-          label: 'Answer Controls',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/nlu-boost-node',
+          id: 'answer-quality',
+          label: 'Answer Quality & Controls',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/nlu-generative-answers-prompt-modification',
           children: [
             {
-              id: 'fallback-pattern',
-              label: 'Fallback with Generative Answers',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/nlu-boost-node',
-            },
-            {
-              id: 'content-moderation',
-              label: 'Content Moderation Levels',
+              id: 'knowledge-unstructured',
+              label: 'Unstructured Data Sources',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio#content-moderation',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-unstructured-data',
             },
             {
-              id: 'citations-behavior',
-              label: 'Citations & Response Handling',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/nlu-boost-node',
+              id: 'grounding-bing-search',
+              label: 'Bing Custom Search',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-bing-custom-search',
+            },
+            {
+              id: 'knowledge-testing',
+              label: 'Test Knowledge Sources',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-test',
             },
           ],
         },
       ],
     },
     {
-      id: 'actions-integrations',
-      label: 'Actions & Integrations',
-      learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-connectors',
+      id: 'tools-actions',
+      label: 'Tools & Actions',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/tools-available',
       children: [
         {
-          id: 'integration-options',
-          label: 'Integration Options',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-connectors',
-          children: [
-            {
-              id: 'http-requests',
-              label: 'HTTP Requests',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/authoring-http-node',
-            },
-            {
-              id: 'power-platform-connectors',
-              label: 'Power Platform Connectors',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-connectors',
-            },
-            {
-              id: 'bot-framework-skills',
-              label: 'Bot Framework Skills',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-use-skills',
-            },
-          ],
-        },
-        {
-          id: 'action-patterns',
-          label: 'Action Patterns',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/flows-overview',
-          children: [
-            {
-              id: 'workflows',
-              label: 'Agent Flows / Workflows',
-              learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/flows-overview',
-            },
-            {
-              id: 'generative-actions',
-              label: 'Generative Actions',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions',
-            },
-            {
-              id: 'long-running-tasks',
-              label: 'Long-running Tasks',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-365-copilot/extensibility/ux-custom-engine-agent#asynchronous-patterns',
-            },
-          ],
-        },
-        {
-          id: 'pro-dev-extensibility',
-          label: 'Pro-dev Extensibility',
+          id: 'tool-types',
+          label: 'Tool Types',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/guidance/extend-copilot-studio',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-tools-custom-agent',
           children: [
             {
-              id: 'byom',
-              label: 'Bring your own model (BYOM)',
+              id: 'tools-connectors',
+              label: 'Connectors as Tools',
               learnUrl:
-                'https://learn.microsoft.com/power-platform/release-plan/2025wave2/microsoft-copilot-studio/use-own-model-when-generating-responses',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-connectors',
             },
             {
-              id: 'custom-knowledge',
-              label: 'Knowledge Base Extension',
-              learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/nlu-generative-answers-custom-data',
+              id: 'tools-agent-flows',
+              label: 'Agent Flows as Tools',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-flow',
             },
             {
-              id: 'custom-analytics',
-              label: 'Custom Analytics Integration',
+              id: 'tools-prompts',
+              label: 'Prompts as Tools',
               learnUrl:
-                'https://learn.microsoft.com/microsoft-copilot-studio/guidance/custom-analytics-strategy',
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/prompts-overview',
+            },
+          ],
+        },
+        {
+          id: 'open-extensibility',
+          label: 'Open Extensibility',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp',
+          children: [
+            {
+              id: 'tools-mcp-servers',
+              label: 'Connect an MCP Server',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/mcp-add-existing-server-to-agent',
+            },
+            {
+              id: 'tools-rest-api',
+              label: 'REST API Tools (preview)',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-rest-api',
+            },
+            {
+              id: 'tools-http-requests',
+              label: 'HTTP Requests',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-http-node',
+            },
+          ],
+        },
+        {
+          id: 'computer-use-automation',
+          label: 'Computer Use & Automation',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/computer-use',
+          children: [
+            {
+              id: 'computer-use-supervision',
+              label: 'Human Supervision',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/human-supervision-computer-use',
+            },
+            {
+              id: 'computer-use-admin',
+              label: 'Administer Computer Use',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/administer-computer-use',
+            },
+            {
+              id: 'azure-bot-service-skills',
+              label: 'Azure Bot Service Skills',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-use-skills',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'multi-agent-handoff',
+      label: 'Multi-agent & Handoff',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-add-other-agents',
+      children: [
+        {
+          id: 'connected-agents',
+          label: 'Connected Agents',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-add-other-agents',
+          children: [
+            {
+              id: 'agent-child',
+              label: 'Child Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-child-agent',
+            },
+            {
+              id: 'agent-copilot-studio',
+              label: 'Other Copilot Studio Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-copilot-studio-agent',
+            },
+            {
+              id: 'agent-foundry',
+              label: 'Microsoft Foundry Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-foundry-agent',
+            },
+          ],
+        },
+        {
+          id: 'open-agent-protocols',
+          label: 'Open Agent Protocols',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-agent-to-agent',
+          children: [
+            {
+              id: 'agent-m365-sdk',
+              label: 'Microsoft 365 Agents SDK',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-microsoft-365-agents-sdk-agent',
+            },
+            {
+              id: 'agent-fabric-data',
+              label: 'Fabric Data Agents (preview)',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-fabric-data-agent',
+            },
+            {
+              id: 'agent-work-iq',
+              label: 'Work IQ (preview)',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-work-iq',
+            },
+          ],
+        },
+        {
+          id: 'human-handoff',
+          label: 'Human Handoff',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-hand-off',
+          children: [
+            {
+              id: 'handoff-contact-center',
+              label: 'Dynamics 365 Handoff',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-hand-off-omnichannel',
+            },
+            {
+              id: 'handoff-generic-hub',
+              label: 'Generic Engagement Hub',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-generic-handoff',
+            },
+            {
+              id: 'handoff-engagement',
+              label: 'Customer Engagement Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/customer-copilot-overview',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'publish-channels',
+      label: 'Publish & Channels',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-fundamentals-publish-channels',
+      children: [
+        {
+          id: 'm365-surfaces',
+          label: 'Teams & Microsoft 365 Copilot',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams',
+          children: [
+            {
+              id: 'channel-sharepoint',
+              label: 'SharePoint',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-sharepoint',
+            },
+            {
+              id: 'channel-power-pages',
+              label: 'Power Pages',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-power-pages',
+            },
+            {
+              id: 'channel-proactive-teams',
+              label: 'Proactive Teams Messages',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-proactive-message',
+            },
+          ],
+        },
+        {
+          id: 'web-custom-channels',
+          label: 'Web & Custom Channels',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-connect-bot-to-web-channels',
+          children: [
+            {
+              id: 'channel-agents-sdk',
+              label: 'Custom Apps (Agents SDK)',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-integrate-web-or-native-app-m365-agents-sdk',
+            },
+            {
+              id: 'channel-mobile-apps',
+              label: 'Mobile & Custom Apps',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-connect-bot-to-custom-application',
+            },
+            {
+              id: 'channel-whatsapp',
+              label: 'WhatsApp',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-whatsapp',
+            },
+          ],
+        },
+        {
+          id: 'voice-telephony',
+          label: 'Voice & Telephony',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/voice-overview',
+          children: [
+            {
+              id: 'voice-realtime',
+              label: 'Real-time Voice Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/voice-realtime-voice-agents',
+            },
+            {
+              id: 'voice-basic',
+              label: 'Basic Voice Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/voice-basic-overview',
+            },
+            {
+              id: 'voice-contact-center',
+              label: 'Dynamics 365 Contact Center',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/voice-get-started',
             },
           ],
         },
@@ -379,114 +559,250 @@ const copilotStudioTree: MindMapNode = {
     {
       id: 'security-governance',
       label: 'Security & Governance',
-      learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/administer-security',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-and-governance',
       children: [
         {
-          id: 'data-policy-controls',
-          label: 'Data Policy Controls (DLP)',
+          id: 'security-data-policies',
+          label: 'Data Policies (DLP)',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/admin-data-loss-prevention',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-data-loss-prevention',
           children: [
-            { id: 'auth-governance', label: 'Maker/User Authentication Controls' },
-            { id: 'knowledge-governance', label: 'Knowledge Source Governance' },
-            { id: 'connector-trigger-governance', label: 'Connector/Trigger Governance' },
+            {
+              id: 'runtime-protection',
+              label: 'Agent Runtime Protection',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-agent-runtime-view',
+            },
+            {
+              id: 'security-scan',
+              label: 'Automatic Security Scan',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-scan',
+            },
+            {
+              id: 'external-threat-detection',
+              label: 'Threat Detection (preview)',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/external-security-provider',
+            },
           ],
         },
         {
-          id: 'security-controls',
-          label: 'Security Controls',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/administer-security',
+          id: 'identity-authentication',
+          label: 'Identity & Authentication',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication',
           children: [
-            { id: 'runtime-protection', label: 'Agent Runtime Protection Status' },
-            { id: 'security-scan', label: 'Automatic Security Scan' },
-            { id: 'cmk-support', label: 'Customer-managed Keys (CMK)' },
+            {
+              id: 'auth-entra-id',
+              label: 'Microsoft Entra ID Auth',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-authentication-azure-ad',
+            },
+            {
+              id: 'auth-sso',
+              label: 'Single Sign-on',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-sso',
+            },
+            {
+              id: 'entra-agent-id',
+              label: 'Entra Agent ID',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-use-entra-agent-identities',
+            },
           ],
         },
         {
-          id: 'audit-compliance',
-          label: 'Audit & Compliance',
+          id: 'admin-compliance',
+          label: 'Admin & Compliance',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/administer-copilot-studio',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-agent-inventory',
           children: [
-            { id: 'purview-logs', label: 'Microsoft Purview Audit Logs' },
-            { id: 'sentinel-logs', label: 'Microsoft Sentinel Monitoring' },
-            { id: 'compliance-offerings', label: 'Compliance Offerings & Residency' },
+            {
+              id: 'purview-audit-logs',
+              label: 'Microsoft Purview Audit',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-logging-copilot-studio',
+            },
+            {
+              id: 'cmk-support',
+              label: 'Customer-managed Keys',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-customer-managed-keys',
+            },
+            {
+              id: 'data-residency',
+              label: 'Geographic Data Residency',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/geo-data-residency',
+            },
           ],
         },
       ],
     },
     {
-      id: 'alm-solutions',
-      label: 'ALM & Solutions',
-      learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/advanced-export-import-bots',
+      id: 'alm-environments',
+      label: 'ALM & Environments',
+      learnUrl: 'https://learn.microsoft.com/en-us/power-platform/alm/basics-alm',
       children: [
         {
           id: 'solution-model',
-          label: 'Solution Model',
+          label: 'Solutions',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/advanced-export-import-bots',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-solutions-overview',
           children: [
-            { id: 'agent-in-solution', label: 'Agents in Power Platform Solutions' },
-            { id: 'custom-solutions', label: 'Custom Solutions' },
-            { id: 'preferred-solution', label: 'Preferred Solution Setting' },
+            {
+              id: 'solution-export-import',
+              label: 'Export & Import Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-solutions-import-export',
+            },
+            {
+              id: 'component-collections',
+              label: 'Reusable Components',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-export-import-copilot-components',
+            },
+            {
+              id: 'solution-connections',
+              label: 'Manage Connections',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-connections',
+            },
           ],
         },
         {
           id: 'environment-strategy',
           label: 'Environment Strategy',
-          learnUrl: 'https://learn.microsoft.com/power-platform/alm/environment-strategy-alm',
+          learnUrl: 'https://learn.microsoft.com/en-us/power-platform/alm/environment-strategy-alm',
           children: [
-            { id: 'dev-test-prod', label: 'Dev/Test/Prod Environments' },
-            { id: 'ring-deployment', label: 'Ring Deployments' },
-            { id: 'environment-routing', label: 'Environment Routing' },
+            {
+              id: 'environments-setup',
+              label: 'Work with Environments',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/environments-first-run-experience',
+            },
+            {
+              id: 'managed-environments',
+              label: 'Managed Environments',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/power-platform/admin/managed-environment-overview',
+            },
+            {
+              id: 'solution-pipelines',
+              label: 'Power Platform Pipelines',
+              learnUrl: 'https://learn.microsoft.com/en-us/power-platform/alm/pipelines',
+            },
           ],
         },
         {
-          id: 'deployment-automation',
-          label: 'Deployment Automation',
-          learnUrl: 'https://learn.microsoft.com/power-platform/alm/use-deployment-pipelines',
+          id: 'pro-dev-workflow',
+          label: 'Pro-dev Workflow',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/visual-studio-code-extension-overview',
           children: [
-            { id: 'import-export', label: 'Import/Export Solutions' },
-            { id: 'solution-pipelines', label: 'Solution Pipelines (CI/CD)' },
-            { id: 'managed-layers', label: 'Managed/Unmanaged Layers' },
+            {
+              id: 'vs-code-clone',
+              label: 'Clone Agent in VS Code',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/visual-studio-code-extension-clone-agent',
+            },
+            {
+              id: 'vs-code-sync',
+              label: 'Synchronize Changes',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/visual-studio-code-extension-synchronization',
+            },
+            {
+              id: 'multitenant-agents',
+              label: 'Multitenant Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/multi-tenant-overview',
+            },
           ],
         },
       ],
     },
     {
-      id: 'analytics-operations',
-      label: 'Analytics & Operations',
-      learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/analytics-overview',
+      id: 'analytics-evaluation-cost',
+      label: 'Analytics, Evaluation & Cost',
+      learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-overview',
       children: [
-        {
-          id: 'analyze-improve',
-          label: 'Analyze & Improve Lifecycle',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/analytics-overview',
-          children: [
-            { id: 'oob-insights', label: 'Out-of-box Insights' },
-            { id: 'continuous-improvement', label: 'Continuous Improvement Loop' },
-            { id: 'performance-testing', label: 'Performance Testing' },
-          ],
-        },
         {
           id: 'analytics-telemetry',
           label: 'Analytics & Telemetry',
-          learnUrl: 'https://learn.microsoft.com/microsoft-copilot-studio/analytics-overview',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-improve-agent-effectiveness',
           children: [
-            { id: 'conversation-transcripts', label: 'Conversation Transcripts' },
-            { id: 'technical-telemetry', label: 'Technical Telemetry' },
-            { id: 'app-insights', label: 'Application Insights Integration' },
+            {
+              id: 'analytics-autonomous',
+              label: 'Autonomous Agent Health',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-improve-agent-health',
+            },
+            {
+              id: 'app-insights',
+              label: 'Application Insights',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/telemetry-overview',
+            },
+            {
+              id: 'analytics-viva',
+              label: 'Viva Insights Rollup',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-viva-insights',
+            },
           ],
         },
         {
-          id: 'platform-services',
-          label: 'Connected Platform Services',
+          id: 'evaluation-testing',
+          label: 'Evaluation & Testing',
           learnUrl:
-            'https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
+            'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-intro',
           children: [
-            { id: 'entra-id', label: 'Microsoft Entra ID' },
-            { id: 'azure-monitor-storage', label: 'Azure Monitor / Storage' },
-            { id: 'foundry-ai-services', label: 'Foundry & Azure AI Services' },
+            {
+              id: 'evaluation-test-sets',
+              label: 'Create Test Sets',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-create',
+            },
+            {
+              id: 'evaluation-methods',
+              label: 'Evaluation Methods',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-overview',
+            },
+            {
+              id: 'evaluation-automation',
+              label: 'Automate via Platform API',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-rest-api',
+            },
+          ],
+        },
+        {
+          id: 'licensing-consumption',
+          label: 'Licensing & Consumption',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-copilot-studio/billing-licensing',
+          children: [
+            {
+              id: 'copilot-credits',
+              label: 'Copilot Credits',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/billing-credit-overview',
+            },
+            {
+              id: 'billing-rates',
+              label: 'Billing Rates & Management',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management',
+            },
+            {
+              id: 'consumption-reporting',
+              label: 'Consumption & Savings',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-consumption',
+            },
           ],
         },
       ],
@@ -503,70 +819,82 @@ const m365CopilotTree: MindMapNode = {
     {
       id: 'm365-experiences',
       label: 'Copilot Experiences',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-365-copilot/which-copilot-for-your-organization',
       children: [
         {
           id: 'm365-apps',
-          label: 'Word, Excel, PowerPoint, Outlook, Teams',
+          label: 'Copilot in Microsoft 365 Apps',
           learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-app-overview',
           children: [
             {
-              id: 'm365-apps-word',
-              label: 'Word & PowerPoint',
+              id: 'm365-apps-agents',
+              label: 'Word, Excel & PowerPoint',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/wordexcelppt-agents',
             },
             {
-              id: 'm365-apps-excel',
-              label: 'Excel & Outlook',
+              id: 'm365-copilot-search',
+              label: 'Microsoft Copilot Search',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-search',
             },
             {
-              id: 'm365-apps-teams',
-              label: 'Teams',
+              id: 'm365-prompt-gallery',
+              label: 'Copilot Prompt Gallery',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-features-in-microsoft-365-apps',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-prompt-gallery',
             },
           ],
         },
         {
           id: 'm365-chat',
-          label: 'Copilot Chat & Business Chat',
+          label: 'Microsoft 365 Copilot Chat',
           learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-chat-considerations',
           children: [
             {
-              id: 'm365-chat-copilot',
-              label: 'Copilot Chat',
+              id: 'm365-chat-requirements',
+              label: 'Chat Requirements',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-chat-requirements',
             },
             {
-              id: 'm365-chat-business',
-              label: 'Business Chat',
+              id: 'm365-chat-harmful-content',
+              label: 'Harmful Content Protection',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/harmful-content-protection-copilot-chat',
+            },
+            {
+              id: 'm365-personalization-memory',
+              label: 'Personalization & Memory',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-personalization-memory',
             },
           ],
         },
         {
           id: 'm365-agents',
-          label: 'Agents (Researcher, Analyst)',
-          learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+          label: 'Agents in Microsoft 365',
+          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-agent-store',
           children: [
             {
               id: 'm365-agents-researcher',
               label: 'Researcher Agent',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/researcher-agent',
             },
             {
-              id: 'm365-agents-analyst',
-              label: 'Analyst Agent',
+              id: 'm365-agents-computer-use',
+              label: 'Researcher Computer Use',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/researcher-agent-computer-use',
+            },
+            {
+              id: 'm365-agents-install',
+              label: 'Install Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-agent-install',
             },
           ],
         },
@@ -575,24 +903,26 @@ const m365CopilotTree: MindMapNode = {
     {
       id: 'm365-grounding',
       label: 'Grounding & Data Sources',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture',
       children: [
         {
           id: 'm365-graph-grounding',
           label: 'Microsoft Graph Grounding',
           learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-privacy',
           children: [
             {
               id: 'm365-graph-permissions',
-              label: 'Permissions & Access',
+              label: 'Data Protection & Auditing',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
             },
             {
               id: 'm365-graph-sources',
-              label: 'Grounding Sources',
+              label: 'Enterprise Data Protection',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/enterprise-data-protection',
             },
           ],
         },
@@ -604,35 +934,15 @@ const m365CopilotTree: MindMapNode = {
           children: [
             {
               id: 'm365-sharepoint',
-              label: 'SharePoint',
+              label: 'SharePoint Advanced Mgmt',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-minimum-requirements-data-compliance',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/get-ready-copilot-sharepoint-advanced-management',
             },
             {
-              id: 'm365-onedrive',
-              label: 'OneDrive',
+              id: 'm365-secure-foundation',
+              label: 'Secure Data Foundation',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-minimum-requirements-data-compliance',
-            },
-          ],
-        },
-        {
-          id: 'm365-mail-calendar-teams',
-          label: 'Mail, Calendar & Teams',
-          learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
-          children: [
-            {
-              id: 'm365-mail-calendar',
-              label: 'Mail & Calendar',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
-            },
-            {
-              id: 'm365-teams-collab',
-              label: 'Teams Collaboration',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-overview#copilot-works-with-microsoft-365-apps-and-microsoft-graph',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/configure-secure-governed-data-foundation-microsoft-365-copilot',
             },
           ],
         },
@@ -643,16 +953,36 @@ const m365CopilotTree: MindMapNode = {
             'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
           children: [
             {
-              id: 'm365-connectors-config',
-              label: 'Connector Setup',
+              id: 'm365-connectors-search-manage',
+              label: 'Manage Copilot Search',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-search-manage',
             },
             {
-              id: 'm365-connectors-graph',
-              label: 'Graph Connectors',
+              id: 'm365-connectors-search-admin',
+              label: 'Search Admin Experience',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-search-admin-experience',
+            },
+          ],
+        },
+        {
+          id: 'm365-web-access',
+          label: 'Web Search & Public Data',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/manage-public-web-access',
+          children: [
+            {
+              id: 'm365-endpoints-allowlist',
+              label: 'Endpoint Allowlist',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/add-copilot-endpoints-allowlist',
+            },
+            {
+              id: 'm365-network-requirements',
+              label: 'App & Network Requirements',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-requirements',
             },
           ],
         },
@@ -661,61 +991,83 @@ const m365CopilotTree: MindMapNode = {
     {
       id: 'm365-extensibility',
       label: 'Extensibility & APIs',
+      learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/manage-generative-ai-apps',
       children: [
         {
+          id: 'm365-declarative-agents',
+          label: 'Declarative Agents',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-declarative-agent',
+          children: [
+            {
+              id: 'm365-agents-requested',
+              label: 'Manage Requested Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-lifecycle/agent-copilot-studio-requested',
+            },
+            {
+              id: 'm365-agents-upload',
+              label: 'Upload Custom Agents',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-lifecycle/agent-upload-agents',
+            },
+            {
+              id: 'm365-agents-marketplace',
+              label: 'Submit to Marketplace',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-policies/agent-submit-marketplace',
+            },
+          ],
+        },
+        {
+          id: 'm365-custom-engine-agents',
+          label: 'Custom Engine Agents',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-custom-engine-agent',
+          children: [
+            {
+              id: 'm365-agents-sideload',
+              label: 'Sideload for Personal Use',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-policies/agent-sideload',
+            },
+            {
+              id: 'm365-agents-deploy',
+              label: 'Deploy an Agent',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-lifecycle/agent-deploy',
+            },
+            {
+              id: 'm365-agents-availability',
+              label: 'Set Agent Availability',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-lifecycle/agent-availability',
+            },
+          ],
+        },
+        {
           id: 'm365-copilot-apis',
-          label: 'Copilot APIs (Chat, Retrieval)',
+          label: 'Copilot APIs',
           learnUrl:
             'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/copilot-apis-overview',
           children: [
             {
-              id: 'm365-copilot-apis-chat',
-              label: 'Chat API',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/copilot-apis-overview',
-            },
-            {
-              id: 'm365-copilot-apis-retrieval',
-              label: 'Retrieval API',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/copilot-apis-overview',
-            },
-          ],
-        },
-        {
-          id: 'm365-copilot-studio-ext',
-          label: 'Copilot Studio Extensions',
-          learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/',
-          children: [
-            {
-              id: 'm365-copilot-studio-actions',
-              label: 'Actions',
-              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/',
-            },
-            {
-              id: 'm365-copilot-studio-connectors',
-              label: 'Connectors',
-              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/',
-            },
-          ],
-        },
-        {
-          id: 'm365-plugins-actions',
-          label: 'Plugins & Actions',
-          learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-business-applications',
-          children: [
-            {
-              id: 'm365-plugins',
-              label: 'Plugins',
+              id: 'm365-business-applications',
+              label: 'Business Applications',
               learnUrl:
                 'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-business-applications',
             },
             {
-              id: 'm365-actions',
-              label: 'Actions',
+              id: 'm365-agent-essentials',
+              label: 'Agent Essentials',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-business-applications',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-essentials-overview',
+            },
+            {
+              id: 'm365-agent-prerequisites',
+              label: 'Agent Prerequisites',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-prerequisites',
             },
           ],
         },
@@ -724,84 +1076,77 @@ const m365CopilotTree: MindMapNode = {
     {
       id: 'm365-security-compliance',
       label: 'Security, Privacy & Compliance',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-365-copilot/security-microsoft-365-copilot',
       children: [
         {
-          id: 'm365-purview-dlp',
-          label: 'Microsoft Purview & DLP',
+          id: 'm365-prompt-defense',
+          label: 'Prompt Defense in Depth',
           learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-prompt-defense-in-depth',
           children: [
             {
-              id: 'm365-purview-controls',
-              label: 'Purview Controls',
+              id: 'm365-subprocessors',
+              label: 'AI Subprocessors',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-subprocessor-overview',
             },
             {
-              id: 'm365-dlp-policies',
-              label: 'DLP Policies',
+              id: 'm365-ai-model-choice',
+              label: 'AI Model Choice',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
-            },
-          ],
-        },
-        {
-          id: 'm365-sensitivity-irm',
-          label: 'Sensitivity Labels & IRM',
-          learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
-          children: [
-            {
-              id: 'm365-sensitivity-labels',
-              label: 'Sensitivity Labels',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/ai-models-overview',
             },
             {
-              id: 'm365-irm',
-              label: 'Information Rights Mgmt',
+              id: 'm365-preview-models',
+              label: 'Preview AI Models',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
-            },
-          ],
-        },
-        {
-          id: 'm365-audit-ediscovery',
-          label: 'Audit, eDiscovery & Retention',
-          learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
-          children: [
-            {
-              id: 'm365-audit',
-              label: 'Audit',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
-            },
-            {
-              id: 'm365-ediscovery',
-              label: 'eDiscovery & Retention',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing#where-copilot-usage-data-is-stored-and-how-you-can-audit-it',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/manage-preview-ai-models',
             },
           ],
         },
         {
           id: 'm365-conditional-access',
-          label: 'Conditional Access & Entra ID',
+          label: 'Identity & Access',
           learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/multiple-account-access',
           children: [
             {
-              id: 'm365-conditional-access-policies',
-              label: 'Conditional Access',
+              id: 'm365-ai-provider-access',
+              label: 'AI Provider Access Groups',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-ai-provider-user-sec-group-access',
             },
             {
-              id: 'm365-mfa',
-              label: 'MFA',
+              id: 'm365-optimize-settings',
+              label: 'Optimize Configuration',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture#copilot-honors-conditional-access-and-mfa',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/optimize-microsoft-365-configuration-settings',
+            },
+          ],
+        },
+        {
+          id: 'm365-responsible-ai',
+          label: 'Responsible AI',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/responsible-ai/responsible-ai-overview',
+          children: [
+            {
+              id: 'm365-application-card',
+              label: 'Application Card',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-application-card',
+            },
+            {
+              id: 'm365-ai-disclaimers',
+              label: 'AI Disclaimers',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-ai-disclaimers',
+            },
+            {
+              id: 'm365-watermarks',
+              label: 'AI Content Watermarks',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/watermarks',
             },
           ],
         },
@@ -810,24 +1155,32 @@ const m365CopilotTree: MindMapNode = {
     {
       id: 'm365-admin-governance',
       label: 'Admin Controls & Governance',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/overview',
       children: [
         {
           id: 'm365-tenant-readiness',
           label: 'Tenant Readiness & Prereqs',
           learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-setup#readiness-activities',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-minimum-requirements',
           children: [
             {
-              id: 'm365-tenant-prereqs',
-              label: 'Prerequisites',
+              id: 'm365-tenant-setup',
+              label: 'Setup & Assign Licenses',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-setup#readiness-activities',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-setup',
             },
             {
-              id: 'm365-tenant-licensing',
-              label: 'Licensing',
+              id: 'm365-tenant-rollout',
+              label: 'Organization Rollout',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-setup#readiness-activities',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-minimum-requirements-rollout',
+            },
+            {
+              id: 'm365-app-deploy',
+              label: 'Deploy the Copilot App',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/deploy-microsoft-365-copilot-app',
             },
           ],
         },
@@ -838,56 +1191,48 @@ const m365CopilotTree: MindMapNode = {
             'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/management-controls',
           children: [
             {
-              id: 'm365-control-govern',
-              label: 'Governance Controls',
+              id: 'm365-control-security',
+              label: 'Security & Governance',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/management-controls',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/security-governance',
             },
             {
-              id: 'm365-control-data',
-              label: 'Data Controls',
+              id: 'm365-control-measurement',
+              label: 'Measurement & Reporting',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/management-controls',
-            },
-          ],
-        },
-        {
-          id: 'm365-connectors-admin',
-          label: 'Manage Connectors & Agents',
-          learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
-          children: [
-            {
-              id: 'm365-connectors-admin-connectors',
-              label: 'Connectors',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-control-system/measurement-reporting',
             },
             {
-              id: 'm365-connectors-admin-agents',
-              label: 'Agents',
+              id: 'm365-control-admin-settings',
+              label: 'Copilot Admin Settings',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/overview-copilot-connector',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-app-admin-settings',
             },
           ],
         },
         {
-          id: 'm365-data-governance',
-          label: 'Data Governance',
+          id: 'm365-agent-governance',
+          label: 'Agent Governance',
           learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/m365-agents-admin-guide',
           children: [
             {
-              id: 'm365-data-access',
-              label: 'Access & Permissions',
+              id: 'm365-agents-blueprint',
+              label: 'Deployment Blueprint',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/m365-agents-blueprint',
             },
             {
-              id: 'm365-data-lifecycle',
-              label: 'Lifecycle Policies',
+              id: 'm365-agents-checklist',
+              label: 'Deployment Checklist',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-architecture-data-protection-auditing',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/m365-agents-checklist',
+            },
+            {
+              id: 'm365-agents-faq',
+              label: 'Agents FAQ',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/m365-agents-faq',
             },
           ],
         },
@@ -896,44 +1241,58 @@ const m365CopilotTree: MindMapNode = {
     {
       id: 'm365-adoption-measurement',
       label: 'Adoption & Measurement',
+      learnUrl:
+        'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-enablement-resources',
       children: [
         {
           id: 'm365-usage-analytics',
-          label: 'Copilot Analytics',
-          learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
-          children: [
-            {
-              id: 'm365-analytics-viva',
-              label: 'Viva Insights',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
-            },
-            {
-              id: 'm365-analytics-summary',
-              label: 'Adoption Summary',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins#viva-insights-copilot-analytics',
-            },
-          ],
-        },
-        {
-          id: 'm365-usage-reports',
-          label: 'Usage Reports & Insights',
+          label: 'Reports & Insights',
           learnUrl:
             'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
           children: [
             {
-              id: 'm365-usage-reporting',
-              label: 'Usage Reporting',
+              id: 'm365-agent-usage-reports',
+              label: 'Agent Usage Reports',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/agent-essentials/agent-usage-billing/agent-usage-cs-reports',
             },
             {
-              id: 'm365-usage-adoption',
-              label: 'Adoption Insights',
+              id: 'm365-service-plans',
+              label: 'Service Plan Diagnostics',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-service-plans',
+            },
+            {
+              id: 'm365-powerbi',
+              label: 'Power BI Data in Copilot',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/copilot-powerbi-copilot-chat',
+            },
+          ],
+        },
+        {
+          id: 'm365-licensing-cost',
+          label: 'Licensing & Cost',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-licensing',
+          children: [
+            {
+              id: 'm365-copilot-credits',
+              label: 'Copilot Credits Billing',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/usage-based-billing-overview-copilot-credits',
+            },
+            {
+              id: 'm365-pay-as-you-go',
+              label: 'Pay-as-you-go',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/pay-as-you-go/overview',
+            },
+            {
+              id: 'm365-capacity-packs',
+              label: 'Prepaid Capacity Packs',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/pay-as-you-go/copilot-capacity-packs',
             },
           ],
         },
@@ -941,39 +1300,24 @@ const m365CopilotTree: MindMapNode = {
           id: 'm365-change-management',
           label: 'Change Management',
           learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-enablement-resources',
+            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-enable-users',
           children: [
             {
-              id: 'm365-change-training',
-              label: 'Training & Enablement',
+              id: 'm365-track-adoption',
+              label: 'Track Copilot Adoption',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-enablement-resources',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/track-copilot-adoption',
             },
             {
-              id: 'm365-change-communications',
-              label: 'Comms & Champions',
+              id: 'm365-organizational-prompts',
+              label: 'Organizational Prompts',
               learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-enablement-resources',
-            },
-          ],
-        },
-        {
-          id: 'm365-feedback',
-          label: 'User Feedback & Quality',
-          learnUrl:
-            'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
-          children: [
-            {
-              id: 'm365-feedback-insights',
-              label: 'Feedback Insights',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
+                'https://learn.microsoft.com/en-us/microsoft-365-copilot/organizational-prompts',
             },
             {
-              id: 'm365-feedback-quality',
-              label: 'Quality Signals',
-              learnUrl:
-                'https://learn.microsoft.com/en-us/microsoft-365-copilot/microsoft-365-copilot-reports-for-admins',
+              id: 'm365-release-notes',
+              label: 'Release Notes',
+              learnUrl: 'https://learn.microsoft.com/en-us/microsoft-365-copilot/release-notes',
             },
           ],
         },
@@ -985,399 +1329,201 @@ const m365CopilotTree: MindMapNode = {
 const microsoftFoundryTree: MindMapNode = {
   id: 'microsoft-foundry',
   label: 'Microsoft Foundry',
-  learnUrl: 'https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry',
+  learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry',
   children: [
     {
-      id: 'foundry-model-catalog',
-      label: 'Model Catalog & Selection',
-      learnUrl:
-        'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
+      id: 'foundry-plan-build',
+      label: 'Plan & Build',
+      learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/choose-build-approach',
       children: [
         {
-          id: 'foundry-foundation-models',
-          label: 'Foundation Models',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-model-catalog-detail',
-              label: 'Model Catalog',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
-            },
-            {
-              id: 'foundry-model-deployment-options',
-              label: 'Deployment Options',
-              learnUrl:
-                'https://learn.microsoft.com/azure/machine-learning/foundry-models-overview?view=azureml-api-2#overview-of-model-catalog-capabilities',
-            },
-          ],
-        },
-        {
-          id: 'foundry-open-models',
-          label: 'Open & Partner Models',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-model-providers',
-              label: 'Model Providers',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
-            },
-            {
-              id: 'foundry-model-licensing',
-              label: 'Licensing & Terms',
-              learnUrl:
-                'https://learn.microsoft.com/azure/machine-learning/foundry-models-overview?view=azureml-api-2#overview-of-model-catalog-capabilities',
-            },
-          ],
-        },
-        {
-          id: 'foundry-model-evaluation',
-          label: 'Model Evaluation',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-compare-models',
-              label: 'Compare Models',
-              learnUrl:
-                'https://learn.microsoft.com/azure/machine-learning/foundry-models-overview?view=azureml-api-2#overview-of-model-catalog-capabilities',
-            },
-            {
-              id: 'foundry-benchmarks',
-              label: 'Benchmarks',
-              learnUrl:
-                'https://learn.microsoft.com/azure/machine-learning/foundry-models-overview?view=azureml-api-2#overview-of-model-catalog-capabilities',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'foundry-orchestration',
-      label: 'Prompt Flow & Orchestration',
-      children: [
-        {
-          id: 'foundry-prompt-flow',
-          label: 'Prompt Flow',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-prompt-flow-variants',
-              label: 'Prompt Variants',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-            },
-            {
-              id: 'foundry-prompt-flow-evaluation',
-              label: 'Built-in Evaluation',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-            },
-          ],
-        },
-        {
-          id: 'foundry-tool-calling',
-          label: 'Tool/Function Calling',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-tools-llm',
-              label: 'LLM Tools',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-            },
-            {
-              id: 'foundry-tools-python',
-              label: 'Python Tools',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-            },
-          ],
-        },
-        {
-          id: 'foundry-agentic-workflows',
-          label: 'Agentic Workflows',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-flow-collaboration',
-              label: 'Collaboration',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-            },
-            {
-              id: 'foundry-flow-deployment',
-              label: 'Flow Deployment',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/prompt-flow?view=foundry-classic',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'foundry-data-retrieval',
-      label: 'Data & Retrieval',
-      children: [
-        {
-          id: 'foundry-vector-search',
-          label: 'Vector Search',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-vector-index',
-              label: 'Vector Indexes',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
-            },
-            {
-              id: 'foundry-vector-prereqs',
-              label: 'Azure AI Search Prereqs',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/how-to/index-add?view=foundry-classic',
-            },
-          ],
-        },
-        {
-          id: 'foundry-rag-pipelines',
-          label: 'RAG Pipelines',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-rag-retrieve',
-              label: 'Retrieve, Augment, Generate',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic#how-does-rag-work',
-            },
-            {
-              id: 'foundry-rag-index',
-              label: 'Indexes for RAG',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic#what-is-an-index-and-why-do-i-need-it',
-            },
-          ],
-        },
-        {
-          id: 'foundry-data-connectors',
-          label: 'Indexes & Data Sources',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-data-index-asset',
-              label: 'Index Assets',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/retrieval-augmented-generation?view=foundry-classic',
-            },
-            {
-              id: 'foundry-data-search',
-              label: 'Azure AI Search',
-              learnUrl: 'https://learn.microsoft.com/azure/search/search-what-is-azure-search',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'foundry-safety',
-      label: 'Safety & Responsible AI',
-      children: [
-        {
-          id: 'foundry-content-filters',
-          label: 'Content Safety Filters',
-          learnUrl: 'https://learn.microsoft.com/azure/ai-services/content-safety/overview',
-          children: [
-            {
-              id: 'foundry-content-safety-text',
-              label: 'Text Safety',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-services/content-safety/overview',
-            },
-            {
-              id: 'foundry-content-safety-image',
-              label: 'Image Safety',
-              learnUrl: 'https://learn.microsoft.com/azure/ai-services/content-safety/overview',
-            },
-          ],
-        },
-        {
-          id: 'foundry-evaluations',
-          label: 'Evaluate & Red-team',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-discover-risks',
-              label: 'Discover Risks',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
-            },
-            {
-              id: 'foundry-protect-risks',
-              label: 'Protect with Guardrails',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
-            },
-          ],
-        },
-        {
-          id: 'foundry-policy-controls',
-          label: 'Governance Controls',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-govern-monitor',
-              label: 'Monitor & Govern',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
-            },
-            {
-              id: 'foundry-govern-compliance',
-              label: 'Compliance Checkpoints',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/responsible-use-of-ai-overview?view=foundry-classic',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'foundry-deployment',
-      label: 'Deployment & Monitoring',
-      children: [
-        {
-          id: 'foundry-managed-endpoints',
-          label: 'Model Deployments',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-ai-project?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-deploy-model',
-              label: 'Deploy a Model',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-ai-project?view=foundry-classic',
-            },
-            {
-              id: 'foundry-model-endpoints',
-              label: 'Inference Endpoint',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/foundry-models/how-to/quickstart-ai-project?view=foundry-classic',
-            },
-          ],
-        },
-        {
-          id: 'foundry-scaling-cost',
-          label: 'Quota & Capacity',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-quota-requests',
-              label: 'Quota Requests',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
-            },
-            {
-              id: 'foundry-quota-monitor',
-              label: 'Usage Monitoring',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/how-to/quota?view=foundry-classic',
-            },
-          ],
-        },
-        {
-          id: 'foundry-observability',
-          label: 'Observability & Monitoring',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/how-to/monitor-applications?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-observability-insights',
-              label: 'App Insights',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/how-to/monitor-applications?view=foundry-classic',
-            },
-            {
-              id: 'foundry-continuous-eval',
-              label: 'Continuous Evaluation',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/how-to/monitor-applications?view=foundry-classic',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'foundry-integration',
-      label: 'App Integration',
-      children: [
-        {
-          id: 'foundry-sdks',
-          label: 'SDKs & APIs',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/quickstarts/hub-get-started-code?view=foundry-classic',
-          children: [
-            {
-              id: 'foundry-quickstart',
-              label: 'Quickstart (SDK)',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/quickstarts/hub-get-started-code?view=foundry-classic',
-            },
-            {
-              id: 'foundry-project-setup',
-              label: 'Project Setup',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/what-is-foundry?view=foundry-classic',
-            },
-          ],
-        },
-        {
-          id: 'foundry-cicd',
+          id: 'foundry-projects',
           label: 'Projects & Resources',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/what-is-foundry?view=foundry-classic',
+          learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/how-to/create-projects',
           children: [
             {
-              id: 'foundry-project-types',
-              label: 'Project Types',
-              learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/what-is-foundry?view=foundry-classic#types-of-projects',
+              id: 'foundry-architecture',
+              label: 'Service Architecture',
+              learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/architecture',
             },
             {
-              id: 'foundry-hub-resources',
-              label: 'Hub Resources',
+              id: 'foundry-sdks',
+              label: 'SDKs & Endpoints',
               learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/ai-resources?view=foundry-classic',
+                'https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/sdk-overview',
+            },
+            {
+              id: 'foundry-quotas',
+              label: 'Quotas & Limits',
+              learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/how-to/quota',
             },
           ],
         },
         {
-          id: 'foundry-identity',
-          label: 'Identity & Access',
-          learnUrl:
-            'https://learn.microsoft.com/azure/ai-foundry/concepts/ai-resources?view=foundry-classic',
+          id: 'foundry-agent-service',
+          label: 'Foundry Agent Service',
+          learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/agents/overview',
           children: [
             {
-              id: 'foundry-hub-security',
-              label: 'Hub Security',
+              id: 'foundry-agent-lifecycle',
+              label: 'Development Lifecycle',
               learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/ai-resources?view=foundry-classic#share-configurations-across-projects-using-hub',
+                'https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/development-lifecycle',
             },
             {
-              id: 'foundry-shared-connections',
-              label: 'Connections',
+              id: 'foundry-agent-identity',
+              label: 'Agent Identity',
               learnUrl:
-                'https://learn.microsoft.com/azure/ai-foundry/concepts/ai-resources?view=foundry-classic#share-configurations-across-projects-using-hub',
+                'https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-identity',
+            },
+            {
+              id: 'foundry-publish-m365',
+              label: 'Publish to Microsoft 365',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/publish-copilot',
             },
           ],
+        },
+      ],
+    },
+    {
+      id: 'foundry-model-catalog',
+      label: 'Models & Deployment',
+      learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview',
+      children: [
+        {
+          id: 'foundry-model-choice',
+          label: 'Model Selection',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure',
+          children: [
+            {
+              id: 'foundry-partner-models',
+              label: 'Partner & Community Models',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners',
+            },
+            {
+              id: 'foundry-deployment-types',
+              label: 'Deployment Types',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/concepts/deployments-overview',
+            },
+            {
+              id: 'foundry-manage-costs',
+              label: 'Plan & Manage Costs',
+              learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/manage-costs',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'foundry-toolbox',
+      label: 'Toolbox & Tools',
+      learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview',
+      children: [
+        {
+          id: 'foundry-tool-types',
+          label: 'Tool Types',
+          learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/openapi',
+          children: [
+            {
+              id: 'foundry-tool-file-search',
+              label: 'File Search',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/file-search',
+            },
+            {
+              id: 'foundry-tool-code-interpreter',
+              label: 'Code Interpreter',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/code-interpreter',
+            },
+            {
+              id: 'foundry-tool-ai-search',
+              label: 'Azure AI Search',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/ai-search',
+            },
+          ],
+        },
+        {
+          id: 'foundry-retrieval',
+          label: 'Retrieval & Indexes (RAG)',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/azure/foundry/concepts/retrieval-augmented-generation',
+        },
+        {
+          id: 'foundry-tool-governance',
+          label: 'Tool Governance',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/governance',
+          children: [
+            {
+              id: 'foundry-tool-auth',
+              label: 'Tool Authentication',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/tool-authentication',
+            },
+            {
+              id: 'foundry-tool-skills',
+              label: 'Skills (preview)',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/skills',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'foundry-observability',
+      label: 'Observability & Evaluation',
+      learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/concepts/observability',
+      children: [
+        {
+          id: 'foundry-tracing',
+          label: 'Agent Tracing',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/azure/foundry/observability/concepts/trace-agent-concept',
+        },
+        {
+          id: 'foundry-evaluation',
+          label: 'Evaluate Agents',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluate-agent',
+          children: [
+            {
+              id: 'foundry-built-in-evaluators',
+              label: 'Built-in Evaluators',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/concepts/built-in-evaluators',
+            },
+            {
+              id: 'foundry-red-teaming',
+              label: 'AI Red Teaming',
+              learnUrl:
+                'https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'foundry-trust-governance',
+      label: 'Trust, Safety & Governance',
+      learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/responsible-use-of-ai-overview',
+      children: [
+        {
+          id: 'foundry-guardrails',
+          label: 'Guardrails & Controls',
+          learnUrl:
+            'https://learn.microsoft.com/en-us/azure/foundry/guardrails/guardrails-overview',
+        },
+        {
+          id: 'foundry-control-plane',
+          label: 'Govern at Scale',
+          learnUrl: 'https://learn.microsoft.com/en-us/azure/foundry/control-plane/overview',
         },
       ],
     },
@@ -2027,7 +2173,11 @@ export default function CopilotStudioMindMap() {
             </button>
           </div>
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-2" role="tablist" aria-label="Mind maps">
+        <div
+          className="mt-3 flex flex-wrap items-center gap-2"
+          role="tablist"
+          aria-label="Mind maps"
+        >
           {mindMapOptions.map((map) => {
             const isSelected = map.id === selectedMapId;
             return (
@@ -2197,9 +2347,7 @@ export default function CopilotStudioMindMap() {
                       height={NODE_HEIGHT}
                       rx={12}
                       fill={rectFill}
-                      stroke={
-                        focusedNodeId === entry.id ? 'rgb(253 224 71)' : rectStroke
-                      }
+                      stroke={focusedNodeId === entry.id ? 'rgb(253 224 71)' : rectStroke}
                       strokeWidth={focusedNodeId === entry.id ? 3 : 1.4}
                     />
 
