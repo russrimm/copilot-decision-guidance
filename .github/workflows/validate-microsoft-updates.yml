@@ -133,6 +133,16 @@ jobs:
         if: steps.aggregate.outputs.has-changes == 'true' || github.event.inputs.force_notification == 'true'
         id: read-results
         run: |
+          # The validation scripts run with `|| true`, so a generator failure
+          # leaves these files absent and the bare `cat` below fails with no
+          # explanation. Check for them first and point at the real cause.
+          for f in validation-results.json validation-report.md; do
+            if [ ! -f "$f" ]; then
+              echo "::error::$f was not produced by the validation step; check the earlier validation step output." >&2
+              exit 1
+            fi
+          done
+
           # Read the JSON results
           RESULTS=$(cat validation-results.json)
           echo "results<<EOF" >> $GITHUB_OUTPUT
@@ -306,18 +316,32 @@ jobs:
       - name: Create update branch
         run: |
           BRANCH_NAME="automated/microsoft-updates-$(date +%Y%m%d)"
-          git checkout -b "$BRANCH_NAME"
+
+          # Reuse today's branch if a rerun already created it, so a retry does
+          # not fail on a name that is already taken.
+          git checkout -B "$BRANCH_NAME"
 
           # Add the validation report to the branch
           git add validation-report.md validation-results.json
+
+          # Nothing to report means nothing to push. Without this, a run with no
+          # net change still pushed a branch, and every one of those became an
+          # orphan when the PR step did not open a pull request for it.
+          if git diff --cached --quiet; then
+            echo "No validation changes to report; skipping branch push."
+            echo "SKIP_PR=true" >> $GITHUB_ENV
+            exit 0
+          fi
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -m "docs: Microsoft product updates validation report $(date +%Y-%m-%d)"
-          git push origin "$BRANCH_NAME"
+          git push --force-with-lease origin "$BRANCH_NAME"
 
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Create Draft Pull Request
+        if: env.SKIP_PR != 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -329,7 +353,7 @@ jobs:
               repo: context.repo.repo,
               title: `📋 Microsoft Product Updates - ${new Date().toISOString().split('T')[0]}`,
               head: process.env.BRANCH_NAME,
-              base: 'main',
+              base: 'master',
               body: `## Automated Update Detection\n\n${report}\n\n---\n\n### Review Checklist\n\n- [ ] Verified changes against official Microsoft sources\n- [ ] Updated \`licensing-data.json\` if needed\n- [ ] Updated \`.github/copilot-instructions.md\` if needed\n- [ ] Updated other documentation files as needed\n- [ ] Tested decision engine with updated data\n- [ ] All tests pass\n\n**This is an automated pull request. Please review carefully before merging.**`,
               draft: true
             });
